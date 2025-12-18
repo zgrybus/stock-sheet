@@ -12,9 +12,15 @@ export const UserDropdown = () => {
       </Popover.Trigger>
       <Popover.Content className="w-64">
         <Popover.Dialog>
-          <Popover.Heading className="font-bold text-xl">
-            Krzysztof Nofz
+          <Popover.Heading className="mb-6">
+            <p className="font-bold text-xl">Krzysztof Nofz</p>
+            <p className="text-muted text-sm font-light">
+              krzysztofnofz@gmail.com
+            </p>
           </Popover.Heading>
+          <Button className="w-full" variant="tertiary">
+            Zarządzaj swoim kontem
+          </Button>
           <Separator className="my-4" />
           <Button className="flex-1 justify-start w-full" variant="tertiary">
             <LogOut />

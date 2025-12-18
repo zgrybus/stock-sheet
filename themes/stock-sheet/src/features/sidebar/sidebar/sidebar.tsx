@@ -15,7 +15,7 @@ export const Sidebar = () => {
           </Accordion.Trigger>
         </Accordion.Heading>
         <Accordion.Panel>
-          <Accordion.Body>Sklad</Accordion.Body>
+          <Accordion.Body>Struktura</Accordion.Body>
         </Accordion.Panel>
       </Accordion.Item>
       <Accordion.Item>
