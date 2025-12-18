@@ -1,16 +1,16 @@
 import { Button, Separator } from "@heroui/react";
 import { Menu } from "lucide-react";
-import StockSheetLogo from "@/features/assets/stock-sheet-logo.png?w=112;224&as=srcset&imagetools";
 import { UserDropdown } from "../user-dropdown/user-dropdown";
+import StockSheetLogo from "@/features/assets/stock-sheet-logo.png?w=112;224&as=srcset&imagetools";
 
 export const MobileHeader = () => {
   return (
     <header>
-      <div className="py-3 px-4 flex">
+      <div className="flex px-4 py-3">
         <Button isIconOnly variant="tertiary">
           <Menu />
         </Button>
-        <img className="w-28 h-10 ml-4" srcSet={StockSheetLogo} alt="logo" />
+        <img className="ml-4 h-10 w-28" srcSet={StockSheetLogo} alt="logo" />
         <div className="ml-auto">
           <UserDropdown />
         </div>

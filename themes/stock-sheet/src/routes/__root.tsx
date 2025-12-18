@@ -22,7 +22,12 @@ function RootComponent() {
       {isDesktop ? <DesktopSidebar /> : <MobileSidebar />}
       <div className="flex-1">
         {isDesktop ? <DesktopHeader /> : <MobileHeader />}
-        <div className="py-3 px-4 lg:py-6 lg:px-10">
+        <div
+          className={`
+            px-4 py-3
+            lg:px-10 lg:py-6
+          `}
+        >
           <Outlet />
         </div>
       </div>
