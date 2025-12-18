@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { fileURLToPath } from "node:url";
+import { imagetools } from "vite-imagetools";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -13,6 +14,7 @@ export default defineConfig({
     }),
     react(),
     tailwindcss(),
+    imagetools(),
   ],
   resolve: {
     alias: {
