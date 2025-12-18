@@ -1,4 +1,3 @@
-import { Button } from "@heroui/react";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -6,10 +5,5 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  return (
-    <div>
-      Sphinx of black quartz, judge my vow.
-      <Button>Save</Button>
-    </div>
-  );
+  return "Home";
 }
