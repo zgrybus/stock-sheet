@@ -1,0 +1,10 @@
+frontend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "themes/stock-sheet/**"
+
+ops:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
+          - "lefthook.yml"
