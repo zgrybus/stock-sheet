@@ -51,4 +51,8 @@ export default defineConfig([
       ...testingLibrary.configs["flat/react"].rules,
     },
   },
+  {
+    files: ["eslint.config.js"],
+    ...tseslint.configs.disableTypeChecked,
+  },
 ]);
