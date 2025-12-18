@@ -7,7 +7,7 @@ export const Sidebar = () => {
       <Accordion.Item>
         <Accordion.Heading>
           <Accordion.Trigger>
-            <Wallet className="text-muted mr-3 size-4 shrink-0" />
+            <Wallet className="mr-3 size-4 shrink-0 text-muted" />
             Portfel
             <Accordion.Indicator>
               <ChevronDown />
@@ -21,7 +21,7 @@ export const Sidebar = () => {
       <Accordion.Item>
         <Accordion.Heading>
           <Accordion.Trigger>
-            <IdCard className="text-muted mr-3 size-4 shrink-0" />
+            <IdCard className="mr-3 size-4 shrink-0 text-muted" />
             Operacje
             <Accordion.Indicator>
               <ChevronDown />
