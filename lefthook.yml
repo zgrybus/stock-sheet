@@ -1,0 +1,7 @@
+pre-commit:
+  parallel: true
+  commands:
+    frontend-linter:
+      root: "themes/stock-sheet"
+      glob: "*.{ts,tsx}"
+      run: npx eslint --fix {staged_files} && git add {staged_files}
