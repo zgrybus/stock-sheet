@@ -4,17 +4,26 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-interface InputFileProps {
+type InputFileProps = {
+  id: string;
   isLoading?: boolean;
+  isInvalid?: boolean;
   onFileSelect: (file: File) => void;
-}
+};
 
-export const InputFile = ({ onFileSelect, isLoading }: InputFileProps) => {
+export const InputFile = ({
+  id,
+  onFileSelect,
+  isLoading,
+  isInvalid,
+}: InputFileProps) => {
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    if (!isLoading) setIsDragging(true);
+    if (!isLoading) {
+      setIsDragging(true);
+    }
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
@@ -25,7 +34,9 @@ export const InputFile = ({ onFileSelect, isLoading }: InputFileProps) => {
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    if (isLoading) return;
+    if (isLoading) {
+      return;
+    }
 
     const file = e.dataTransfer.files[0];
     onFileSelect(file);
@@ -33,14 +44,16 @@ export const InputFile = ({ onFileSelect, isLoading }: InputFileProps) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) onFileSelect(file);
+    if (file) {
+      onFileSelect(file);
+    }
     e.target.value = "";
   };
 
   return (
     <div className="grid w-full items-center gap-1.5">
       <Input
-        id="xtb-file-upload"
+        id={id}
         type="file"
         accept=".xlsx, .xls, .csv"
         className="hidden"
@@ -49,7 +62,8 @@ export const InputFile = ({ onFileSelect, isLoading }: InputFileProps) => {
       />
 
       <Label
-        htmlFor="xtb-file-upload"
+        aria-invalid={isInvalid}
+        htmlFor={id}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
