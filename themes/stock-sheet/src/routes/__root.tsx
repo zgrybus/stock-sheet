@@ -4,6 +4,7 @@ import { useIsDesktop } from "@/features/match-media-utils/use-is-desktop/use-is
 import { DesktopHeader } from "@/features/header/desktop-header/desktop-header";
 import { MobileHeader } from "@/features/header/mobile-header/mobile-header";
 import { Sidebar } from "@/features/header/sidebar/sidebar";
+import { RouteBreadcrumb } from "@/features/header/navigation/route-breadcrumb/route-breadcrumb";
 
 type MyRouterContext = {
   queryClient: QueryClient;
@@ -49,7 +50,7 @@ function RootComponent() {
             lg:p-8
           `}
         >
-          <div className="mb-4 h-10 w-full">Portfel / Import</div>
+          <RouteBreadcrumb />
           <Outlet />
         </main>
       </div>

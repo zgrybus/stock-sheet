@@ -21,7 +21,7 @@ function Index() {
           lg:w-125
         `}
       >
-        <InputFile />
+        <InputFile isLoading={false} onFileSelect={() => {}} />
       </div>
     </>
   );
