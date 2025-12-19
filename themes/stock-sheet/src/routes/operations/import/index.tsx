@@ -8,6 +8,7 @@ import { ChevronRight, Upload, FileText, Send } from "lucide-react";
 import { Stepper } from "@/components/ui/stepper";
 import type { StepItem } from "@/components/ui/stepper";
 import { WalletOperationsTable } from "@/features/wallet-operations/wallet-operations-table/wallet-operations-table";
+import { ConsentAndSubmitOperations } from "@/features/wallet-operations/consent-and-submit-operations/consent-and-submit-operations";
 
 type OperationJson = {
   id: string;
@@ -51,7 +52,7 @@ function Index() {
 
   const operationJson = useStore(
     form.store,
-    (state) => state.values.operationJson
+    (state) => state.values.operationJson || []
   );
 
   return (
@@ -71,8 +72,7 @@ function Index() {
         <p className="mt-2 text-sm text-muted-foreground">
           {currentStep === 0 &&
             "Wgraj historię transakcji (XTB), aby zaktualizować portfel."}
-          {currentStep === 1 &&
-            `Znaleziono ${operationJson?.length || 0} operacji.`}
+          {currentStep === 1 && `Znaleziono ${operationJson.length} operacji.`}
           {currentStep === 2 &&
             "Wymagana jest Twoja zgoda przed zapisaniem danych."}
         </p>
@@ -93,7 +93,7 @@ function Index() {
         </div>
       )}
 
-      {currentStep === 1 && operationJson && (
+      {currentStep === 1 && (
         <div>
           <WalletOperationsTable operations={operationJson} />
           <div className="mt-10 flex justify-end gap-4">
@@ -115,13 +115,10 @@ function Index() {
       )}
 
       {currentStep === 2 && (
-        <div className="mx-auto max-w-md rounded-lg border bg-card p-6">
-          <div className="flex justify-between pt-4">
-            <Button variant="outline" onClick={() => setCurrentStep(1)}>
-              Wróć
-            </Button>
-          </div>
-        </div>
+        <ConsentAndSubmitOperations
+          setCurrentStep={setCurrentStep}
+          totalPosition={operationJson.length}
+        />
       )}
     </div>
   );
