@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { read, utils } from "xlsx";
+import { ParseError } from "../types";
 
 export const useXtbXlsxParser = () => {
   const parse = useCallback((file: File) => {
@@ -12,12 +13,19 @@ export const useXtbXlsxParser = () => {
 
           const workbook = read(data, { type: "array" });
 
-          const sheet = workbook.Sheets["CASH OPERATION HISTORY"];
+          const openPositionSheet = workbook.SheetNames.find((sheet) =>
+            sheet.includes("OPEN POSITION")
+          );
+          if (!openPositionSheet) {
+            return reject(new Error(ParseError.MissingOpenPosition));
+          }
+
+          const sheet = workbook.Sheets[openPositionSheet];
           const json = utils.sheet_to_json(sheet);
 
           return resolve(json);
         } catch (error) {
-          reject(error);
+          return reject(error);
         }
       };
 
