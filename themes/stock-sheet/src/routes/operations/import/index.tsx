@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronRight, Upload, FileText, Send } from "lucide-react";
 import { Stepper } from "@/components/ui/stepper";
 import type { StepItem } from "@/components/ui/stepper";
+import { WalletOperationsTable } from "@/features/wallet-operations/wallet-operations-table/wallet-operations-table";
 
 type OperationJson = {
   id: string;
@@ -61,7 +62,7 @@ function Index() {
         currentStep={currentStep}
         onStepClick={setCurrentStep}
       />
-      <div className="animate-in text-center duration-500 fade-in">
+      <div className="mb-6 animate-in text-center duration-500 fade-in">
         <h1 className="text-2xl font-bold tracking-tight">
           {currentStep === 0 && "Import operacji"}
           {currentStep === 1 && "Sprawdź poprawność danych"}
@@ -93,7 +94,8 @@ function Index() {
       )}
 
       {currentStep === 1 && operationJson && (
-        <div className="space-y-4">
+        <div>
+          <WalletOperationsTable operations={operationJson} />
           <div className="mt-6 flex justify-between">
             <Button onClick={() => setCurrentStep(2)}>
               Dane poprawne <ChevronRight className="ml-2 h-4 w-4" />
