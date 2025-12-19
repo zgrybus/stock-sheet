@@ -51,7 +51,7 @@ export const InputFile = ({
   };
 
   return (
-    <div className="grid w-full items-center gap-1.5">
+    <div className="w-full items-center gap-1.5">
       <Input
         id={id}
         type="file"
