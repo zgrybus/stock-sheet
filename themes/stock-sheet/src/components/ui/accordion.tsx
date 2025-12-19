@@ -7,7 +7,13 @@ import { cn } from "@/lib/utils";
 function Accordion({
   ...props
 }: React.ComponentProps<typeof AccordionPrimitive.Root>) {
-  return <AccordionPrimitive.Root data-slot="accordion" {...props} />;
+  return (
+    <AccordionPrimitive.Root
+      data-slot="accordion"
+      className="w-full"
+      {...props}
+    />
+  );
 }
 
 function AccordionItem({
@@ -40,8 +46,9 @@ function AccordionTrigger({
         data-slot="accordion-trigger"
         className={cn(
           `
-            flex flex-1 items-start justify-between gap-4 rounded-md py-4
-            text-left text-sm font-medium transition-all outline-none
+            flex flex-1 cursor-pointer items-start justify-between gap-4
+            rounded-md py-4 text-left text-sm font-medium transition-all
+            outline-none
             hover:underline
             focus-visible:border-ring focus-visible:ring-[3px]
             focus-visible:ring-ring/50
@@ -55,7 +62,7 @@ function AccordionTrigger({
         {children}
         <ChevronDownIcon
           className={`
-            pointer-events-none size-4 shrink-0 translate-y-0.5
+            pointer-events-none size-5 shrink-0 translate-y-0.5
             text-muted-foreground transition-transform duration-200
           `}
         />
