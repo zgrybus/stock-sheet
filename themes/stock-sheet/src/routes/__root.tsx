@@ -17,24 +17,6 @@ function RootComponent() {
   const { isDesktop } = useIsDesktop();
 
   return (
-    // <div className="flex min-h-dvh">
-    //   {isDesktop ? (
-    //     <aside className="flex min-h-dvh w-60">
-    //       <Sidebar />
-    //     </aside>
-    //   ) : null}
-    //   <div className="flex flex-1 flex-col">
-    //     {isDesktop ? <DesktopHeader /> : <MobileHeader />}
-    //     <div
-    //       className={`
-    //         flex-1 bg-muted px-4 py-3
-    //         lg:px-10 lg:py-6
-    //       `}
-    //     >
-    //       <Outlet />
-    //     </div>
-    //   </div>
-    // </div>
     <div
       className={`
         flex min-h-dvh w-full bg-background text-foreground antialiased
@@ -61,13 +43,13 @@ function RootComponent() {
         >
           {isDesktop ? <DesktopHeader /> : <MobileHeader />}
         </div>
-
         <main
           className={`
             flex-1 p-4
             lg:p-8
           `}
         >
+          <div className="mb-4 h-10 w-full">Portfel / Import</div>
           <Outlet />
         </main>
       </div>

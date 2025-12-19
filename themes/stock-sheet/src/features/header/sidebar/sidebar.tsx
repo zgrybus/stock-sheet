@@ -6,12 +6,19 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import StockSheetLogo from "@/features/assets/stock-sheet-logo.png?w=112;224&as=srcset&imagetools";
+import { Link } from "@tanstack/react-router";
 
 export const Sidebar = () => {
   return (
     <div className="flex h-full flex-col gap-4 p-4">
       <div className="px-2 pt-1 pb-2">
-        <img className="h-8 w-auto" srcSet={StockSheetLogo} alt="Stock Sheet" />
+        <Link to="/">
+          <img
+            className="h-8 w-auto"
+            srcSet={StockSheetLogo}
+            alt="Stock Sheet"
+          />
+        </Link>
       </div>
       <Accordion type="multiple" className="w-full space-y-1">
         <AccordionItem value="wallet">
@@ -36,7 +43,7 @@ export const Sidebar = () => {
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <span>Import operacji</span>
+            <Link to="/operations/import">Import operacji</Link>
             <span>Historia transakcji</span>
             <span>Gotówka</span>
           </AccordionContent>
