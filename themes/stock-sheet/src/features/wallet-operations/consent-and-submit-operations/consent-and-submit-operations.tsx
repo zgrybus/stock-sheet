@@ -71,7 +71,13 @@ export const ConsentAndSubmitOperations = ({
           </div>
           <div className={`flex items-start space-x-3 rounded-md border`}>
             <Label htmlFor="terms" className={`cursor-pointer items-start`}>
-              <Checkbox id="terms" className={`mt-1`} />
+              <Checkbox
+                id="terms"
+                className={`
+                  mt-1 border-muted-foreground
+                  data-[state=checked]:border-primary
+                `}
+              />
               <div className="text-sm font-semibold">
                 <p>Akceptuję warunki importu</p>
                 <p className="mt-2 leading-relaxed text-muted-foreground">
