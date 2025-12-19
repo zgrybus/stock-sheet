@@ -55,14 +55,14 @@ function Index() {
   );
 
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-5xl">
       <Stepper
         aria-label="Stepper importu operacji"
         steps={STEPS}
         currentStep={currentStep}
         onStepClick={setCurrentStep}
       />
-      <div className="mb-6 animate-in text-center duration-500 fade-in">
+      <div className="mb-10 animate-in text-center duration-500 fade-in">
         <h1 className="text-2xl font-bold tracking-tight">
           {currentStep === 0 && "Import operacji"}
           {currentStep === 1 && "Sprawdź poprawność danych"}
@@ -96,9 +96,19 @@ function Index() {
       {currentStep === 1 && operationJson && (
         <div>
           <WalletOperationsTable operations={operationJson} />
-          <div className="mt-6 flex justify-between">
-            <Button onClick={() => setCurrentStep(2)}>
-              Dane poprawne <ChevronRight className="ml-2 h-4 w-4" />
+          <div className="mt-10 flex justify-end gap-4">
+            <Button
+              size="lg"
+              variant="secondary"
+              onClick={() => {
+                form.reset();
+                setCurrentStep(0);
+              }}
+            >
+              Wroc
+            </Button>
+            <Button size="lg" onClick={() => setCurrentStep(2)}>
+              Dane poprawne <ChevronRight />
             </Button>
           </div>
         </div>
