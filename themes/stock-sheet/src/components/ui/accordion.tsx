@@ -47,7 +47,7 @@ function AccordionTrigger({
         className={cn(
           `
             flex flex-1 cursor-pointer items-start justify-between gap-4
-            rounded-md py-4 text-left text-sm font-medium transition-all
+            rounded-md py-4 text-left text-lg font-medium transition-all
             outline-none
             hover:underline
             focus-visible:border-ring focus-visible:ring-[3px]
@@ -80,13 +80,15 @@ function AccordionContent({
     <AccordionPrimitive.Content
       data-slot="accordion-content"
       className={`
-        overflow-hidden text-sm
+        overflow-hidden text-base
         data-[state=closed]:animate-accordion-up
         data-[state=open]:animate-accordion-down
       `}
       {...props}
     >
-      <div className={cn("pt-0 pb-4", className)}>{children}</div>
+      <div className={cn("flex flex-col gap-2 pt-0 pb-4", className)}>
+        {children}
+      </div>
     </AccordionPrimitive.Content>
   );
 }
