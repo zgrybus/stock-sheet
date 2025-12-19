@@ -37,6 +37,7 @@ export const Stepper = ({
               <li className="relative flex flex-col items-center">
                 <Button
                   className="flex h-auto flex-col"
+                  size={"sm"}
                   variant="ghost"
                   disabled={!isClickable}
                   onClick={() => isClickable && onStepClick(index)}
@@ -44,8 +45,9 @@ export const Stepper = ({
                   <span
                     className={cn(
                       `
-                        rounded-full border-red-200 p-3 text-sm font-medium
+                        rounded-full border-red-200 p-1 text-sm font-medium
                         transition-all duration-300
+                        md:p-3
                       `,
                       {
                         "border-primary bg-primary text-primary-foreground group-hover:bg-primary/90":
@@ -55,9 +57,19 @@ export const Stepper = ({
                     )}
                   >
                     {isCompleted ? (
-                      <Check className="size-5" />
+                      <Check
+                        className={`
+                          size-4
+                          md:size-5
+                        `}
+                      />
                     ) : step.icon ? (
-                      <step.icon className="size-5" />
+                      <step.icon
+                        className={`
+                          size-4
+                          md:size-5
+                        `}
+                      />
                     ) : (
                       index + 1
                     )}
@@ -73,7 +85,12 @@ export const Stepper = ({
                 </Button>
               </li>
               {!isLast && (
-                <div className={`relative mx-2 h-1 flex-1 bg-muted`}>
+                <div
+                  className={`
+                    relative mx-1 h-1 flex-1 bg-muted
+                    md:mx-2
+                  `}
+                >
                   <div
                     className={cn(
                       "absolute inset-0 bg-primary transition-all duration-500",
