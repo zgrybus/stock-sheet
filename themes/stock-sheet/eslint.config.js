@@ -31,6 +31,14 @@ export default defineConfig([
       "import/order": "off",
       "sort-imports": "off",
       "react-refresh/only-export-components": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
     },
     settings: {
       "better-tailwindcss": {

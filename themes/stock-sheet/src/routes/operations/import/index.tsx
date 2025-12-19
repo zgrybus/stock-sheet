@@ -2,7 +2,7 @@ import { InputFile } from "@/components/ui/input-file";
 import { createFileRoute } from "@tanstack/react-router";
 import { useForm } from "@tanstack/react-form";
 import { Field, FieldError } from "@/components/ui/field";
-import { useXlsxFileParse } from "@/features/xlsx-utils/xlsx-parser";
+import { useXlsxParser } from "@/features/xlsx-utils/use-xlsx-parser/use-xlsx-parser";
 
 export const Route = createFileRoute("/operations/import/")({
   component: Index,
@@ -18,12 +18,9 @@ function Index() {
     },
   });
 
-  const { isLoading, parse } = useXlsxFileParse({
+  const { isParsing, parse } = useXlsxParser({
     onParse: (data) => {
       console.log("data: ", data);
-    },
-    onError: () => {
-      console.log("error");
     },
   });
 
@@ -49,7 +46,7 @@ function Index() {
               <Field data-invalid={field.state.meta.errors.length > 0}>
                 <InputFile
                   id={field.name}
-                  isLoading={isLoading}
+                  isLoading={isParsing}
                   onFileSelect={parse}
                 />
                 <FieldError errors={field.state.meta.errors} />
