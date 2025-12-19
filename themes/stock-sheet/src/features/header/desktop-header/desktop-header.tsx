@@ -1,15 +1,14 @@
 import { UserDropdown } from "../user-dropdown/user-dropdown";
-import { Separator } from "@/components/ui/separator";
 
 export const DesktopHeader = () => {
   return (
-    <header>
-      <div className="flex px-10 py-6">
-        <div className="ml-auto">
-          <UserDropdown />
-        </div>
-      </div>
-      <Separator />
+    <header
+      className={`
+        sticky top-0 z-50 flex h-14 w-full items-center justify-end gap-4
+        border-b border-border bg-background/80 px-6 backdrop-blur-md
+      `}
+    >
+      <UserDropdown />
     </header>
   );
 };

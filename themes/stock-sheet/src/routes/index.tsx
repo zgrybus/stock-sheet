@@ -5,5 +5,11 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  return "Home";
+  return (
+    <div>
+      <div>
+        <h2 className="text-2xl font-bold tracking-tight">Pulpit</h2>
+      </div>
+    </div>
+  );
 }
