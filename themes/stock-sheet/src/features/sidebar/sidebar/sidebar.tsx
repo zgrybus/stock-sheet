@@ -1,37 +1,28 @@
-import { Accordion } from "@heroui/react";
-import { ChevronDown, IdCard, Wallet } from "lucide-react";
+import { IdCard, Wallet } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 export const Sidebar = () => {
   return (
-    <Accordion>
-      <Accordion.Item>
-        <Accordion.Heading>
-          <Accordion.Trigger>
-            <Wallet className="mr-3 size-4 shrink-0 text-muted" />
-            Portfel
-            <Accordion.Indicator>
-              <ChevronDown />
-            </Accordion.Indicator>
-          </Accordion.Trigger>
-        </Accordion.Heading>
-        <Accordion.Panel>
-          <Accordion.Body>Struktura</Accordion.Body>
-        </Accordion.Panel>
-      </Accordion.Item>
-      <Accordion.Item>
-        <Accordion.Heading>
-          <Accordion.Trigger>
-            <IdCard className="mr-3 size-4 shrink-0 text-muted" />
-            Operacje
-            <Accordion.Indicator>
-              <ChevronDown />
-            </Accordion.Indicator>
-          </Accordion.Trigger>
-        </Accordion.Heading>
-        <Accordion.Panel>
-          <Accordion.Body>Import operacji</Accordion.Body>
-        </Accordion.Panel>
-      </Accordion.Item>
+    <Accordion type="multiple">
+      <AccordionItem value="wallet">
+        <AccordionTrigger>
+          <Wallet className="mr-3 size-4 shrink-0 text-muted" />
+          Portfel
+        </AccordionTrigger>
+        <AccordionContent>Struktura</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="operation">
+        <AccordionTrigger>
+          <IdCard className="mr-3 size-4 shrink-0 text-muted" />
+          Operacje
+        </AccordionTrigger>
+        <AccordionContent>Import operacji</AccordionContent>
+      </AccordionItem>
     </Accordion>
   );
 };

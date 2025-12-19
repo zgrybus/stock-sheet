@@ -1,6 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-// eslint-disable-next-line react-refresh/only-export-components
 export function getContext() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { staleTime: 180000 } },

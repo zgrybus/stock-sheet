@@ -1,33 +1,32 @@
-import { Avatar, Button, Popover, Separator } from "@heroui/react";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut } from "lucide-react";
 
 export const UserDropdown = () => {
   return (
     <Popover>
-      <Popover.Trigger>
+      <PopoverTrigger>
         <Avatar>
-          <Avatar.Image alt="Krzysztof Nofz" />
-          <Avatar.Fallback>KN</Avatar.Fallback>
+          <AvatarImage alt="Krzysztof Nofz" />
+          <AvatarFallback>KN</AvatarFallback>
         </Avatar>
-      </Popover.Trigger>
-      <Popover.Content className="w-64">
-        <Popover.Dialog>
-          <Popover.Heading className="mb-6">
-            <p className="text-xl font-bold">Krzysztof Nofz</p>
-            <p className="text-sm font-light text-muted">
-              krzysztofnofz@gmail.com
-            </p>
-          </Popover.Heading>
-          <Button className="w-full" variant="tertiary">
-            Zarządzaj swoim kontem
-          </Button>
-          <Separator className="my-4" />
-          <Button className="w-full flex-1 justify-start" variant="tertiary">
-            <LogOut />
-            Wyloguj
-          </Button>
-        </Popover.Dialog>
-      </Popover.Content>
+      </PopoverTrigger>
+      <PopoverContent className="w-64">
+        <p className="text-xl font-bold">Krzysztof Nofz</p>
+        <p className="text-sm font-light text-muted">krzysztofnofz@gmail.com</p>
+        <Button className="w-full">Zarządzaj swoim kontem</Button>
+        <Separator className="my-4" />
+        <Button>
+          <LogOut />
+          Wyloguj
+        </Button>
+      </PopoverContent>
     </Popover>
   );
 };

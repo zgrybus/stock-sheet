@@ -28,6 +28,8 @@ export default defineConfig([
     rules: {
       ...eslintPluginBetterTailwindcss.configs["recommended-warn"].rules,
       ...eslintPluginBetterTailwindcss.configs["recommended-error"].rules,
+      "import/order": "off",
+      "react-refresh/only-export-components": "off",
     },
     settings: {
       "better-tailwindcss": {

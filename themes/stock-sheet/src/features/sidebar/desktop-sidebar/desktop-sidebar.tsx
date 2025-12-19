@@ -1,4 +1,4 @@
-import { Separator } from "@heroui/react";
+import { Separator } from "@/components/ui/separator";
 import { Sidebar } from "../sidebar/sidebar";
 import StockSheetLogo from "@/features/assets/stock-sheet-logo.png?w=112;224&as=srcset&imagetools";
 
