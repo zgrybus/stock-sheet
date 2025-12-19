@@ -1,10 +1,9 @@
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import type { QueryClient } from "@tanstack/react-query";
 import { useIsDesktop } from "@/features/match-media-utils/use-is-desktop/use-is-desktop";
-import { DesktopSidebar } from "@/features/sidebar/desktop-sidebar/desktop-sidebar";
-import { MobileSidebar } from "@/features/sidebar/mobile-sidebar/mobile-sidebar";
 import { DesktopHeader } from "@/features/header/desktop-header/desktop-header";
 import { MobileHeader } from "@/features/header/mobile-header/mobile-header";
+import { Sidebar } from "@/features/header/sidebar/sidebar";
 
 type MyRouterContext = {
   queryClient: QueryClient;
@@ -18,13 +17,17 @@ function RootComponent() {
   const { isDesktop } = useIsDesktop();
 
   return (
-    <div className="flex">
-      {isDesktop ? <DesktopSidebar /> : <MobileSidebar />}
-      <div className="flex-1">
+    <div className="flex min-h-dvh">
+      {isDesktop ? (
+        <aside className="flex min-h-dvh w-60">
+          <Sidebar />
+        </aside>
+      ) : null}
+      <div className="flex flex-1 flex-col">
         {isDesktop ? <DesktopHeader /> : <MobileHeader />}
         <div
           className={`
-            px-4 py-3
+            flex-1 bg-muted px-4 py-3
             lg:px-10 lg:py-6
           `}
         >

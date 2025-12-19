@@ -1,5 +1,5 @@
-import { Separator } from "@heroui/react";
 import { UserDropdown } from "../user-dropdown/user-dropdown";
+import { Separator } from "@/components/ui/separator";
 
 export const DesktopHeader = () => {
   return (
