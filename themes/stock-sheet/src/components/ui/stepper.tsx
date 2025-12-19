@@ -36,8 +36,8 @@ export const Stepper = ({
             <React.Fragment key={index}>
               <li className="relative flex flex-col items-center">
                 <Button
-                  className="flex h-auto flex-col"
-                  size={"sm"}
+                  className="flex h-auto flex-col gap-3 py-2"
+                  size="sm"
                   variant="ghost"
                   disabled={!isClickable}
                   onClick={() => isClickable && onStepClick(index)}

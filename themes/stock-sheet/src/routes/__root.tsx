@@ -4,7 +4,7 @@ import { useIsDesktop } from "@/features/match-media-utils/use-is-desktop/use-is
 import { DesktopHeader } from "@/features/header/desktop-header/desktop-header";
 import { MobileHeader } from "@/features/header/mobile-header/mobile-header";
 import { Sidebar } from "@/features/header/sidebar/sidebar";
-import { RouteBreadcrumb } from "@/features/header/navigation/route-breadcrumb/route-breadcrumb";
+import { RouteBreadcrumb } from "@/features/navigation/route-breadcrumb/route-breadcrumb";
 import { Toaster } from "sonner";
 
 type MyRouterContext = {
