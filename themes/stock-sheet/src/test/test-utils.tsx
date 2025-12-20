@@ -16,6 +16,7 @@ import type {
   ValidateNavigateOptions,
 } from "@tanstack/react-router";
 import { routeTree } from "@/routeTree.gen";
+import { Toaster } from "sonner";
 
 const interpolateRoute = <
   TOptions,
@@ -53,7 +54,10 @@ export function TestProviders({
   children,
 }: TestProvidersProps) {
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <>
+      <Toaster />
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </>
   );
 }
 

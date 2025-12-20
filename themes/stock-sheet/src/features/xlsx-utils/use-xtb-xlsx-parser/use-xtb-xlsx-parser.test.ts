@@ -1,5 +1,5 @@
 import { read, utils } from "xlsx";
-import { xtbXlsxMock } from "./xtb-xlsx.mock";
+import { MockXtbXlsxParserData } from "./xtb-xlsx-parser-data.mock";
 import { renderHook } from "@testing-library/react";
 import { useXtbXlsxParser } from "./use-xtb-xlsx-parser";
 import { TestProviders } from "@/test/test-utils";
@@ -8,7 +8,7 @@ import { produce } from "immer";
 
 describe("useXtbXlsxParser", () => {
   test("extracts positions and currency correctly from a valid XTB report", async () => {
-    vi.mocked(utils.sheet_to_json).mockReturnValue(xtbXlsxMock);
+    vi.mocked(utils.sheet_to_json).mockReturnValue(MockXtbXlsxParserData);
     vi.mocked(read).mockReturnValue({
       SheetNames: [],
       Sheets: { "CASH OPERATION HISTORY": {} },
@@ -66,7 +66,7 @@ describe("useXtbXlsxParser", () => {
 
   describe("Error handling", () => {
     test(`rejects with ${ParseError.MissingCashOperationHistory} when the "CASH OPERATION HISTORY" sheet is missing`, async () => {
-      vi.mocked(utils.sheet_to_json).mockReturnValue(xtbXlsxMock);
+      vi.mocked(utils.sheet_to_json).mockReturnValue(MockXtbXlsxParserData);
       vi.mocked(read).mockReturnValue({
         SheetNames: [],
         Sheets: { OTHER: {} },
@@ -85,7 +85,7 @@ describe("useXtbXlsxParser", () => {
 
     test(`rejects with ${ParseError.CurrencyError} when the detected currency is unsupported`, async () => {
       vi.mocked(utils.sheet_to_json).mockReturnValue(
-        produce(xtbXlsxMock, (draft) => {
+        produce(MockXtbXlsxParserData, (draft) => {
           draft[0].__EMPTY_4 = "USDD";
         })
       );
@@ -107,7 +107,7 @@ describe("useXtbXlsxParser", () => {
 
     test(`rejects with ${ParseError.ParsingError} when the positions table header row cannot be found`, async () => {
       vi.mocked(utils.sheet_to_json).mockReturnValue(
-        produce(xtbXlsxMock, (draft) => {
+        produce(MockXtbXlsxParserData, (draft) => {
           draft[1].__rowNum__ = 10;
         })
       );
@@ -130,7 +130,7 @@ describe("useXtbXlsxParser", () => {
     describe("Stock purchase parsing validation", () => {
       test(`rejects with ${ParseError.ParsingError} when the trade volume is malformed`, async () => {
         vi.mocked(utils.sheet_to_json).mockReturnValue(
-          produce(xtbXlsxMock, (draft) => {
+          produce(MockXtbXlsxParserData, (draft) => {
             draft[2].__EMPTY_3 = "OPEN BUY _ @ 150.00";
           })
         );
@@ -152,7 +152,7 @@ describe("useXtbXlsxParser", () => {
 
       test(`rejects with ${ParseError.ParsingError} when the trade price is malformed`, async () => {
         vi.mocked(utils.sheet_to_json).mockReturnValue(
-          produce(xtbXlsxMock, (draft) => {
+          produce(MockXtbXlsxParserData, (draft) => {
             draft[2].__EMPTY_3 = "OPEN BUY 10 @ _";
           })
         );
@@ -174,7 +174,7 @@ describe("useXtbXlsxParser", () => {
 
       test(`rejects with ${ParseError.ParsingError} when the trade description format matches no known pattern`, async () => {
         vi.mocked(utils.sheet_to_json).mockReturnValue(
-          produce(xtbXlsxMock, (draft) => {
+          produce(MockXtbXlsxParserData, (draft) => {
             draft[2].__EMPTY_3 = "NOT 10 @ 105";
           })
         );

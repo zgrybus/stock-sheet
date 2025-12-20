@@ -1,6 +1,6 @@
 import type { XtbXlsxRowType } from "./use-xtb-xlsx-parser";
 
-export const xtbXlsxMock: Array<XtbXlsxRowType> = [
+export const MockXtbXlsxParserData: Array<XtbXlsxRowType> = [
   {
     __rowNum__: 5,
     __EMPTY: "",
