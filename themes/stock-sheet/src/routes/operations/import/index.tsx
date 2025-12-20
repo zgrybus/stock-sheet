@@ -9,16 +9,7 @@ import { Stepper } from "@/components/ui/stepper";
 import type { StepItem } from "@/components/ui/stepper";
 import { WalletOperationsTable } from "@/features/wallet-operations/wallet-operations-table/wallet-operations-table";
 import { ConsentAndSubmitOperations } from "@/features/wallet-operations/consent-and-submit-operations/consent-and-submit-operations";
-
-type OperationJson = {
-  id: string;
-  stockSymbol: string;
-  type: "BUY";
-  volume: number;
-  openDate: string;
-  pricePerVolume: number;
-  totalPrice: number;
-};
+import type { CashOperationHistory } from "@/features/xlsx-utils/types";
 
 const STEPS: Array<StepItem> = [
   { title: "Wgranie pliku", icon: Upload },
@@ -35,7 +26,7 @@ function Index() {
 
   const form = useForm({
     defaultValues: {
-      operationJson: null as Array<OperationJson> | null,
+      cashOperationHistoryJson: null as CashOperationHistory | null,
     },
     onSubmit: ({ value }) => {
       console.log(value);
@@ -44,14 +35,14 @@ function Index() {
 
   const { isParsing, parse } = useXlsxParser({
     onParse: (data) => {
-      form.setFieldValue("operationJson", data);
+      form.setFieldValue("cashOperationHistoryJson", data);
       setCurrentStep(1);
     },
   });
 
-  const operationJson = useStore(
+  const cashOperationHistory = useStore(
     form.store,
-    (state) => state.values.operationJson || []
+    (state) => state.values.cashOperationHistoryJson
   );
 
   return (
@@ -71,7 +62,10 @@ function Index() {
         <p className="mt-2 text-sm text-muted-foreground">
           {currentStep === 0 &&
             "Wgraj historię transakcji (XTB), aby zaktualizować portfel."}
-          {currentStep === 1 && `Znaleziono ${operationJson.length} operacji.`}
+          {currentStep === 1 &&
+            `Znaleziono ${
+              cashOperationHistory?.positions.length || 0
+            } operacji.`}
           {currentStep === 2 &&
             "Wymagana jest Twoja zgoda przed zapisaniem danych."}
         </p>
@@ -94,7 +88,10 @@ function Index() {
 
       {currentStep === 1 && (
         <div>
-          <WalletOperationsTable operations={operationJson} />
+          <WalletOperationsTable
+            currency={cashOperationHistory?.currency}
+            operations={cashOperationHistory?.positions}
+          />
           <div className="mt-10 flex justify-end gap-4">
             <Button
               size="lg"
@@ -116,7 +113,7 @@ function Index() {
       {currentStep === 2 && (
         <ConsentAndSubmitOperations
           setCurrentStep={setCurrentStep}
-          totalPosition={operationJson.length}
+          totalPosition={cashOperationHistory?.positions.length || 0}
         />
       )}
     </div>

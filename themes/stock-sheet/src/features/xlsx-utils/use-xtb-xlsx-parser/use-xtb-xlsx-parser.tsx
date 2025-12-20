@@ -2,7 +2,8 @@ import { useCallback } from "react";
 import { read, utils } from "xlsx";
 import type { WorkSheet } from "xlsx";
 import { ParseError } from "../types";
-import type { OpenPositionData } from "../types";
+import type { CashOperationHistory } from "../types";
+import { isValidCurrency } from "@/features/number-utils/number-format-util/number-format-util";
 
 type XlsxRowPurchaseType = {
   __EMPTY_1: "Stock purchase";
@@ -33,6 +34,22 @@ type XlsxRowType = {
   __rowNum__: number;
 } & (XlsxRowPurchaseType | XlsxRowSaleType | XlsxRowCloseTradeType);
 
+const parseCurrency = (json: Array<XlsxRowType>): string => {
+  const currenyRow = json.find((row) => row["__rowNum__"] === 5);
+
+  if (!currenyRow) {
+    throw Error(ParseError.ParsingError);
+  }
+
+  const currency = currenyRow.__EMPTY_4;
+
+  if (!isValidCurrency(currency)) {
+    throw Error(ParseError.CurrencyError);
+  }
+
+  return currency;
+};
+
 const parseTradeDetails = (input: XlsxRowPurchaseType["__EMPTY_3"]) => {
   const regex = /^OPEN BUY (\d+(\.\d+)?) @ (\d+(\.\d+)?)$/;
   const match = input.match(regex);
@@ -47,8 +64,20 @@ const parseTradeDetails = (input: XlsxRowPurchaseType["__EMPTY_3"]) => {
   };
 };
 
-const mapXtbXlsx = (json: Array<XlsxRowType>): Array<OpenPositionData> =>
-  json
+const parsePositions = (
+  json: Array<XlsxRowType>
+): CashOperationHistory["positions"] => {
+  const positionsTableStartIndex = json.findIndex(
+    (row) => row["__rowNum__"] === 11
+  );
+
+  if (positionsTableStartIndex < 0) {
+    throw new Error(ParseError.ParsingError);
+  }
+
+  const positionsTable = json.slice(positionsTableStartIndex, json.length - 1);
+
+  return positionsTable
     .filter((row) => row.__EMPTY_1 === "Stock purchase")
     .map((row) => ({
       id: row.__EMPTY,
@@ -58,10 +87,16 @@ const mapXtbXlsx = (json: Array<XlsxRowType>): Array<OpenPositionData> =>
       totalPrice: Math.abs(parseFloat(row.__EMPTY_5)),
       ...parseTradeDetails(row.__EMPTY_3),
     }));
+};
+
+const mapXtbXlsx = (json: Array<XlsxRowType>): CashOperationHistory => ({
+  currency: parseCurrency(json),
+  positions: parsePositions(json),
+});
 
 export const useXtbXlsxParser = () => {
   const parse = useCallback((file: File) => {
-    return new Promise<Array<OpenPositionData>>((resolve, reject) => {
+    return new Promise<CashOperationHistory>((resolve, reject) => {
       const reader = new FileReader();
 
       reader.onload = (e) => {
@@ -84,19 +119,7 @@ export const useXtbXlsxParser = () => {
             }
           );
 
-          const tableRowIndex = json.findIndex(
-            (row) => row["__rowNum__"] === 11
-          );
-
-          if (tableRowIndex < 0) {
-            return reject(new Error(ParseError.ParsingError));
-          }
-
-          console.log(json);
-
-          const tableJson = json.slice(tableRowIndex, json.length - 1);
-
-          return resolve(mapXtbXlsx(tableJson));
+          return resolve(mapXtbXlsx(json));
         } catch (error) {
           return reject(error);
         }

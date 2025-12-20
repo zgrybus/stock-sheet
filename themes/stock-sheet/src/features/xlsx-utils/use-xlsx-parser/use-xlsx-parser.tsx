@@ -2,11 +2,11 @@ import { useCallback } from "react";
 import { useXtbXlsxParser } from "../use-xtb-xlsx-parser/use-xtb-xlsx-parser";
 import { toast } from "sonner";
 import { ParseError } from "../types";
-import type { OpenPositionData } from "../types";
+import type { CashOperationHistory } from "../types";
 import { useMinimumLoadingTime } from "@/features/loading-utils/use-minimum-loading-time/use-minimum-loading-time";
 
 type UseXlsxParserProps = {
-  onParse: (data: Array<OpenPositionData>) => void;
+  onParse: (data: CashOperationHistory) => void;
 };
 
 export const useXlsxParser = ({ onParse }: UseXlsxParserProps) => {
@@ -39,6 +39,13 @@ export const useXlsxParser = ({ onParse }: UseXlsxParserProps) => {
           case ParseError.ParsingError:
             toast.error(
               "Format danych jest niezgodny z oczekiwanym. Spróbuj wygenerować raport ponownie."
+            );
+            break;
+
+          case ParseError.CurrencyError:
+            toast.error(
+              "Wykryto nieobsługiwaną walutę. Upewnij się, że importujesz raport z właściwego rachunku.",
+              {}
             );
             break;
           default:
