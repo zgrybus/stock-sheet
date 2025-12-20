@@ -4,6 +4,7 @@ import type { WorkSheet } from "xlsx";
 import { ParseError } from "../types";
 import type { CashOperationHistory } from "../types";
 import { isValidCurrency } from "@/features/number-utils/number-format-util/number-format-util";
+import { match } from "ts-pattern";
 
 type XlsxRowPurchaseType = {
   __EMPTY_1: "Stock purchase";
@@ -52,15 +53,15 @@ const parseCurrency = (json: Array<XlsxRowType>): string => {
 
 const parseTradeDetails = (input: XlsxRowPurchaseType["__EMPTY_3"]) => {
   const regex = /^OPEN BUY (\d+(\.\d+)?) @ (\d+(\.\d+)?)$/;
-  const match = input.match(regex);
+  const regexMatch = input.match(regex);
 
-  if (!match) {
+  if (!regexMatch) {
     throw Error(ParseError.ParsingError);
   }
 
   return {
-    volume: parseFloat(match[1]),
-    pricePerVolume: parseFloat(match[3]),
+    volume: parseFloat(regexMatch[1]),
+    pricePerVolume: parseFloat(regexMatch[3]),
   };
 };
 
@@ -78,15 +79,19 @@ const parsePositions = (
   const positionsTable = json.slice(positionsTableStartIndex, json.length - 1);
 
   return positionsTable
-    .filter((row) => row.__EMPTY_1 === "Stock purchase")
-    .map((row) => ({
-      id: row.__EMPTY,
-      type: "BUY",
-      openDate: row.__EMPTY_2,
-      stockSymbol: row.__EMPTY_4,
-      totalPrice: Math.abs(parseFloat(row.__EMPTY_5)),
-      ...parseTradeDetails(row.__EMPTY_3),
-    }));
+    .map((row) =>
+      match(row)
+        .with({ __EMPTY_1: "Stock purchase" }, (stockPurchaseRow) => ({
+          id: stockPurchaseRow.__EMPTY,
+          type: "BUY" as const,
+          openDate: stockPurchaseRow.__EMPTY_2,
+          stockSymbol: stockPurchaseRow.__EMPTY_4,
+          totalPrice: Math.abs(parseFloat(stockPurchaseRow.__EMPTY_5)),
+          ...parseTradeDetails(stockPurchaseRow.__EMPTY_3),
+        }))
+        .otherwise(() => null)
+    )
+    .filter((row) => row !== null);
 };
 
 const mapXtbXlsx = (json: Array<XlsxRowType>): CashOperationHistory => ({

@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { ParseError } from "../types";
 import type { CashOperationHistory } from "../types";
 import { useMinimumLoadingTime } from "@/features/loading-utils/use-minimum-loading-time/use-minimum-loading-time";
+import { match } from "ts-pattern";
 
 type UseXlsxParserProps = {
   onParse: (data: CashOperationHistory) => void;
@@ -30,27 +31,25 @@ export const useXlsxParser = ({ onParse }: UseXlsxParserProps) => {
           return;
         }
 
-        switch (error.message) {
-          case ParseError.MissingCashOperationHistory:
+        match(error.message)
+          .with(ParseError.MissingCashOperationHistory, () =>
             toast.error(
               "Nieprawidłowy format pliku. Upewnij się, że eksportujesz raport z XTB z historią pozycji."
-            );
-            break;
-          case ParseError.ParsingError:
+            )
+          )
+          .with(ParseError.ParsingError, () =>
             toast.error(
               "Format danych jest niezgodny z oczekiwanym. Spróbuj wygenerować raport ponownie."
-            );
-            break;
-
-          case ParseError.CurrencyError:
+            )
+          )
+          .with(ParseError.CurrencyError, () =>
             toast.error(
-              "Wykryto nieobsługiwaną walutę. Upewnij się, że importujesz raport z właściwego rachunku.",
-              {}
-            );
-            break;
-          default:
-            toast.error("Blad formatowania danych. Spróbuj ponownie.");
-        }
+              "Wykryto nieobsługiwaną walutę. Upewnij się, że importujesz raport z właściwego rachunku."
+            )
+          )
+          .otherwise(() =>
+            toast.error("Blad formatowania danych. Spróbuj ponownie.")
+          );
       }
     },
     [xtbParse, onParse, runWithDelay]
