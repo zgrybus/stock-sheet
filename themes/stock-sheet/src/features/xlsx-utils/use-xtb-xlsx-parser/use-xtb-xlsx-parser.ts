@@ -6,6 +6,11 @@ import type { CashOperationHistory } from "../types";
 import { isValidCurrency } from "@/features/number-utils/number-format-util/number-format-util";
 import { match } from "ts-pattern";
 
+type XlsxRowUnknownType = {
+  __EMPTY_1: "";
+  __EMPTY_3: string;
+};
+
 type XlsxRowPurchaseType = {
   __EMPTY_1: "Stock purchase";
   __EMPTY_3: `OPEN BUY ${number} @ ${number}`;
@@ -21,7 +26,7 @@ type XlsxRowCloseTradeType = {
   __EMPTY_3: `Profit of position #${number}`;
 };
 
-type XlsxRowType = {
+export type XtbXlsxRowType = {
   // id
   __EMPTY: string;
   // openDate
@@ -33,9 +38,14 @@ type XlsxRowType = {
   // totalPrice
   __EMPTY_5: string;
   __rowNum__: number;
-} & (XlsxRowPurchaseType | XlsxRowSaleType | XlsxRowCloseTradeType);
+} & (
+  | XlsxRowUnknownType
+  | XlsxRowPurchaseType
+  | XlsxRowSaleType
+  | XlsxRowCloseTradeType
+);
 
-const parseCurrency = (json: Array<XlsxRowType>): string => {
+const parseCurrency = (json: Array<XtbXlsxRowType>): string => {
   const currenyRow = json.find((row) => row["__rowNum__"] === 5);
 
   if (!currenyRow) {
@@ -66,7 +76,7 @@ const parseTradeDetails = (input: XlsxRowPurchaseType["__EMPTY_3"]) => {
 };
 
 const parsePositions = (
-  json: Array<XlsxRowType>
+  json: Array<XtbXlsxRowType>
 ): CashOperationHistory["positions"] => {
   const positionsTableStartIndex = json.findIndex(
     (row) => row["__rowNum__"] === 11
@@ -94,7 +104,7 @@ const parsePositions = (
     .filter((row) => row !== null);
 };
 
-const mapXtbXlsx = (json: Array<XlsxRowType>): CashOperationHistory => ({
+const mapXtbXlsx = (json: Array<XtbXlsxRowType>): CashOperationHistory => ({
   currency: parseCurrency(json),
   positions: parsePositions(json),
 });
@@ -117,12 +127,16 @@ export const useXtbXlsxParser = () => {
           if (!cashOperationHistorySheet) {
             return reject(new Error(ParseError.MissingCashOperationHistory));
           }
-          const json = utils.sheet_to_json<XlsxRowType>(
+          const json = utils.sheet_to_json<XtbXlsxRowType>(
             cashOperationHistorySheet,
             {
               raw: false,
             }
           );
+
+          if (json.length === 0) {
+            return resolve({ currency: "", positions: [] });
+          }
 
           return resolve(mapXtbXlsx(json));
         } catch (error) {

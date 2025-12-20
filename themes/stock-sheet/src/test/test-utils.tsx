@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import {
@@ -49,7 +48,7 @@ type TestProvidersProps = {
   queryClient?: QueryClient;
 };
 
-function TestProviders({
+export function TestProviders({
   queryClient = createTestQueryClient(),
   children,
 }: TestProvidersProps) {
