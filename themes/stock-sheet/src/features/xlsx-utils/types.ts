@@ -1,15 +1,20 @@
 export enum ParseError {
-  MissingOpenPosition = "MissingOpenPosition",
+  MissingCashOperationHistory = "MissingCashOperationHistory",
   ParsingError = "ParsingError",
+  CurrencyError = "CurrencyError",
 }
 
-export type OpenPositionData = {
+export type CashOperationHistoryPosition = {
   id: string;
-  stockValue: string;
+  stockSymbol: string;
   type: "BUY";
   volume: number;
   openDate: string;
   pricePerVolume: number;
   totalPrice: number;
-  grossPL: number;
+};
+
+export type CashOperationHistory = {
+  currency: string;
+  positions: Array<CashOperationHistoryPosition>;
 };

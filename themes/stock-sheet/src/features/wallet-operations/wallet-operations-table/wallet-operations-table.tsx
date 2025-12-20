@@ -7,12 +7,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { priceFormatUtil } from "@/features/number-utils/number-format-util/number-format-util";
+import { numberFormatUtil } from "@/features/number-utils/number-format-util/number-format-util";
 import { parse, isValid, format } from "date-fns";
 
 type Operation = {
   id: string;
-  stockValue: string;
+  stockSymbol: string;
   type: "BUY" | "SELL";
   volume: number;
   openDate: string;
@@ -21,7 +21,8 @@ type Operation = {
 };
 
 type WalletOperationsTableProps = {
-  operations: Array<Operation>;
+  currency: string | undefined;
+  operations: Array<Operation> | undefined;
 };
 
 const formatDate = (dateString: string) => {
@@ -35,7 +36,8 @@ const formatDate = (dateString: string) => {
 };
 
 export const WalletOperationsTable = ({
-  operations,
+  currency,
+  operations = [],
 }: WalletOperationsTableProps) => {
   return (
     <div className="rounded-md border">
@@ -60,8 +62,8 @@ export const WalletOperationsTable = ({
               <TableCell className="text-sm whitespace-nowrap">
                 {formatDate(operation.openDate)}
               </TableCell>
-              <TableCell className="font-medium">
-                {operation.stockValue}
+              <TableCell className="font-bold">
+                {operation.stockSymbol}
               </TableCell>
               <TableCell>
                 <Badge
@@ -79,10 +81,16 @@ export const WalletOperationsTable = ({
               </TableCell>
               <TableCell className="text-right">{operation.volume}</TableCell>
               <TableCell className="text-right text-muted-foreground">
-                {priceFormatUtil.format(operation.pricePerVolume)}
+                {numberFormatUtil({
+                  style: "currency",
+                  currency,
+                }).format(operation.pricePerVolume)}
               </TableCell>
               <TableCell className="text-right font-semibold">
-                {priceFormatUtil.format(operation.totalPrice)}
+                {numberFormatUtil({
+                  style: "currency",
+                  currency,
+                }).format(operation.totalPrice)}
               </TableCell>
             </TableRow>
           ))}

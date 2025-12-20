@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 
 type ConsentAndSubmitOperationsProps = {
   totalPosition: number;
-  setCurrentStep: (step: number) => void;
+  setCurrentStep: (step: 0 | 1 | 2) => void;
 };
 
 export const ConsentAndSubmitOperations = ({

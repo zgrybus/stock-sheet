@@ -12,3 +12,16 @@ afterEach(() => {
 });
 
 afterAll(() => mswServer.close());
+
+vi.mock(import("xlsx"), async (importOriginal) => {
+  const actual = await importOriginal();
+
+  return {
+    ...actual,
+    read: vi.fn(),
+    utils: {
+      ...actual.utils,
+      sheet_to_json: vi.fn(),
+    },
+  };
+});

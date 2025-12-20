@@ -10,19 +10,19 @@ export type StepItem = {
   description?: string;
 };
 
-type StepperProps = {
+type StepperProps<T extends number> = {
   steps: Array<StepItem>;
-  currentStep: number;
-  onStepClick?: (stepId: number) => void;
+  currentStep: T;
+  onStepClick?: (stepId: T) => void;
 } & React.ComponentProps<"nav">;
 
-export const Stepper = ({
+export const Stepper = <T extends number>({
   steps,
   currentStep,
   onStepClick,
   className,
   ...rest
-}: StepperProps) => {
+}: StepperProps<T>) => {
   return (
     <nav className={cn("mb-24 w-full", className)} {...rest}>
       <ol className="flex w-full items-center">
@@ -40,7 +40,7 @@ export const Stepper = ({
                   size="sm"
                   variant="ghost"
                   disabled={!isClickable}
-                  onClick={() => isClickable && onStepClick(index)}
+                  onClick={() => isClickable && onStepClick(index as T)}
                 >
                   <span
                     className={cn(

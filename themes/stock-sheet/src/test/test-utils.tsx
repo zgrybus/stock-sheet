@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render } from "@testing-library/react";
 import {
@@ -17,6 +16,7 @@ import type {
   ValidateNavigateOptions,
 } from "@tanstack/react-router";
 import { routeTree } from "@/routeTree.gen";
+import { Toaster } from "sonner";
 
 const interpolateRoute = <
   TOptions,
@@ -49,12 +49,15 @@ type TestProvidersProps = {
   queryClient?: QueryClient;
 };
 
-function TestProviders({
+export function TestProviders({
   queryClient = createTestQueryClient(),
   children,
 }: TestProvidersProps) {
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <>
+      <Toaster />
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    </>
   );
 }
 
