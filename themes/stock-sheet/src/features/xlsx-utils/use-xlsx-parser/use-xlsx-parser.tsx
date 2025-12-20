@@ -31,7 +31,7 @@ export const useXlsxParser = ({ onParse }: UseXlsxParserProps) => {
         }
 
         switch (error.message) {
-          case ParseError.MissingOpenPosition:
+          case ParseError.MissingCashOperationHistory:
             toast.error(
               "Nieprawidłowy format pliku. Upewnij się, że eksportujesz raport z XTB z historią pozycji."
             );
@@ -42,7 +42,7 @@ export const useXlsxParser = ({ onParse }: UseXlsxParserProps) => {
             );
             break;
           default:
-            toast.error(`Błąd: ${error.message}`);
+            toast.error("Blad formatowania danych. Spróbuj ponownie.");
         }
       }
     },

@@ -12,13 +12,12 @@ import { ConsentAndSubmitOperations } from "@/features/wallet-operations/consent
 
 type OperationJson = {
   id: string;
-  stockValue: string;
+  stockSymbol: string;
   type: "BUY";
   volume: number;
   openDate: string;
   pricePerVolume: number;
   totalPrice: number;
-  grossPL: number;
 };
 
 const STEPS: Array<StepItem> = [
