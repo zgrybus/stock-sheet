@@ -57,6 +57,7 @@ export const ConsentAndSubmitOperations = ({
         </CardHeader>
         <CardContent className="space-y-6">
           <div
+            data-testid="submit-operations-position-number"
             className={`
               flex justify-between rounded-lg border border-dashed bg-muted/50
               p-4

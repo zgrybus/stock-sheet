@@ -12,7 +12,7 @@ export const Sidebar = () => {
   return (
     <div className="flex h-full flex-col gap-4 p-4">
       <div className="px-2 pt-1 pb-2">
-        <Link to="/">
+        <Link to="/" aria-label="Przekieruj na stronę główną">
           <img
             className="h-8 w-auto"
             srcSet={StockSheetLogo}

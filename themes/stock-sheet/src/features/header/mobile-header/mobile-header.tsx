@@ -23,7 +23,11 @@ export const MobileHeader = () => {
       <div className="flex items-center gap-3">
         <Drawer direction="left">
           <DrawerTrigger asChild>
-            <Button variant="default" size="icon">
+            <Button
+              variant="default"
+              size="icon"
+              aria-label="Otwórz menu mobilne"
+            >
               <Menu />
             </Button>
           </DrawerTrigger>
