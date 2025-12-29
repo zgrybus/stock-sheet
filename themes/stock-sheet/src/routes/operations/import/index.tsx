@@ -111,7 +111,7 @@ function Index() {
                   setCurrentStep(0);
                 }}
               >
-                Wroc
+                Wróć
               </Button>
               <Button size="lg" onClick={() => setCurrentStep(2)}>
                 Dane poprawne <ChevronRight />
