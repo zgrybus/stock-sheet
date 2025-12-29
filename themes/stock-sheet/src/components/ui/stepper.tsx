@@ -62,6 +62,7 @@ export const Stepper = <T extends number>({
                           size-4
                           md:size-5
                         `}
+                        data-testid="step-item-check"
                       />
                     ) : step.icon ? (
                       <step.icon
