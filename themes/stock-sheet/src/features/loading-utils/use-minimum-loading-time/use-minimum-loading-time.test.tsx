@@ -1,5 +1,4 @@
 import { renderHook, act, waitFor } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { useMinimumLoadingTime } from "./use-minimum-loading-time";
 
 describe("useMinimumLoadingTime", () => {
