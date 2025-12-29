@@ -70,7 +70,7 @@ export async function renderComponentWithRouterAndProviders<
   TRouter extends RegisteredRouter = RegisteredRouter
 >(
   ui: ReactElement,
-  navigate?: ValidateNavigateOptions<TRouter, TOptions>,
+  navigate: ValidateNavigateOptions<TRouter, TOptions>,
   options?: RenderWithProvidersOptions
 ) {
   const rootRoute = createRootRoute({});
@@ -78,7 +78,7 @@ export async function renderComponentWithRouterAndProviders<
 
   rootRoute.addChildren([
     createRoute({
-      path: navigate?.to ?? ("/" as string),
+      path: navigate.to ?? ("/" as string),
       getParentRoute: () => rootRoute,
       component: () => ui,
       notFoundComponent: () => <div>Not Found</div>,
@@ -95,7 +95,7 @@ export async function renderComponentWithRouterAndProviders<
     },
   });
 
-  router.navigate({ to: "/" });
+  await act(() => router.navigate(navigate));
 
   const res = render(<RouterProvider router={router} />, {
     wrapper: (props) => (
