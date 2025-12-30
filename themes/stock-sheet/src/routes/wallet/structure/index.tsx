@@ -48,6 +48,8 @@ export const Route = createFileRoute("/wallet/structure/")({
 });
 
 function Index() {
+  const currency = "USD";
+
   return (
     <div className="container mx-auto max-w-5xl">
       <h2 className="mb-2 text-3xl font-bold tracking-tight">
@@ -71,8 +73,19 @@ function Index() {
           Lista aktywnych instrumentów w portfelu.
         </p>
       </section>
-      <WalletStructureTable currency={"USD"} stocks={stocks} />
-      <section className="mt-10 rounded-md border bg-card">
+      <WalletStructureTable stocks={stocks} currency={currency} />
+      <section className="mt-10 rounded-md border bg-card p-6">
+        <h3
+          className={`
+            text-xl leading-none font-semibold tracking-tight text-foreground
+          `}
+        >
+          Wizualizacja portfela
+        </h3>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Graficzne przedstawienie udziału poszczególnych instrumentów w
+          całkowitej wartości Twoich inwestycji.
+        </p>
         <WalletStructurePieChart stocks={stocks} />
       </section>
     </div>
