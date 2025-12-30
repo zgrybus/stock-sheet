@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { WalletStructureTable } from "@/features/wallet-structure/wallet-structure-table/wallet-structure-table";
+import { WalletStructurePieChart } from "@/features/wallet-structure/wallet-structure-pie-chart/wallet-structure-pie-chart";
 
 export const stocks = [
   {
@@ -71,6 +72,9 @@ function Index() {
         </p>
       </section>
       <WalletStructureTable currency={"USD"} stocks={stocks} />
+      <section className="mt-10 rounded-md border bg-card">
+        <WalletStructurePieChart stocks={stocks} />
+      </section>
     </div>
   );
 }
