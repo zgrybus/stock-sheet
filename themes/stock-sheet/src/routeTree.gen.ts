@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as WalletStructureIndexRouteImport } from './routes/wallet/structure/index'
 import { Route as OperationsImportIndexRouteImport } from './routes/operations/import/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WalletStructureIndexRoute = WalletStructureIndexRouteImport.update({
+  id: '/wallet/structure/',
+  path: '/wallet/structure/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OperationsImportIndexRoute = OperationsImportIndexRouteImport.update({
@@ -26,27 +32,31 @@ const OperationsImportIndexRoute = OperationsImportIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/operations/import': typeof OperationsImportIndexRoute
+  '/wallet/structure': typeof WalletStructureIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/operations/import': typeof OperationsImportIndexRoute
+  '/wallet/structure': typeof WalletStructureIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/operations/import/': typeof OperationsImportIndexRoute
+  '/wallet/structure/': typeof WalletStructureIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/operations/import'
+  fullPaths: '/' | '/operations/import' | '/wallet/structure'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/operations/import'
-  id: '__root__' | '/' | '/operations/import/'
+  to: '/' | '/operations/import' | '/wallet/structure'
+  id: '__root__' | '/' | '/operations/import/' | '/wallet/structure/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OperationsImportIndexRoute: typeof OperationsImportIndexRoute
+  WalletStructureIndexRoute: typeof WalletStructureIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wallet/structure/': {
+      id: '/wallet/structure/'
+      path: '/wallet/structure'
+      fullPath: '/wallet/structure'
+      preLoaderRoute: typeof WalletStructureIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/operations/import/': {
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OperationsImportIndexRoute: OperationsImportIndexRoute,
+  WalletStructureIndexRoute: WalletStructureIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

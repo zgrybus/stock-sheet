@@ -29,7 +29,7 @@ export const Sidebar = () => {
             </div>
           </AccordionTrigger>
           <AccordionContent>
-            <span>Struktura</span>
+            <Link to="/wallet/structure">Struktura</Link>
             <span>Analiza Zysków</span>
             <span>Dywidendy</span>
           </AccordionContent>
