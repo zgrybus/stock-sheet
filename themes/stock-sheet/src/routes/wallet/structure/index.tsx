@@ -86,7 +86,7 @@ function Index() {
           Graficzne przedstawienie udziału poszczególnych instrumentów w
           całkowitej wartości Twoich inwestycji.
         </p>
-        <WalletStructurePieChart stocks={stocks} />
+        <WalletStructurePieChart stocks={stocks} currency="USD" />
       </section>
     </div>
   );
