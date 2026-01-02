@@ -45,6 +45,31 @@ export function WalletStructurePieChart({
     [stocks]
   );
 
+  const data = useMemo(() => {
+    return stocks.map((stock, index) => {
+      const price = numberFormatUtil({
+        style: "currency",
+        currency,
+      }).format(Number(stock.totalPrice));
+
+      const percentage = numberFormatUtil({
+        style: "percent",
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
+      }).format(totalValue > 0 ? Number(stock.totalPrice) / totalValue : 0);
+
+      const hue = (index * 137.5) % 360;
+      const color = `hsl(${hue}, 65%, 50%)`;
+
+      return {
+        ...stock,
+        price,
+        percentage,
+        color,
+      };
+    });
+  }, [stocks, totalValue, currency]);
+
   return (
     <div className="flex items-center justify-center p-6">
       <ChartContainer
@@ -56,24 +81,16 @@ export function WalletStructurePieChart({
             content={
               <ChartTooltipContent
                 hideLabel
-                formatter={(value, name, item) => {
-                  const price = numberFormatUtil({
-                    style: "currency",
-                    currency,
-                  }).format(Number(value));
-
-                  const percentage = numberFormatUtil({
-                    style: "percent",
-                  }).format(totalValue > 0 ? Number(value) / totalValue : 0);
-
+                formatter={(_value, _name, item) => {
                   return (
                     <div className="flex items-center gap-2 font-medium">
                       <div
                         className="size-3 rounded-xs"
-                        style={{ backgroundColor: item.payload.fill }}
+                        style={{ backgroundColor: item.payload.color }}
                       />
                       <span>
-                        <strong>{name}</strong> ( {price} ) {percentage}
+                        <strong>{item.payload.name}</strong> ({" "}
+                        {item.payload.price} ) {item.payload.percentage}
                       </span>
                     </div>
                   );
@@ -82,7 +99,7 @@ export function WalletStructurePieChart({
             }
           />
           <Pie
-            data={stocks}
+            data={data}
             dataKey="totalPrice"
             nameKey="name"
             innerRadius={80}
@@ -116,7 +133,7 @@ const renderCustomizedLabel = ({
   midAngle,
   innerRadius,
   outerRadius,
-  percent,
+  percentage,
 }: PieLabelRenderProps) => {
   if (cx == null || cy == null || innerRadius == null || outerRadius == null) {
     return null;
@@ -142,7 +159,7 @@ const renderCustomizedLabel = ({
         drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)] select-none
       `}
     >
-      {`${((percent ?? 0) * 100).toFixed(0)}%`}
+      {percentage}
     </text>
   );
 };

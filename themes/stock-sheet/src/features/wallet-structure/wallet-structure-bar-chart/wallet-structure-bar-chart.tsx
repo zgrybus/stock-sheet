@@ -40,15 +40,14 @@ export function WalletStructureBarChart({
 
   const data = useMemo(() => {
     return stocks.map((stock, index) => {
-      const percentVal =
-        totalValue > 0 ? (stock.totalPrice / totalValue) * 100 : 0;
-
       const price = numberFormatUtil({
         style: "currency",
         currency,
       }).format(Number(stock.totalPrice));
 
       const percentage = numberFormatUtil({
+        maximumFractionDigits: 2,
+        minimumFractionDigits: 2,
         style: "percent",
       }).format(totalValue > 0 ? Number(stock.totalPrice) / totalValue : 0);
 
@@ -60,19 +59,13 @@ export function WalletStructureBarChart({
         price,
         percentage,
         color,
-        percentVal,
       };
     });
   }, [stocks, totalValue, currency]);
 
   return (
     <ChartContainer config={chartConfig}>
-      <BarChart
-        data={data}
-        layout="vertical"
-        barCategoryGap={10}
-        // margin={{ right: 40 }}
-      >
+      <BarChart data={data} layout="vertical" barCategoryGap={10}>
         <XAxis type="number" hide />
         <YAxis
           dataKey="name"
