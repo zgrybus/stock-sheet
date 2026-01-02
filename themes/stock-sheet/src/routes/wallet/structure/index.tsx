@@ -3,25 +3,20 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { WalletStructureTable } from "@/features/wallet-structure/wallet-structure-table/wallet-structure-table";
 import { WalletStructurePieChart } from "@/features/wallet-structure/wallet-structure-pie-chart/wallet-structure-pie-chart";
+import { WalletStructureBarChart } from "@/features/wallet-structure/wallet-structure-bar-chart/wallet-structure-bar-chart";
 
 export const stocks = [
+  {
+    name: "O.US",
+    volumes: 50,
+    averagePrice: 55.2,
+    totalPrice: 2760.0,
+  },
   {
     name: "AAPL.US",
     volumes: 15,
     averagePrice: 175.5,
     totalPrice: 2632.5,
-  },
-  {
-    name: "MSFT.US",
-    volumes: 8,
-    averagePrice: 320.1,
-    totalPrice: 2560.8,
-  },
-  {
-    name: "NVDA.US",
-    volumes: 4,
-    averagePrice: 450.0,
-    totalPrice: 1800.0,
   },
   {
     name: "GOOGL.US",
@@ -30,16 +25,22 @@ export const stocks = [
     totalPrice: 2605.0,
   },
   {
+    name: "MSFT.US",
+    volumes: 8,
+    averagePrice: 320.1,
+    totalPrice: 2560.8,
+  },
+  {
     name: "TSLA.US",
     volumes: 10,
     averagePrice: 240.5,
     totalPrice: 2405.0,
   },
   {
-    name: "O.US",
-    volumes: 50,
-    averagePrice: 55.2,
-    totalPrice: 2760.0,
+    name: "NVDA.US",
+    volumes: 4,
+    averagePrice: 450.0,
+    totalPrice: 1800.0,
   },
 ];
 
@@ -87,6 +88,7 @@ function Index() {
           całkowitej wartości Twoich inwestycji.
         </p>
         <WalletStructurePieChart stocks={stocks} currency="USD" />
+        <WalletStructureBarChart stocks={stocks} currency="USD" />
       </section>
     </div>
   );
