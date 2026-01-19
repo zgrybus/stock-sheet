@@ -3,6 +3,13 @@ frontend:
       - any-glob-to-any-file:
           - "themes/stock-sheet/**"
 
+backend:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "src/**"
+          - "gradle/**"
+          - "build.gradle.kts"
+
 ops:
   - changed-files:
       - any-glob-to-any-file:
