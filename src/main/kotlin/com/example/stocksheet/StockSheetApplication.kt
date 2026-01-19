@@ -1,4 +1,4 @@
-package com.example.stock_sheet
+package com.example.stocksheet
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class StockSheetApplication
 
 fun main(args: Array<String>) {
-	runApplication<StockSheetApplication>(*args)
+    runApplication<StockSheetApplication>(*args)
 }

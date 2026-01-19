@@ -1,0 +1,7 @@
+[90m/Users/krzysztof.nofz/Documents/stock-sheet/src/main/kotlin/com/example/stock_sheet/[0mStockSheetApplication.kt[90m:[0m1[90m:9:[0m Package name must not contain underscore [90m(standard:package-name)[0m
+[90m/Users/krzysztof.nofz/Documents/stock-sheet/src/main/kotlin/com/example/stock_sheet/[0mStockSheetApplication.kt[90m:[0m10[90m:1:[0m Unexpected tab character(s) [90m(standard:indent)[0m
+[90m/Users/krzysztof.nofz/Documents/stock-sheet/src/main/kotlin/com/example/stock_sheet/[0mStockSheetApplication.kt[90m:[0m10[90m:1:[0m Unexpected indentation (1) (should be 4) [90m(standard:indent)[0m
+
+Summary error count (descending) by rule:
+  standard:indent: 2
+  standard:package-name: 1

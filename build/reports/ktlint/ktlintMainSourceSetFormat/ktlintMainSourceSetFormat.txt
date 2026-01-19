@@ -1,0 +1,11 @@
+[90m/Users/krzysztof.nofz/Documents/stock-sheet/src/main/kotlin/com/example/stock_sheet/[0mStockSheetApplication.kt[90m:[0m1[90m:1:[0m File must end with a newline (\n) [90m(standard:final-newline)[0m
+[90m/Users/krzysztof.nofz/Documents/stock-sheet/src/main/kotlin/com/example/stock_sheet/[0mStockSheetApplication.kt[90m:[0m9[90m:15:[0m Missing spacing before "{" [90m(standard:curly-spacing)[0m
+[90m/Users/krzysztof.nofz/Documents/stock-sheet/src/main/kotlin/com/example/stock_sheet/[0mStockSheetApplication.kt[90m:[0m10[90m:15:[0m Missing spacing around "=" [90m(standard:op-spacing)[0m
+[90m/Users/krzysztof.nofz/Documents/stock-sheet/src/main/kotlin/com/example/stock_sheet/[0mStockSheetApplication.kt[90m:[0m10[90m:19:[0m Missing spacing around "+" [90m(standard:op-spacing)[0m
+[90m/Users/krzysztof.nofz/Documents/stock-sheet/src/main/kotlin/com/example/stock_sheet/[0mStockSheetApplication.kt[90m:[0m13[90m:1:[0m Unexpected blank line(s) before "}" [90m(standard:no-blank-line-before-rbrace)[0m
+
+Summary error count (descending) by rule:
+  standard:op-spacing: 2
+  standard:curly-spacing: 1
+  standard:final-newline: 1
+  standard:no-blank-line-before-rbrace: 1

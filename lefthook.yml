@@ -5,3 +5,7 @@ pre-commit:
       root: "themes/stock-sheet"
       glob: "*.{ts,tsx}"
       run: npx eslint --fix {staged_files} && git add {staged_files}
+
+    backend-linter:
+      glob: "*.{kt,kts}"
+      run: ./gradlew ktlintFormat && git add {staged_files}
