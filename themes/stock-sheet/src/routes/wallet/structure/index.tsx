@@ -1,0 +1,95 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { WalletStructureTable } from "@/features/wallet-structure/wallet-structure-table/wallet-structure-table";
+import { WalletStructurePieChart } from "@/features/wallet-structure/wallet-structure-pie-chart/wallet-structure-pie-chart";
+import { WalletStructureBarChart } from "@/features/wallet-structure/wallet-structure-bar-chart/wallet-structure-bar-chart";
+
+export const stocks = [
+  {
+    name: "O.US",
+    volumes: 50,
+    averagePrice: 55.2,
+    totalPrice: 2760.0,
+  },
+  {
+    name: "AAPL.US",
+    volumes: 15,
+    averagePrice: 175.5,
+    totalPrice: 2632.5,
+  },
+  {
+    name: "GOOGL.US",
+    volumes: 20,
+    averagePrice: 130.25,
+    totalPrice: 2605.0,
+  },
+  {
+    name: "MSFT.US",
+    volumes: 8,
+    averagePrice: 320.1,
+    totalPrice: 2560.8,
+  },
+  {
+    name: "TSLA.US",
+    volumes: 10,
+    averagePrice: 240.5,
+    totalPrice: 2405.0,
+  },
+  {
+    name: "NVDA.US",
+    volumes: 4,
+    averagePrice: 450.0,
+    totalPrice: 1800.0,
+  },
+];
+
+export const Route = createFileRoute("/wallet/structure/")({
+  component: Index,
+});
+
+function Index() {
+  const currency = "USD";
+
+  return (
+    <div className="container mx-auto max-w-5xl">
+      <h2 className="mb-2 text-3xl font-bold tracking-tight">
+        Struktura portfela
+      </h2>
+      <p className="text-muted-foreground">
+        Poniżej znajduje się szczegółowy wykaz Twoich aktywów, obejmujący
+        posiadane wolumeny oraz średnie ceny zakupu.
+      </p>
+      <Separator className="my-6" />
+      <section className="mb-8">
+        <div className="mb-2 flex items-center gap-2">
+          <h3
+            className={`text-xl font-semibold tracking-tight text-foreground`}
+          >
+            Twoje aktywa
+          </h3>
+          <Badge variant="default">{stocks.length}</Badge>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Lista aktywnych instrumentów w portfelu.
+        </p>
+      </section>
+      <WalletStructureTable stocks={stocks} currency={currency} />
+      <section className="mt-10 rounded-md border bg-card p-6">
+        <h3
+          className={`
+            text-xl leading-none font-semibold tracking-tight text-foreground
+          `}
+        >
+          Wizualizacja portfela
+        </h3>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Graficzne przedstawienie udziału poszczególnych instrumentów w
+          całkowitej wartości Twoich inwestycji.
+        </p>
+        <WalletStructurePieChart stocks={stocks} currency="USD" />
+        <WalletStructureBarChart stocks={stocks} currency="USD" />
+      </section>
+    </div>
+  );
+}
