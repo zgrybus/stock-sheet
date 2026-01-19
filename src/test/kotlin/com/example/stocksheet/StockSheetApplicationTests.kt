@@ -1,4 +1,4 @@
-package com.example.stock_sheet
+package com.example.stocksheet
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
