@@ -1,8 +1,7 @@
 package com.example.stocksheet
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.DescribeSpec
-import io.kotest.extensions.spring.SpringExtension
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc
@@ -14,15 +13,13 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Testcontainers
-abstract class BaseIntegrationTest(
-    protected val mockMvc: MockMvc,
-    protected val objectMapper: ObjectMapper,
-) : DescribeSpec() {
-    override fun extensions() = listOf(SpringExtension)
+abstract class BaseIntegrationTest : DescribeSpec() {
+    @Autowired
+    lateinit var mockMvc: MockMvc
 
     companion object {
         @Container
         @ServiceConnection
-        val postgres = PostgreSQLContainer("postgres:15-alpine")
+        val postgres = PostgreSQLContainer("postgres:16-alpine")
     }
 }
