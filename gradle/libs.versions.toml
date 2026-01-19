@@ -27,6 +27,8 @@ kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core",
 kotest-extensions-spring = { group = "io.kotest", name = "kotest-extensions-spring", version.ref = "kotest" }
 
 testcontainers-postgresql = { group = "org.testcontainers", name = "postgresql", version.ref = "testcontainers" }
+testcontainers-junit-jupiter = { group = "org.testcontainers", name = "junit-jupiter", version.ref = "testcontainers" }
+spring-boot-testcontainers = { group = "org.springframework.boot", name = "spring-boot-testcontainers" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

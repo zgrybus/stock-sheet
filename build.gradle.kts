@@ -39,7 +39,10 @@ dependencies {
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotest.extensions.spring)
+
     testImplementation(libs.testcontainers.postgresql)
+    testImplementation(libs.testcontainers.junit.jupiter)
+    testImplementation(libs.spring.boot.testcontainers)
 
     testRuntimeOnly(libs.junit.platform.launcher)
 }
