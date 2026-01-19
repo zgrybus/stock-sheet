@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: tools.jackson.module:jackson-module-kotlin:3.0.3" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="tools.jackson.module" artifactId="jackson-module-kotlin" version="3.0.3" baseVersion="3.0.3" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/tools.jackson.module/jackson-module-kotlin/3.0.3/810974ece2fdc92e101f2647af50c5359d2c44d5/jackson-module-kotlin-3.0.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
