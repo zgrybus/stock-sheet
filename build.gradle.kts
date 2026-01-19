@@ -1,4 +1,3 @@
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.spring)
@@ -36,7 +35,12 @@ dependencies {
     testImplementation(libs.spring.boot.starter.data.jpa.test)
     testImplementation(libs.spring.boot.starter.flyway.test)
     testImplementation(libs.spring.boot.starter.webmvc.test)
-    testImplementation(libs.kotlin.test.junit5)
+
+    testImplementation(libs.kotest.runner.junit5)
+    testImplementation(libs.kotest.assertions.core)
+    testImplementation(libs.kotest.extensions.spring)
+    testImplementation(libs.testcontainers.postgresql)
+
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
