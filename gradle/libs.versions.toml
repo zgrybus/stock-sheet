@@ -5,6 +5,7 @@ dependencyManagement = "1.1.7"
 ktlint = "14.0.1"
 kotest = "6.0.7"
 testcontainers = "1.21.4"
+jakarta = "3.1.1"
 
 [libraries]
 spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
@@ -16,6 +17,8 @@ postgresql = { group = "org.postgresql", name = "postgresql" }
 
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 jackson-module-kotlin = { group = "tools.jackson.module", name = "jackson-module-kotlin" }
+
+jakarta-validation-api = {group = "jakarta.validation", name="jakarta.validation-api", version.ref = "jakarta"}
 
 spring-boot-starter-data-jpa-test = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa-test" }
 spring-boot-starter-flyway-test = { group = "org.springframework.boot", name = "spring-boot-starter-flyway-test" }
