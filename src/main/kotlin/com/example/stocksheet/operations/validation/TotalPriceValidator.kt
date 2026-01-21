@@ -26,6 +26,7 @@ class TotalPriceValidator : ConstraintValidator<ValidTotalPrice, OperationReques
                 context.defaultConstraintMessageTemplate,
             ).addPropertyNode("totalPrice")
             .addConstraintViolation()
+
         return false
     }
 }

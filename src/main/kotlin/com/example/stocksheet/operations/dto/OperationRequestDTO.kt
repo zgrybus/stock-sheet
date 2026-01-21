@@ -20,7 +20,7 @@ data class OperationRequestDTO(
     @field:NotNull(message = "Volume is required")
     @field:Positive(message = "Volume needs to be positive")
     var volume: BigDecimal,
-    @field:NotBlank(message = "Open Date is required")
+    @field:NotNull(message = "Open Date is required")
     @field:Past(message = "Open Date needs to be date from the past")
     var openDate: Instant,
     @field:NotNull(message = "Price Per Volume is required")
