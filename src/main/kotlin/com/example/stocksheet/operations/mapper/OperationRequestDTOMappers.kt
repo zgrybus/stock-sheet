@@ -5,12 +5,12 @@ import com.example.stocksheet.operations.entity.OperationEntity
 
 fun OperationRequestDTO.toEntity(): OperationEntity =
     OperationEntity(
-        externalId = this.externalId!!,
-        stockSymbol = this.stockSymbol!!,
-        type = this.type!!,
-        volume = this.volume!!,
-        openDate = this.openDate!!,
-        pricePerVolume = this.pricePerVolume!!,
-        totalPrice = this.totalPrice!!,
-        currency = this.currency!!,
+        externalId = requireNotNull(this.externalId),
+        stockSymbol = requireNotNull(this.stockSymbol),
+        type = requireNotNull(this.type),
+        volume = requireNotNull(this.volume),
+        openDate = requireNotNull(this.openDate),
+        pricePerVolume = requireNotNull(this.pricePerVolume),
+        totalPrice = requireNotNull(this.totalPrice),
+        currency = requireNotNull(this.currency),
     )

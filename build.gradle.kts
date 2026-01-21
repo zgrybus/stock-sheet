@@ -32,6 +32,8 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.jackson.module.kotlin)
 
+    implementation(libs.oshai.kotlin.logging)
+
     implementation(libs.jakarta.validation.api)
 
     testImplementation(libs.spring.boot.starter.data.jpa.test)
