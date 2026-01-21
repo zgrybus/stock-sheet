@@ -33,6 +33,8 @@ class OperationEntity(
     @Column(nullable = false)
     var pricePerVolume: BigDecimal,
     @Column(nullable = false)
+    var totalPrice: BigDecimal,
+    @Column(nullable = false)
     var currency: String,
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

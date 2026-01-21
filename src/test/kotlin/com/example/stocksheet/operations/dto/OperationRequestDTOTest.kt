@@ -9,8 +9,6 @@ import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation
 import jakarta.validation.Validator
-import java.math.BigDecimal
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
@@ -18,28 +16,19 @@ import java.time.ZoneOffset
 class OperationRequestDTOTest : DescribeSpec() {
     private val validator: Validator = Validation.buildDefaultValidatorFactory().validator
 
-    private fun getOperationRequestDTO(
-        externalId: String? = "external-id-1",
-        stockSymbol: String? = "APL.US",
-        type: OperationType? = OperationType.BUY,
-        volume: BigDecimal? = 10.toBigDecimal(),
-        openDate: Instant? = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
-        pricePerVolume: BigDecimal? = 100.toBigDecimal(),
-        totalPrice: BigDecimal? = 1000.toBigDecimal(),
-        currency: String? = "USD",
-    ): OperationRequestDTO =
-        OperationRequestDTO(
-            externalId,
-            stockSymbol,
-            type,
-            volume,
-            openDate,
-            pricePerVolume,
-            totalPrice,
-            currency,
-        )
-
     init {
+        fun getOperationRequestDTO(): OperationRequestDTO =
+            OperationRequestDTO(
+                externalId = "external-id-1",
+                stockSymbol = "APL.US",
+                type = OperationType.BUY,
+                volume = 10.toBigDecimal(),
+                openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
+                pricePerVolume = 100.toBigDecimal(),
+                totalPrice = 1000.toBigDecimal(),
+                currency = "USD",
+            )
+
         describe("OperationRequestDTO") {
             it("does not return any error") {
                 val dto = getOperationRequestDTO()
@@ -50,7 +39,7 @@ class OperationRequestDTOTest : DescribeSpec() {
 
             describe("externalId validation") {
                 it("returns an error, when external id is not set") {
-                    val dto = getOperationRequestDTO(externalId = null)
+                    val dto = getOperationRequestDTO().apply { externalId = null }
                     val violations = validator.validate(dto)
 
                     violations.shouldHaveSize(1)
@@ -63,7 +52,7 @@ class OperationRequestDTOTest : DescribeSpec() {
 
             describe("stockSymbol validation") {
                 it("returns an error, when stock symbol is not set") {
-                    val dto = getOperationRequestDTO(stockSymbol = null)
+                    val dto = getOperationRequestDTO().apply { stockSymbol = null }
                     val violations = validator.validate(dto)
 
                     violations.shouldHaveSize(1)
@@ -76,7 +65,7 @@ class OperationRequestDTOTest : DescribeSpec() {
 
             describe("type validation") {
                 it("returns an error, when type is not set") {
-                    val dto = getOperationRequestDTO(type = null)
+                    val dto = getOperationRequestDTO().apply { type = null }
                     val violations = validator.validate(dto)
 
                     violations.shouldHaveSize(1)
@@ -89,7 +78,7 @@ class OperationRequestDTOTest : DescribeSpec() {
 
             describe("volume validation") {
                 it("returns an error, when volume is not set") {
-                    val dto = getOperationRequestDTO(volume = null)
+                    val dto = getOperationRequestDTO().apply { volume = null }
                     val violations = validator.validate(dto)
 
                     violations.forOne {
@@ -99,7 +88,7 @@ class OperationRequestDTOTest : DescribeSpec() {
                 }
 
                 it("returns an error, when volume is not positive") {
-                    val dto = getOperationRequestDTO(volume = 0.toBigDecimal())
+                    val dto = getOperationRequestDTO().apply { volume = 0.toBigDecimal() }
                     val violations = validator.validate(dto)
 
                     violations.forOne {
@@ -111,7 +100,7 @@ class OperationRequestDTOTest : DescribeSpec() {
 
             describe("openDate validation") {
                 it("returns an error, when open date is not set") {
-                    val dto = getOperationRequestDTO(openDate = null)
+                    val dto = getOperationRequestDTO().apply { openDate = null }
                     val violations = validator.validate(dto)
 
                     violations.shouldHaveSize(1)
@@ -122,7 +111,7 @@ class OperationRequestDTOTest : DescribeSpec() {
                 }
 
                 it("returns an error, when open date is not set") {
-                    val dto = getOperationRequestDTO(openDate = LocalDateTime.now().plusYears(1).toInstant(ZoneOffset.UTC))
+                    val dto = getOperationRequestDTO().apply { openDate = LocalDateTime.now().plusYears(1).toInstant(ZoneOffset.UTC) }
                     val violations = validator.validate(dto)
 
                     violations.shouldHaveSize(1)
@@ -135,7 +124,7 @@ class OperationRequestDTOTest : DescribeSpec() {
 
             describe("pricePerVolume validation") {
                 it("returns an error, when price per volume is not set") {
-                    val dto = getOperationRequestDTO(pricePerVolume = null)
+                    val dto = getOperationRequestDTO().apply { pricePerVolume = null }
                     val violations = validator.validate(dto)
 
                     violations.forOne {
@@ -145,7 +134,7 @@ class OperationRequestDTOTest : DescribeSpec() {
                 }
 
                 it("returns an error, when price per volume is not positive") {
-                    val dto = getOperationRequestDTO(pricePerVolume = 0.toBigDecimal())
+                    val dto = getOperationRequestDTO().apply { pricePerVolume = 0.toBigDecimal() }
                     val violations = validator.validate(dto)
 
                     violations.forOne {
@@ -157,7 +146,7 @@ class OperationRequestDTOTest : DescribeSpec() {
 
             describe("totalPrice validation") {
                 it("returns an error, when total price is not set") {
-                    val dto = getOperationRequestDTO(totalPrice = null)
+                    val dto = getOperationRequestDTO().apply { totalPrice = null }
                     val violations = validator.validate(dto)
 
                     violations.forOne {
@@ -167,7 +156,7 @@ class OperationRequestDTOTest : DescribeSpec() {
                 }
 
                 it("returns an error, when total price is not positive") {
-                    val dto = getOperationRequestDTO(totalPrice = 0.toBigDecimal())
+                    val dto = getOperationRequestDTO().apply { totalPrice = 0.toBigDecimal() }
                     val violations = validator.validate(dto)
 
                     violations.forOne {
@@ -178,11 +167,11 @@ class OperationRequestDTOTest : DescribeSpec() {
 
                 it("returns an error, when total price is does not equal Volume * Price Per Volume") {
                     val dto =
-                        getOperationRequestDTO(
-                            pricePerVolume = 100.toBigDecimal(),
-                            volume = 10.toBigDecimal(),
-                            totalPrice = 900.toBigDecimal(),
-                        )
+                        getOperationRequestDTO().apply {
+                            pricePerVolume = 100.toBigDecimal()
+                            volume = 10.toBigDecimal()
+                            totalPrice = 900.toBigDecimal()
+                        }
                     val violations = validator.validate(dto)
 
                     violations.forOne {
@@ -194,7 +183,7 @@ class OperationRequestDTOTest : DescribeSpec() {
 
             describe("currency validation") {
                 it("returns an error, when currency is not set") {
-                    val dto = getOperationRequestDTO(currency = null)
+                    val dto = getOperationRequestDTO().apply { currency = null }
                     val violations = validator.validate(dto)
 
                     violations.shouldHaveSize(1)
