@@ -13,6 +13,10 @@ class TotalPriceValidator : ConstraintValidator<ValidTotalPrice, OperationReques
         val pricePerVolume = dto.pricePerVolume
         val volume = dto.volume
 
+        if (totalPrice == null || volume == null || pricePerVolume == null) {
+            return false
+        }
+
         val expectedTotalPrice = volume.multiply(pricePerVolume)
 
         val isValid = expectedTotalPrice.compareTo(totalPrice) == 0
