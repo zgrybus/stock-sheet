@@ -1,6 +1,7 @@
 package com.example.stocksheet.operations.controller
 
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
+import com.example.stocksheet.operations.dto.PortfolioSummaryDTO
 import com.example.stocksheet.operations.service.OperationService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -11,8 +12,8 @@ import org.springframework.web.bind.annotation.RestController
 class OperationController(
     private val operationService: OperationService,
 ) {
-    @GetMapping
-    fun getOperations(currency: String) = operationService.getOperations(currency)
+    @GetMapping("/portfolio")
+    fun getPortfolioSummary(currency: String): PortfolioSummaryDTO = operationService.getPortfolioSummary(currency)
 
     @PostMapping
     fun addOperations(
