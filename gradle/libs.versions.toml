@@ -5,17 +5,25 @@ dependencyManagement = "1.1.7"
 ktlint = "14.0.1"
 kotest = "6.0.7"
 testcontainers = "1.21.4"
+jakarta = "3.1.1"
+oshaiLogging = "7.0.3"
 
 [libraries]
 spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
 spring-boot-starter-flyway = { group = "org.springframework.boot", name = "spring-boot-starter-flyway" }
 spring-boot-starter-webmvc = { group = "org.springframework.boot", name = "spring-boot-starter-webmvc" }
 
+spring-boot-starter-validation = { group = "org.springframework.boot", name = "spring-boot-starter-validation" }
+
 flyway-database-postgresql = { group = "org.flywaydb", name = "flyway-database-postgresql" }
 postgresql = { group = "org.postgresql", name = "postgresql" }
 
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 jackson-module-kotlin = { group = "tools.jackson.module", name = "jackson-module-kotlin" }
+
+jakarta-validation-api = {group = "jakarta.validation", name="jakarta.validation-api", version.ref = "jakarta" }
+
+oshai-kotlin-logging = { group = "io.github.oshai", name = "kotlin-logging-jvm", version.ref = "oshaiLogging" }
 
 spring-boot-starter-data-jpa-test = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa-test" }
 spring-boot-starter-flyway-test = { group = "org.springframework.boot", name = "spring-boot-starter-flyway-test" }

@@ -32,6 +32,10 @@ dependencies {
     implementation(libs.kotlin.reflect)
     implementation(libs.jackson.module.kotlin)
 
+    implementation(libs.oshai.kotlin.logging)
+
+    implementation(libs.jakarta.validation.api)
+
     testImplementation(libs.spring.boot.starter.data.jpa.test)
     testImplementation(libs.spring.boot.starter.flyway.test)
     testImplementation(libs.spring.boot.starter.webmvc.test)
@@ -43,6 +47,8 @@ dependencies {
     testImplementation(libs.testcontainers.postgresql)
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.spring.boot.testcontainers)
+
+    testImplementation(libs.spring.boot.starter.validation)
 
     testRuntimeOnly(libs.junit.platform.launcher)
 }
