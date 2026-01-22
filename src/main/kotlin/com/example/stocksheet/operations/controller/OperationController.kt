@@ -1,6 +1,6 @@
 package com.example.stocksheet.operations.controller
 
-import com.example.stocksheet.operations.dto.OperationRequestDTO
+import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
 import com.example.stocksheet.operations.service.OperationService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,6 +16,6 @@ class OperationController(
 
     @PostMapping
     fun addOperations(
-        @RequestBody operations: List<OperationRequestDTO>,
+        @RequestBody operations: OperationsBatchRequestDTO,
     ) = operationService.addOperations(operations)
 }

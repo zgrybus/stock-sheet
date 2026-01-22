@@ -20,15 +20,15 @@ class OperationRequestDTOMappers : DescribeSpec() {
                 openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
                 pricePerVolume = 100.toBigDecimal(),
                 totalPrice = 1000.toBigDecimal(),
-                currency = "USD",
             )
 
         describe("toEntity") {
 
             it("should correctly map all fields from DTO to Entity") {
                 val dto = getOperationRequestDTO()
+                val currency = "USD"
 
-                dto.toEntity().should {
+                dto.toEntity(currency).should {
                     it.externalId.shouldBe(dto.externalId)
                     it.stockSymbol.shouldBe(dto.stockSymbol)
                     it.type.shouldBe(dto.type)
@@ -36,7 +36,7 @@ class OperationRequestDTOMappers : DescribeSpec() {
                     it.openDate.shouldBe(dto.openDate)
                     it.pricePerVolume.shouldBe(dto.pricePerVolume)
                     it.totalPrice.shouldBe(dto.totalPrice)
-                    it.currency.shouldBe(dto.currency)
+                    it.currency.shouldBe(currency)
                 }
             }
         }

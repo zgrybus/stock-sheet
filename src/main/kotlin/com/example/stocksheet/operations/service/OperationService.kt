@@ -1,6 +1,6 @@
 package com.example.stocksheet.operations.service
 
-import com.example.stocksheet.operations.dto.OperationRequestDTO
+import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
 import com.example.stocksheet.operations.repository.OperationRepository
 import org.springframework.stereotype.Service
 
@@ -11,5 +11,5 @@ class OperationService(
     fun getOperations(currency: String) {
     }
 
-    fun addOperations(operations: List<OperationRequestDTO>) {}
+    fun addOperations(operations: OperationsBatchRequestDTO) {}
 }
