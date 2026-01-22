@@ -7,6 +7,7 @@ kotest = "6.0.7"
 testcontainers = "1.21.4"
 jakarta = "3.1.1"
 oshaiLogging = "7.0.3"
+mockk = "1.14.7"
 
 [libraries]
 spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
@@ -33,6 +34,8 @@ junit-platform-launcher = { group = "org.junit.platform", name = "junit-platform
 kotest-runner-junit5 = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest" }
 kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
 kotest-extensions-spring = { group = "io.kotest", name = "kotest-extensions-spring", version.ref = "kotest" }
+
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
 testcontainers-postgresql = { group = "org.testcontainers", name = "postgresql", version.ref = "testcontainers" }
 testcontainers-junit-jupiter = { group = "org.testcontainers", name = "junit-jupiter", version.ref = "testcontainers" }

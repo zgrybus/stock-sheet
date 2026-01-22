@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 interface OperationRepository :
     JpaRepository<OperationEntity, Long>,
     JpaSpecificationExecutor<OperationEntity> {
-    fun findAllByCurrency(currency: String): MutableList<OperationEntity>
+    fun findAllByCurrency(currency: String): List<OperationEntity>
 }

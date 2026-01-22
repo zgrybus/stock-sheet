@@ -44,6 +44,8 @@ dependencies {
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotest.extensions.spring)
 
+    testImplementation(libs.mockk)
+
     testImplementation(libs.testcontainers.postgresql)
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation(libs.spring.boot.testcontainers)
