@@ -47,28 +47,37 @@ class OperationService(
     }
 
     @Transactional()
-    fun addOperations(operations: OperationsBatchRequestDTO): OperationImportResponseDTO {
-        logger.info { "Adding operations: $operations" }
+    fun addOperations(batch: OperationsBatchRequestDTO): OperationImportResponseDTO {
+        logger.info { "Processing batch import for currency: ${batch.currency}" }
 
-        val notDuplicatedOperations = operations
-        val duplicated = operations.operations
+        val requestedExternalIds = batch.operations?.mapNotNull { it.externalId } ?: emptyList()
+        val existingEntities = operationRepository.findAllByExternalIdIn(requestedExternalIds)
+        val existingIdsMap = existingEntities.associateBy { it.externalId }
 
-        val added =
-            operationRepository
-                .saveAll(notDuplicatedOperations.toEntity())
-                .also {
-                    logger.info { "Added new operations: $notDuplicatedOperations" }
-                }.toList()
+        val (duplicatedOperations, newOperations) =
+            (batch.operations ?: emptyList()).partition {
+                existingIdsMap.containsKey(
+                    it.externalId,
+                )
+            }
+
+        val savedOperations = operationRepository.saveAll(newOperations.map { it.toEntity(batch.currency!!) })
+
+        logger.info { "Import finished. Added: ${savedOperations.size}, Duplicated: ${duplicatedOperations.size}" }
 
         return OperationImportResponseDTO(
             added =
-                added.map {
+                savedOperations.map {
                     OperationImportResponseDTO.OperationSummaryDTO(
                         id = it.id,
                         externalId = it.externalId,
                     )
                 },
-            duplicated = listOf(),
+            duplicated =
+                duplicatedOperations.map { operation ->
+                    val idFromDb = existingIdsMap[operation.externalId]?.id
+                    OperationImportResponseDTO.OperationSummaryDTO(id = idFromDb, externalId = operation.externalId)
+                },
         )
     }
 }

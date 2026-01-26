@@ -5,7 +5,7 @@ data class OperationImportResponseDTO(
     val duplicated: List<OperationSummaryDTO>,
 ) {
     data class OperationSummaryDTO(
-        val id: Long,
-        val externalId: String,
+        val id: Long?,
+        val externalId: String?,
     )
 }
