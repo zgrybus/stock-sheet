@@ -38,5 +38,5 @@ data class OperationRequestDTO(
     var pricePerVolume: BigDecimal? = null,
     @field:NotNull(message = "Total Price is required")
     @field:Positive(message = "Total Price needs to be positive")
-    var totalPrice: BigDecimal? = null,
+    val totalPrice: BigDecimal? = null,
 )
