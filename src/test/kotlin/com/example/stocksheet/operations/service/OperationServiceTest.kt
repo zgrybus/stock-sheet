@@ -12,6 +12,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.equality.shouldBeEqualToComparingFields
 import io.kotest.matchers.shouldBe
+import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -26,6 +27,7 @@ class OperationServiceTest : DescribeSpec() {
     private val operationService = OperationService(operationRepositoryMock)
 
     init {
+
         fun getOperationEntity(): OperationEntity =
             OperationEntity(
                 id = 100,
@@ -76,6 +78,10 @@ class OperationServiceTest : DescribeSpec() {
             )
 
         val currency = "USD"
+
+        afterEach {
+            clearAllMocks()
+        }
 
         describe("OperationServiceTest") {
             describe("getPortfolioSummary") {
