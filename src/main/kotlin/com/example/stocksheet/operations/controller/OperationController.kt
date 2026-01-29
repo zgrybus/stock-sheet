@@ -16,12 +16,19 @@ import org.springframework.web.bind.annotation.RestController
 class OperationController(
     private val operationService: OperationService,
 ) {
-    @GetMapping("/portfolio/{currency}")
+    @GetMapping(
+        value = ["/portfolio/{currency}"],
+        produces = ["application/json"],
+    )
     fun getPortfolioSummary(
         @PathVariable currency: String,
     ): PortfolioSummaryDTO = operationService.getPortfolioSummary(currency)
 
-    @PostMapping("/import/{currency}")
+    @PostMapping(
+        value = ["/import/{currency}"],
+        consumes = ["application/json"],
+        produces = ["application/json"],
+    )
     fun addOperations(
         @RequestBody operations: OperationsBatchRequestDTO,
         @PathVariable currency: String,

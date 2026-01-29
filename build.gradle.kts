@@ -29,6 +29,8 @@ dependencies {
     implementation(libs.flyway.database.postgresql)
     runtimeOnly(libs.postgresql)
 
+    implementation(libs.open.api)
+
     implementation(libs.kotlin.reflect)
     implementation(libs.jackson.module.kotlin)
 
