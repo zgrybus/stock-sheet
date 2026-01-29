@@ -29,6 +29,8 @@ dependencies {
     implementation(libs.flyway.database.postgresql)
     runtimeOnly(libs.postgresql)
 
+    implementation(libs.open.api)
+
     implementation(libs.kotlin.reflect)
     implementation(libs.jackson.module.kotlin)
 
@@ -43,6 +45,8 @@ dependencies {
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotest.extensions.spring)
+
+    testImplementation(libs.mockk)
 
     testImplementation(libs.testcontainers.postgresql)
     testImplementation(libs.testcontainers.junit.jupiter)

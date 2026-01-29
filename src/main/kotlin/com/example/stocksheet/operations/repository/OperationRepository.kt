@@ -6,4 +6,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 
 interface OperationRepository :
     JpaRepository<OperationEntity, Long>,
-    JpaSpecificationExecutor<OperationEntity>
+    JpaSpecificationExecutor<OperationEntity> {
+    fun findAllByCurrency(currency: String): List<OperationEntity>
+
+    fun findAllByExternalIdIn(externalIds: Collection<String>): List<OperationEntity>
+}

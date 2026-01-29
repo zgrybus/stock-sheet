@@ -3,7 +3,7 @@ package com.example.stocksheet.operations.mapper
 import com.example.stocksheet.operations.dto.OperationRequestDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 
-fun OperationRequestDTO.toEntity(): OperationEntity =
+fun OperationRequestDTO.toEntity(currency: String): OperationEntity =
     OperationEntity(
         externalId = requireNotNull(this.externalId),
         stockSymbol = requireNotNull(this.stockSymbol),
@@ -12,5 +12,5 @@ fun OperationRequestDTO.toEntity(): OperationEntity =
         openDate = requireNotNull(this.openDate),
         pricePerVolume = requireNotNull(this.pricePerVolume),
         totalPrice = requireNotNull(this.totalPrice),
-        currency = requireNotNull(this.currency),
+        currency = currency,
     )
