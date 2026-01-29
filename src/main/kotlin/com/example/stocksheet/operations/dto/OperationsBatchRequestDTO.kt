@@ -15,8 +15,6 @@ data class OperationsBatchRequestDTO(
     @field:NotEmpty(message = "Operations list cannot be empty")
     @field:Valid
     var operations: List<OperationRequestDTO>? = null,
-    @field:NotBlank(message = "Currency is required")
-    var currency: String? = null,
 )
 
 @ValidTotalPrice(message = "Total Price must be equal to Volume * Price Per Volume")
@@ -38,5 +36,5 @@ data class OperationRequestDTO(
     var pricePerVolume: BigDecimal? = null,
     @field:NotNull(message = "Total Price is required")
     @field:Positive(message = "Total Price needs to be positive")
-    val totalPrice: BigDecimal? = null,
+    var totalPrice: BigDecimal? = null,
 )

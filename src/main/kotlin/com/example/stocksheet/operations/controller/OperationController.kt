@@ -21,8 +21,9 @@ class OperationController(
         @PathVariable currency: String,
     ): PortfolioSummaryDTO = operationService.getPortfolioSummary(currency)
 
-    @PostMapping
+    @PostMapping("/import/{currency}")
     fun addOperations(
         @RequestBody operations: OperationsBatchRequestDTO,
-    ): OperationImportResponseDTO = operationService.addOperations(operations)
+        @PathVariable currency: String,
+    ): OperationImportResponseDTO = operationService.addOperations(operations, currency)
 }

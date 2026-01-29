@@ -47,8 +47,11 @@ class OperationService(
     }
 
     @Transactional()
-    fun addOperations(batch: OperationsBatchRequestDTO): OperationImportResponseDTO {
-        logger.info { "Processing batch import for currency: ${batch.currency}" }
+    fun addOperations(
+        batch: OperationsBatchRequestDTO,
+        currency: String,
+    ): OperationImportResponseDTO {
+        logger.info { "Processing batch import for currency: $currency" }
 
         val requestedExternalIds = batch.operations?.mapNotNull { it.externalId } ?: emptyList()
         val existingEntities = operationRepository.findAllByExternalIdIn(requestedExternalIds)
@@ -61,7 +64,7 @@ class OperationService(
                 )
             }
 
-        val savedOperations = operationRepository.saveAll(newOperations.map { it.toEntity(batch.currency!!) })
+        val savedOperations = operationRepository.saveAll(newOperations.map { it.toEntity(currency) })
 
         logger.info { "Import finished. Added: ${savedOperations.size}, Duplicated: ${duplicatedOperations.size}" }
 

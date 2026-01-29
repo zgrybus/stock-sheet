@@ -9,5 +9,5 @@ interface OperationRepository :
     JpaSpecificationExecutor<OperationEntity> {
     fun findAllByCurrency(currency: String): List<OperationEntity>
 
-    fun findAllByExternalIdIn(externalIds: Collection<String>): MutableList<OperationEntity>
+    fun findAllByExternalIdIn(externalIds: Collection<String>): List<OperationEntity>
 }

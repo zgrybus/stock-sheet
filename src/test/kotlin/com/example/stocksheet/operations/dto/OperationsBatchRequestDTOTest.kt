@@ -34,7 +34,6 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
                     listOf(
                         getOperationRequestDTO(),
                     ),
-                currency = "USD",
             )
 
         describe("OperationsBatchRequestDTOTest") {
@@ -54,19 +53,6 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
                     violations.first().should {
                         it.message.shouldBe("Operations list cannot be empty")
                         it.propertyPath.toString().shouldBe("operations")
-                    }
-                }
-            }
-
-            describe("currency validation") {
-                it("returns an error, when currency is not set") {
-                    val dto = getOperationsBatchRequestDTO().apply { currency = null }
-                    val violations = validator.validate(dto)
-
-                    violations.shouldHaveSize(1)
-                    violations.first().should {
-                        it.message.shouldBe("Currency is required")
-                        it.propertyPath.toString().shouldBe("currency")
                     }
                 }
             }
