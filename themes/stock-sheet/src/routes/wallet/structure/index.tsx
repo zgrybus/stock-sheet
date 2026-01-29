@@ -4,6 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { WalletStructureTable } from "@/features/wallet-structure/wallet-structure-table/wallet-structure-table";
 import { WalletStructurePieChart } from "@/features/wallet-structure/wallet-structure-pie-chart/wallet-structure-pie-chart";
 import { WalletStructureBarChart } from "@/features/wallet-structure/wallet-structure-bar-chart/wallet-structure-bar-chart";
+import { $apiStockSheet } from "@/apis/stock-sheet/client";
 
 export const stocks = [
   {
@@ -50,6 +51,11 @@ export const Route = createFileRoute("/wallet/structure/")({
 
 function Index() {
   const currency = "USD";
+  const { data } = $apiStockSheet.useQuery(
+    "get",
+    "/api/operations/portfolio/{currency}",
+    { params: { path: { currency } } },
+  );
 
   return (
     <div className="container mx-auto max-w-5xl">
