@@ -12,8 +12,8 @@ import { useMemo } from "react";
 import { numberFormatUtil } from "@/features/number-utils/number-format-util/number-format-util";
 
 type Stock = {
-  name: string;
-  totalPrice: number;
+  totalCost: number;
+  stockSymbol: string;
 };
 
 type WalletPieChartProps = {
@@ -30,19 +30,19 @@ export function WalletStructurePieChart({
       (acc, stock, index) => {
         const hue = (index * 137.5) % 360;
 
-        acc[stock.name] = {
-          label: stock.name,
+        acc[stock.stockSymbol] = {
+          label: stock.stockSymbol,
           color: `hsl(${hue}, 70%, 45%)`,
         };
         return acc;
       },
-      { totalPrice: { label: "Wartość" } } as ChartConfig
+      { totalPrice: { label: "Wartość" } } as ChartConfig,
     );
   }, [stocks]);
 
   const totalValue = useMemo(
-    () => stocks.reduce((acc, stock) => acc + stock.totalPrice, 0),
-    [stocks]
+    () => stocks.reduce((acc, stock) => acc + stock.totalCost, 0),
+    [stocks],
   );
 
   const data = useMemo(() => {
@@ -50,13 +50,13 @@ export function WalletStructurePieChart({
       const price = numberFormatUtil({
         style: "currency",
         currency,
-      }).format(Number(stock.totalPrice));
+      }).format(Number(stock.totalCost));
 
       const percentage = numberFormatUtil({
         style: "percent",
         maximumFractionDigits: 2,
         minimumFractionDigits: 2,
-      }).format(totalValue > 0 ? Number(stock.totalPrice) / totalValue : 0);
+      }).format(totalValue > 0 ? Number(stock.totalCost) / totalValue : 0);
 
       const hue = (index * 137.5) % 360;
       const color = `hsl(${hue}, 65%, 50%)`;
@@ -109,8 +109,8 @@ export function WalletStructurePieChart({
           >
             {stocks.map((entry) => (
               <Cell
-                key={entry.name}
-                fill={chartConfig[entry.name].color}
+                key={entry.stockSymbol}
+                fill={chartConfig[entry.stockSymbol].color}
                 className={`
                   cursor-pointer transition-opacity duration-200 outline-none
                   hover:opacity-80

@@ -20,8 +20,8 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 type Stock = {
-  name: string;
-  totalPrice: number;
+  totalCost: number;
+  stockSymbol: string;
 };
 
 type WalletBarChartProps = {
@@ -34,8 +34,8 @@ export function WalletStructureBarChart({
   stocks,
 }: WalletBarChartProps) {
   const totalValue = useMemo(
-    () => stocks.reduce((acc, stock) => acc + stock.totalPrice, 0),
-    [stocks]
+    () => stocks.reduce((acc, stock) => acc + stock.totalCost, 0),
+    [stocks],
   );
 
   const data = useMemo(() => {
@@ -43,13 +43,13 @@ export function WalletStructureBarChart({
       const price = numberFormatUtil({
         style: "currency",
         currency,
-      }).format(Number(stock.totalPrice));
+      }).format(Number(stock.totalCost));
 
       const percentage = numberFormatUtil({
         maximumFractionDigits: 2,
         minimumFractionDigits: 2,
         style: "percent",
-      }).format(totalValue > 0 ? Number(stock.totalPrice) / totalValue : 0);
+      }).format(totalValue > 0 ? Number(stock.totalCost) / totalValue : 0);
 
       const hue = (index * 137.5) % 360;
       const color = `hsl(${hue}, 65%, 50%)`;
@@ -76,8 +76,8 @@ export function WalletStructureBarChart({
           width={100}
           fontWeight={500}
           tickFormatter={(value) => {
-            const item = data.find((d) => d.name === value);
-            return item ? `${item.name} (${item.price})` : value;
+            const item = data.find((d) => d.stockSymbol === value);
+            return item ? `${item.stockSymbol} (${item.price})` : value;
           }}
         />
         <Tooltip
@@ -111,7 +111,7 @@ export function WalletStructureBarChart({
             offset={10}
           />
           {data.map((entry) => (
-            <Cell key={entry.name} fill={entry.color} />
+            <Cell key={entry.stockSymbol} fill={entry.color} />
           ))}
         </Bar>
       </BarChart>

@@ -6,56 +6,29 @@ import { WalletStructurePieChart } from "@/features/wallet-structure/wallet-stru
 import { WalletStructureBarChart } from "@/features/wallet-structure/wallet-structure-bar-chart/wallet-structure-bar-chart";
 import { $apiStockSheet } from "@/apis/stock-sheet/client";
 
-export const stocks = [
-  {
-    name: "O.US",
-    volumes: 50,
-    averagePrice: 55.2,
-    totalPrice: 2760.0,
-  },
-  {
-    name: "AAPL.US",
-    volumes: 15,
-    averagePrice: 175.5,
-    totalPrice: 2632.5,
-  },
-  {
-    name: "GOOGL.US",
-    volumes: 20,
-    averagePrice: 130.25,
-    totalPrice: 2605.0,
-  },
-  {
-    name: "MSFT.US",
-    volumes: 8,
-    averagePrice: 320.1,
-    totalPrice: 2560.8,
-  },
-  {
-    name: "TSLA.US",
-    volumes: 10,
-    averagePrice: 240.5,
-    totalPrice: 2405.0,
-  },
-  {
-    name: "NVDA.US",
-    volumes: 4,
-    averagePrice: 450.0,
-    totalPrice: 1800.0,
-  },
-];
-
 export const Route = createFileRoute("/wallet/structure/")({
   component: Index,
 });
 
 function Index() {
   const currency = "USD";
-  const { data } = $apiStockSheet.useQuery(
+  const { data, isPending, isError } = $apiStockSheet.useQuery(
     "get",
     "/api/operations/portfolio/{currency}",
-    { params: { path: { currency } } },
+    {
+      params: { path: { currency } },
+    },
   );
+
+  if (isPending) {
+    return <div>Pobieranie..</div>;
+  }
+
+  if (isError) {
+    return <div>Coś poszło nie tak..</div>;
+  }
+
+  const stocks = data.positions;
 
   return (
     <div className="container mx-auto max-w-5xl">
@@ -74,7 +47,7 @@ function Index() {
           >
             Twoje aktywa
           </h3>
-          <Badge variant="default">{stocks.length}</Badge>
+          <Badge variant="default">{stocks?.length || 0}</Badge>
         </div>
         <p className="text-sm text-muted-foreground">
           Lista aktywnych instrumentów w portfelu.
@@ -93,8 +66,8 @@ function Index() {
           Graficzne przedstawienie udziału poszczególnych instrumentów w
           całkowitej wartości Twoich inwestycji.
         </p>
-        <WalletStructurePieChart stocks={stocks} currency="USD" />
-        <WalletStructureBarChart stocks={stocks} currency="USD" />
+        <WalletStructurePieChart stocks={stocks} currency={currency} />
+        <WalletStructureBarChart stocks={stocks} currency={currency} />
       </section>
     </div>
   );
