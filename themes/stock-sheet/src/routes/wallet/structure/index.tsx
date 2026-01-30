@@ -47,7 +47,7 @@ function Index() {
           >
             Twoje aktywa
           </h3>
-          <Badge variant="default">{stocks?.length || 0}</Badge>
+          <Badge variant="default">{stocks.length}</Badge>
         </div>
         <p className="text-sm text-muted-foreground">
           Lista aktywnych instrumentów w portfelu.

@@ -147,7 +147,8 @@
               "$ref": "#/components/schemas/OperationSummaryDTO"
             }
           }
-        }
+        },
+        "required": ["added", "duplicated"]
       },
       "OperationSummaryDTO": {
         "type": "object",
@@ -173,7 +174,8 @@
               "$ref": "#/components/schemas/StockPositionDTO"
             }
           }
-        }
+        },
+        "required": ["currency", "positions"]
       },
       "StockPositionDTO": {
         "type": "object",
@@ -187,7 +189,8 @@
           "totalCost": {
             "type": "number"
           }
-        }
+        },
+        "required": ["stockSymbol", "totalCost", "totalVolume"]
       }
     }
   }

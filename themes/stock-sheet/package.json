@@ -11,9 +11,7 @@
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "postinstall": "lefthook install",
-    "api:generate:client": "openapi-typescript ./src/apis/stock-sheet/api.json -o ./src/apis/stock-sheet/generated/client.d.ts",
-    "api:generate:mocks": "openapi-msw ./src/apis/stock-sheet/api.json --output ./src/apis/stock-sheet/generated/msw.d.ts",
-    "api:generate": "npm run api:generate:client && npm run api:generate:mocks"
+    "api:generate": "openapi-typescript ./src/apis/stock-sheet/api.json -o ./src/apis/stock-sheet/generated/client.d.ts"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.2.8",

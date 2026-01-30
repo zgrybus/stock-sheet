@@ -4,129 +4,129 @@
  */
 
 export interface paths {
-    "/api/operations/import/{currency}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["addOperations"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  "/api/operations/import/{currency}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/operations/portfolio/{currency}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getPortfolioSummary"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations["addOperations"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/operations/portfolio/{currency}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get: operations["getPortfolioSummary"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        OperationRequestDTO: {
-            externalId: string;
-            stockSymbol: string;
-            /** @enum {string} */
-            type: "BUY" | "SELL";
-            volume: number;
-            /** Format: date-time */
-            openDate: string;
-            pricePerVolume: number;
-            totalPrice: number;
-        };
-        OperationsBatchRequestDTO: {
-            operations: Array<components["schemas"]["OperationRequestDTO"]>;
-        };
-        OperationImportResponseDTO: {
-            added?: Array<components["schemas"]["OperationSummaryDTO"]>;
-            duplicated?: Array<components["schemas"]["OperationSummaryDTO"]>;
-        };
-        OperationSummaryDTO: {
-            /** Format: int64 */
-            id?: number;
-            externalId?: string;
-        };
-        PortfolioSummaryDTO: {
-            currency?: string;
-            positions?: Array<components["schemas"]["StockPositionDTO"]>;
-        };
-        StockPositionDTO: {
-            stockSymbol?: string;
-            totalVolume?: number;
-            totalCost?: number;
-        };
+  schemas: {
+    OperationRequestDTO: {
+      externalId: string;
+      stockSymbol: string;
+      /** @enum {string} */
+      type: "BUY" | "SELL";
+      volume: number;
+      /** Format: date-time */
+      openDate: string;
+      pricePerVolume: number;
+      totalPrice: number;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    OperationsBatchRequestDTO: {
+      operations: Array<components["schemas"]["OperationRequestDTO"]>;
+    };
+    OperationImportResponseDTO: {
+      added: Array<components["schemas"]["OperationSummaryDTO"]>;
+      duplicated: Array<components["schemas"]["OperationSummaryDTO"]>;
+    };
+    OperationSummaryDTO: {
+      /** Format: int64 */
+      id?: number;
+      externalId?: string;
+    };
+    PortfolioSummaryDTO: {
+      currency: string;
+      positions: Array<components["schemas"]["StockPositionDTO"]>;
+    };
+    StockPositionDTO: {
+      stockSymbol: string;
+      totalVolume: number;
+      totalCost: number;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    addOperations: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                currency: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OperationsBatchRequestDTO"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OperationImportResponseDTO"];
-                };
-            };
-        };
+  addOperations: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        currency: string;
+      };
+      cookie?: never;
     };
-    getPortfolioSummary: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                currency: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PortfolioSummaryDTO"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OperationsBatchRequestDTO"];
+      };
     };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OperationImportResponseDTO"];
+        };
+      };
+    };
+  };
+  getPortfolioSummary: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        currency: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PortfolioSummaryDTO"];
+        };
+      };
+    };
+  };
 }
