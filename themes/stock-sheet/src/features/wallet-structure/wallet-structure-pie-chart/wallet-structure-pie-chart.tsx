@@ -89,7 +89,7 @@ export function WalletStructurePieChart({
                         style={{ backgroundColor: item.payload.color }}
                       />
                       <span>
-                        <strong>{item.payload.name}</strong> ({" "}
+                        <strong>{item.payload.stockSymbol}</strong> ({" "}
                         {item.payload.price} ) {item.payload.percentage}
                       </span>
                     </div>
@@ -100,8 +100,8 @@ export function WalletStructurePieChart({
           />
           <Pie
             data={data}
-            dataKey="totalPrice"
-            nameKey="name"
+            dataKey="totalCost"
+            nameKey="stockSymbol"
             innerRadius={80}
             strokeWidth={5}
             labelLine={false}
@@ -118,7 +118,7 @@ export function WalletStructurePieChart({
               />
             ))}
           </Pie>
-          <ChartLegend content={<ChartLegendContent nameKey="name" />} />
+          <ChartLegend content={<ChartLegendContent nameKey="stockSymbol" />} />
         </PieChart>
       </ChartContainer>
     </div>

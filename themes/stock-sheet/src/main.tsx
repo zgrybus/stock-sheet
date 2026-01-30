@@ -36,7 +36,11 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <RouterProvider router={router} />
-    </StrictMode>
+      <TanStackQueryProvider.Provider
+        queryClient={TanStackQueryProviderContext.queryClient}
+      >
+        <RouterProvider router={router} />
+      </TanStackQueryProvider.Provider>
+    </StrictMode>,
   );
 }

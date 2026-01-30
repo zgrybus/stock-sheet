@@ -11,6 +11,10 @@ import { WalletOperationsTable } from "@/features/wallet-operations/wallet-opera
 import { ConsentAndSubmitOperations } from "@/features/wallet-operations/consent-and-submit-operations/consent-and-submit-operations";
 import type { CashOperationHistory } from "@/features/xlsx-utils/types";
 import { match } from "ts-pattern";
+import { $apiStockSheet } from "@/apis/stock-sheet/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { formatISO, parse as parseDate } from "date-fns";
 
 const STEPS: Array<StepItem> = [
   { title: "Wgranie pliku", icon: Upload },
@@ -23,14 +27,56 @@ export const Route = createFileRoute("/operations/import/")({
 });
 
 function Index() {
+  const queryClient = useQueryClient();
+
   const [currentStep, setCurrentStep] = useState<0 | 1 | 2>(0);
+  const { mutate, isPending } = $apiStockSheet.useMutation(
+    "post",
+    "/api/operations/import/{currency}",
+  );
 
   const form = useForm({
     defaultValues: {
       cashOperationHistoryJson: null as CashOperationHistory | null,
     },
-    onSubmit: ({ value }) => {
-      console.log(value);
+    onSubmit: ({ value, formApi }) => {
+      if (!value.cashOperationHistoryJson) {
+        return;
+      }
+      const { currency, positions } = value.cashOperationHistoryJson;
+
+      const operations = positions.map((position) => ({
+        externalId: position.id,
+        stockSymbol: position.stockSymbol,
+        type: position.type,
+        volume: position.volume,
+        openDate: formatISO(
+          parseDate(position.openDate, "dd/MM/yyyy HH:mm:ss", new Date()),
+        ),
+        pricePerVolume: position.pricePerVolume,
+        totalPrice: position.totalPrice,
+      }));
+
+      mutate(
+        { params: { path: { currency } }, body: { operations } },
+        {
+          onSuccess: () => {
+            const queryKey = $apiStockSheet.queryOptions(
+              "get",
+              "/api/operations/portfolio/{currency}",
+              { params: { path: { currency } } },
+            ).queryKey;
+
+            queryClient.invalidateQueries({
+              queryKey,
+            });
+
+            formApi.reset();
+            setCurrentStep(0);
+            toast.success("Dodaleś swoje operacje");
+          },
+        },
+      );
     },
   });
 
@@ -43,11 +89,18 @@ function Index() {
 
   const cashOperationHistory = useStore(
     form.store,
-    (state) => state.values.cashOperationHistoryJson
+    (state) => state.values.cashOperationHistoryJson,
   );
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <form
+      className="mx-auto max-w-5xl"
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
       <Stepper
         aria-label="Stepper importu operacji"
         steps={STEPS}
@@ -67,14 +120,14 @@ function Index() {
             .with(
               0,
               () =>
-                "Wgraj historię transakcji (XTB), aby zaktualizować portfel."
+                "Wgraj historię transakcji (XTB), aby zaktualizować portfel.",
             )
             .with(
               1,
               () =>
                 `Znaleziono ${
                   cashOperationHistory?.positions.length || 0
-                } operacji.`
+                } operacji.`,
             )
             .with(2, () => "Wymagana jest Twoja zgoda przed zapisaniem danych.")
             .exhaustive(() => null)}
@@ -121,11 +174,12 @@ function Index() {
         ))
         .with(2, () => (
           <ConsentAndSubmitOperations
+            isPending={isPending}
             setCurrentStep={setCurrentStep}
             totalPosition={cashOperationHistory?.positions.length || 0}
           />
         ))
         .exhaustive(() => null)}
-    </div>
+    </form>
   );
 }

@@ -29,6 +29,7 @@ function Index() {
   }
 
   const stocks = data.positions;
+  console.log(stocks);
 
   return (
     <div className="container mx-auto max-w-5xl">

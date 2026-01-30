@@ -68,7 +68,7 @@ export function WalletStructureBarChart({
       <BarChart data={data} layout="vertical" barCategoryGap={10}>
         <XAxis type="number" hide />
         <YAxis
-          dataKey="name"
+          dataKey="stockSymbol"
           type="category"
           tickLine={false}
           axisLine={false}
@@ -92,7 +92,7 @@ export function WalletStructureBarChart({
                       style={{ backgroundColor: item.payload.color }}
                     />
                     <span className="font-medium">
-                      <strong>{item.payload.name}</strong> ({" "}
+                      <strong>{item.payload.stockSymbol}</strong> ({" "}
                       {item.payload.price} ) {item.payload.percentage}
                     </span>
                   </div>
@@ -101,7 +101,7 @@ export function WalletStructureBarChart({
             />
           }
         />
-        <Bar dataKey="totalPrice" radius={[0, 4, 4, 0]}>
+        <Bar dataKey="totalCost" radius={[0, 4, 4, 0]}>
           <LabelList
             dataKey="percentage"
             position="insideRight"
