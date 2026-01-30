@@ -73,7 +73,9 @@ function Index() {
 
             formApi.reset();
             setCurrentStep(0);
-            toast.success("Dodaleś swoje operacje");
+            toast.success(
+              `Pomyślnie zaimportowano ${operations.length} operacji`,
+            );
           },
         },
       );

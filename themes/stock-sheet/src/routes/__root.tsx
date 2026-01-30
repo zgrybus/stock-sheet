@@ -20,7 +20,7 @@ function RootComponent() {
 
   return (
     <>
-      <Toaster richColors position="top-center" />
+      <Toaster richColors position="top-center" className="text-center" />
       <div
         className={`
           flex min-h-dvh w-full bg-background text-foreground antialiased

@@ -106,7 +106,12 @@ export const ConsentAndSubmitOperations = ({
             <ArrowLeft />
             Wróć
           </Button>
-          <Button size="lg" className={`min-w-37.5`} type="submit">
+          <Button
+            size="lg"
+            className={`min-w-37.5`}
+            type="submit"
+            loading={isPending}
+          >
             Wyślij dane <Send />
           </Button>
         </CardFooter>
