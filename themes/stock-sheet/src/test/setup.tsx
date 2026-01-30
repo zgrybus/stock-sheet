@@ -2,6 +2,8 @@ import "@testing-library/jest-dom";
 import { afterAll, afterEach, beforeAll } from "vitest";
 import { cleanup } from "@testing-library/react";
 import { mswServer } from "./msw/msw-server";
+import { forwardRef } from "react";
+import type { Ref } from "react";
 
 beforeAll(() => mswServer.listen({ onUnhandledRequest: "error" }));
 
@@ -23,5 +25,21 @@ vi.mock(import("xlsx"), async (importOriginal) => {
       ...actual.utils,
       sheet_to_json: vi.fn(),
     },
+  };
+});
+
+vi.mock(import("recharts"), async (importActual) => {
+  const mockRecharts = await importActual();
+  return {
+    ...mockRecharts,
+    ResponsiveContainer: forwardRef(({ children }, ref) => (
+      <div
+        ref={ref as Ref<HTMLDivElement>}
+        style={{ width: 800, height: 800 }}
+        data-testid="responsive-container-mock"
+      >
+        {children}
+      </div>
+    )),
   };
 });

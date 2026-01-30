@@ -25,7 +25,7 @@ export const WalletStructureTable = ({
 }: WalletStructureTableProps) => {
   return (
     <div className="overflow-hidden rounded-md border bg-card">
-      <Table>
+      <Table aria-label="Twoje operacje">
         <TableHeader className="bg-secondary">
           <TableRow className="hover:bg-secondary">
             <TableHead

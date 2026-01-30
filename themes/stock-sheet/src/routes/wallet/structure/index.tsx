@@ -41,14 +41,15 @@ function Index() {
       </p>
       <Separator className="my-6" />
       <section className="mb-8">
-        <div className="mb-2 flex items-center gap-2">
-          <h3
-            className={`text-xl font-semibold tracking-tight text-foreground`}
-          >
-            Twoje aktywa
-          </h3>
+        <h3
+          className={`
+            mb-2 flex items-center gap-2 text-xl font-semibold tracking-tight
+            text-foreground
+          `}
+        >
+          Twoje aktywa
           <Badge variant="default">{stocks.length}</Badge>
-        </div>
+        </h3>
         <p className="text-sm text-muted-foreground">
           Lista aktywnych instrumentów w portfelu.
         </p>
