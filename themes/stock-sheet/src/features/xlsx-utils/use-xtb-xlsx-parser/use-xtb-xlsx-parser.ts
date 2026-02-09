@@ -61,25 +61,24 @@ const parseCurrency = (json: Array<XtbXlsxRowType>): string => {
   return currency;
 };
 
-const parseTradeDetails = (input: XlsxRowPurchaseType["__EMPTY_3"]) => {
-  const regex = /^OPEN BUY (\d+(\.\d+)?) @ (\d+(\.\d+)?)$/;
+const parseTradeDetails = (input: string) => {
+  const regex = /^OPEN BUY ([\d.]+)(?:\/[\d.]+)? @ ([\d.]+)$/;
   const regexMatch = input.match(regex);
 
   if (!regexMatch) {
-    throw Error(ParseError.ParsingError);
+    throw Error("ParsingError");
   }
 
   return {
     volume: parseFloat(regexMatch[1]),
-    pricePerVolume: parseFloat(regexMatch[3]),
+    pricePerVolume: parseFloat(regexMatch[2]),
   };
 };
-
 const parsePositions = (
-  json: Array<XtbXlsxRowType>
+  json: Array<XtbXlsxRowType>,
 ): CashOperationHistory["positions"] => {
   const positionsTableStartIndex = json.findIndex(
-    (row) => row["__rowNum__"] === 11
+    (row) => row["__rowNum__"] === 11,
   );
 
   if (positionsTableStartIndex < 0) {
@@ -99,7 +98,7 @@ const parsePositions = (
           totalPrice: Math.abs(parseFloat(stockPurchaseRow.__EMPTY_5)),
           ...parseTradeDetails(stockPurchaseRow.__EMPTY_3),
         }))
-        .otherwise(() => null)
+        .otherwise(() => null),
     )
     .filter((row) => row !== null);
 };
@@ -131,7 +130,7 @@ export const useXtbXlsxParser = () => {
             cashOperationHistorySheet,
             {
               raw: false,
-            }
+            },
           );
 
           if (json.length === 0) {

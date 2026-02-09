@@ -4,6 +4,7 @@ import { describe, it, expect, vi } from "vitest";
 import { ConsentAndSubmitOperations } from "./consent-and-submit-operations";
 
 const initialProps = {
+  isPending: false,
   totalPosition: 42,
   setCurrentStep: vi.fn(),
 };
@@ -13,7 +14,7 @@ describe("ConsentAndSubmitOperations", () => {
     render(<ConsentAndSubmitOperations {...initialProps} />);
 
     expect(
-      screen.getByTestId("submit-operations-position-number")
+      screen.getByTestId("submit-operations-position-number"),
     ).toHaveTextContent("Liczba pozycji:42");
   });
 
@@ -25,7 +26,7 @@ describe("ConsentAndSubmitOperations", () => {
       <ConsentAndSubmitOperations
         {...initialProps}
         setCurrentStep={setCurrentStepMock}
-      />
+      />,
     );
 
     await user.click(screen.getByRole("button", { name: "Wróć" }));

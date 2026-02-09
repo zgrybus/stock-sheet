@@ -11,6 +11,8 @@ import { WalletOperationsTable } from "@/features/wallet-operations/wallet-opera
 import { ConsentAndSubmitOperations } from "@/features/wallet-operations/consent-and-submit-operations/consent-and-submit-operations";
 import type { CashOperationHistory } from "@/features/xlsx-utils/types";
 import { match } from "ts-pattern";
+import { parse as parseDate } from "date-fns";
+import { useOperationsImportMutation } from "@/features/operations-api/use-operations-import-mutation/use-operations-import-mutation";
 
 const STEPS: Array<StepItem> = [
   { title: "Wgranie pliku", icon: Upload },
@@ -24,13 +26,45 @@ export const Route = createFileRoute("/operations/import/")({
 
 function Index() {
   const [currentStep, setCurrentStep] = useState<0 | 1 | 2>(0);
+  const { mutate: onOperationsImportMutate, isPending } =
+    useOperationsImportMutation();
 
   const form = useForm({
     defaultValues: {
       cashOperationHistoryJson: null as CashOperationHistory | null,
     },
-    onSubmit: ({ value }) => {
-      console.log(value);
+    onSubmit: ({ value, formApi }) => {
+      if (!value.cashOperationHistoryJson) {
+        return;
+      }
+      const { currency, positions } = value.cashOperationHistoryJson;
+
+      const operations = positions.map((position) => ({
+        externalId: position.id,
+        stockSymbol: position.stockSymbol,
+        type: position.type,
+        volume: position.volume,
+        openDate: parseDate(
+          position.openDate,
+          "dd/MM/yyyy HH:mm:ss",
+          new Date(),
+        ).toISOString(),
+        pricePerVolume: position.pricePerVolume,
+        totalPrice: position.totalPrice,
+      }));
+
+      onOperationsImportMutate(
+        {
+          params: { path: { currency } },
+          body: { operations },
+        },
+        {
+          onSuccess: () => {
+            formApi.reset();
+            setCurrentStep(0);
+          },
+        },
+      );
     },
   });
 
@@ -43,11 +77,18 @@ function Index() {
 
   const cashOperationHistory = useStore(
     form.store,
-    (state) => state.values.cashOperationHistoryJson
+    (state) => state.values.cashOperationHistoryJson,
   );
 
   return (
-    <div className="mx-auto max-w-5xl">
+    <form
+      className="mx-auto max-w-5xl"
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
       <Stepper
         aria-label="Stepper importu operacji"
         steps={STEPS}
@@ -67,14 +108,14 @@ function Index() {
             .with(
               0,
               () =>
-                "Wgraj historię transakcji (XTB), aby zaktualizować portfel."
+                "Wgraj historię transakcji (XTB), aby zaktualizować portfel.",
             )
             .with(
               1,
               () =>
                 `Znaleziono ${
                   cashOperationHistory?.positions.length || 0
-                } operacji.`
+                } operacji.`,
             )
             .with(2, () => "Wymagana jest Twoja zgoda przed zapisaniem danych.")
             .exhaustive(() => null)}
@@ -121,11 +162,12 @@ function Index() {
         ))
         .with(2, () => (
           <ConsentAndSubmitOperations
+            isPending={isPending}
             setCurrentStep={setCurrentStep}
             totalPosition={cashOperationHistory?.positions.length || 0}
           />
         ))
         .exhaustive(() => null)}
-    </div>
+    </form>
   );
 }

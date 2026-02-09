@@ -12,11 +12,13 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 type ConsentAndSubmitOperationsProps = {
+  isPending: boolean;
   totalPosition: number;
   setCurrentStep: (step: 0 | 1 | 2) => void;
 };
 
 export const ConsentAndSubmitOperations = ({
+  isPending,
   totalPosition,
   setCurrentStep,
 }: ConsentAndSubmitOperationsProps) => {
@@ -104,7 +106,12 @@ export const ConsentAndSubmitOperations = ({
             <ArrowLeft />
             Wróć
           </Button>
-          <Button size="lg" className={`min-w-37.5`}>
+          <Button
+            size="lg"
+            className={`min-w-37.5`}
+            type="submit"
+            loading={isPending}
+          >
             Wyślij dane <Send />
           </Button>
         </CardFooter>

@@ -4,45 +4,8 @@ import { Separator } from "@/components/ui/separator";
 import { WalletStructureTable } from "@/features/wallet-structure/wallet-structure-table/wallet-structure-table";
 import { WalletStructurePieChart } from "@/features/wallet-structure/wallet-structure-pie-chart/wallet-structure-pie-chart";
 import { WalletStructureBarChart } from "@/features/wallet-structure/wallet-structure-bar-chart/wallet-structure-bar-chart";
-
-export const stocks = [
-  {
-    name: "O.US",
-    volumes: 50,
-    averagePrice: 55.2,
-    totalPrice: 2760.0,
-  },
-  {
-    name: "AAPL.US",
-    volumes: 15,
-    averagePrice: 175.5,
-    totalPrice: 2632.5,
-  },
-  {
-    name: "GOOGL.US",
-    volumes: 20,
-    averagePrice: 130.25,
-    totalPrice: 2605.0,
-  },
-  {
-    name: "MSFT.US",
-    volumes: 8,
-    averagePrice: 320.1,
-    totalPrice: 2560.8,
-  },
-  {
-    name: "TSLA.US",
-    volumes: 10,
-    averagePrice: 240.5,
-    totalPrice: 2405.0,
-  },
-  {
-    name: "NVDA.US",
-    volumes: 4,
-    averagePrice: 450.0,
-    totalPrice: 1800.0,
-  },
-];
+import { $apiStockSheet } from "@/apis/stock-sheet/client";
+import { useMemo } from "react";
 
 export const Route = createFileRoute("/wallet/structure/")({
   component: Index,
@@ -50,6 +13,28 @@ export const Route = createFileRoute("/wallet/structure/")({
 
 function Index() {
   const currency = "USD";
+  const { data, isPending, isError } = $apiStockSheet.useQuery(
+    "get",
+    "/api/operations/portfolio/{currency}",
+    {
+      params: { path: { currency } },
+    },
+  );
+
+  const stocks = useMemo(() => {
+    if (!data?.positions) {
+      return [];
+    }
+    return data.positions.sort((a, b) => (a.totalCost > b.totalCost ? -1 : 1));
+  }, [data]);
+
+  if (isPending) {
+    return <div>Pobieranie..</div>;
+  }
+
+  if (isError) {
+    return <div>Coś poszło nie tak..</div>;
+  }
 
   return (
     <div className="container mx-auto max-w-5xl">
@@ -62,14 +47,15 @@ function Index() {
       </p>
       <Separator className="my-6" />
       <section className="mb-8">
-        <div className="mb-2 flex items-center gap-2">
-          <h3
-            className={`text-xl font-semibold tracking-tight text-foreground`}
-          >
-            Twoje aktywa
-          </h3>
+        <h3
+          className={`
+            mb-2 flex items-center gap-2 text-xl font-semibold tracking-tight
+            text-foreground
+          `}
+        >
+          Twoje aktywa
           <Badge variant="default">{stocks.length}</Badge>
-        </div>
+        </h3>
         <p className="text-sm text-muted-foreground">
           Lista aktywnych instrumentów w portfelu.
         </p>
@@ -87,8 +73,8 @@ function Index() {
           Graficzne przedstawienie udziału poszczególnych instrumentów w
           całkowitej wartości Twoich inwestycji.
         </p>
-        <WalletStructurePieChart stocks={stocks} currency="USD" />
-        <WalletStructureBarChart stocks={stocks} currency="USD" />
+        <WalletStructurePieChart stocks={stocks} currency={currency} />
+        <WalletStructureBarChart stocks={stocks} currency={currency} />
       </section>
     </div>
   );
