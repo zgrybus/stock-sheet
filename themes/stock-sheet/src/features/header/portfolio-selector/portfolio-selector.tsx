@@ -19,7 +19,7 @@ const MOCK_PORTFOLIOS = [
 export const PortfolioSelector = () => {
   const [isOpen, setOpen] = useState(false);
 
-  const currentPortfolioId = "1";
+  const currentPortfolioId = "4";
   const currentPortfolio = MOCK_PORTFOLIOS.find(
     (p) => p.id === currentPortfolioId,
   );
@@ -40,7 +40,11 @@ export const PortfolioSelector = () => {
           />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-64 p-2" align="start">
+      <PopoverContent
+        className="w-64 p-2"
+        align="start"
+        aria-label="Wybór portfela"
+      >
         <div
           className={`
             px-2 pt-2 pb-1 text-xs font-semibold tracking-wider
