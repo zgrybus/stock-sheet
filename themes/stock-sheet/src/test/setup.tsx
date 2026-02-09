@@ -5,6 +5,8 @@ import { mswServer } from "./msw/msw-server";
 import { forwardRef } from "react";
 import type { Ref } from "react";
 
+process.env.TZ = "Europe/Warsaw";
+
 beforeAll(() => mswServer.listen({ onUnhandledRequest: "error" }));
 
 afterEach(() => {
