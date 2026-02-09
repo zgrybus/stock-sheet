@@ -31,11 +31,11 @@ export const useOperationsImportMutation = () => {
         const addedText = `Nowe pozycje: ${added.length}`;
         const duplicatedText =
           duplicated.length > 0
-            ? `| Pominięte duplikaty: ${duplicated.length}`
+            ? ` | Pominięte duplikaty: ${duplicated.length}`
             : "";
 
         toast.success("Import zakończony", {
-          description: `${addedText} ${duplicatedText}`,
+          description: `${addedText}${duplicatedText}`,
         });
 
         options?.onSuccess?.(data, _variables, result, context);

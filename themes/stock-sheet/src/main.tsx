@@ -40,7 +40,7 @@ if (!rootElement.innerHTML) {
       <TanStackQueryProvider.Provider
         queryClient={TanStackQueryProviderContext.queryClient}
       >
-        <Toaster richColors position="top-center" className="text-center" />
+        <Toaster richColors position="top-center" />
         <RouterProvider router={router} />
       </TanStackQueryProvider.Provider>
     </StrictMode>,
