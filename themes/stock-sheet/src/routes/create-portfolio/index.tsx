@@ -4,6 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/create-portfolio/")({
   component: RouteComponent,
@@ -55,8 +62,28 @@ function RouteComponent() {
               Nazwa pomoże Ci odróżnić ten portfel w menu przełącznika.
             </FieldDescription>
           </Field>
+          <Field className="mt-6">
+            <FieldLabel htmlFor="currency">Waluta bazowa</FieldLabel>
+            <Select>
+              <SelectTrigger
+                id="currency"
+                className={`border-muted-foreground/30`}
+              >
+                <SelectValue placeholder="Wybierz walutę" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="PLN">PLN - Złoty polski</SelectItem>
+                <SelectItem value="USD">USD - Dolar amerykański</SelectItem>
+                <SelectItem value="EUR">EUR - Euro</SelectItem>
+                <SelectItem value="GBP">GBP - Funt brytyjski</SelectItem>
+              </SelectContent>
+            </Select>
+            <FieldDescription>
+              Główna waluta, w której wyliczane będą statystyki portfela.
+            </FieldDescription>
+          </Field>
         </CardContent>
-        <CardFooter className="justify-end gap-3">
+        <CardFooter className="mt-6 justify-end gap-3">
           <Button variant="ghost" size="lg" asChild>
             <Link to="/">Anuluj</Link>
           </Button>
