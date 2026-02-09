@@ -5,7 +5,6 @@ import { DesktopHeader } from "@/features/header/desktop-header/desktop-header";
 import { MobileHeader } from "@/features/header/mobile-header/mobile-header";
 import { Sidebar } from "@/features/header/sidebar/sidebar";
 import { RouteBreadcrumb } from "@/features/navigation/route-breadcrumb/route-breadcrumb";
-import { Toaster } from "sonner";
 
 type MyRouterContext = {
   queryClient: QueryClient;
@@ -20,7 +19,6 @@ function RootComponent() {
 
   return (
     <>
-      <Toaster richColors position="top-center" className="text-center" />
       <div
         className={`
           flex min-h-dvh w-full bg-background text-foreground antialiased

@@ -11,10 +11,8 @@ import { WalletOperationsTable } from "@/features/wallet-operations/wallet-opera
 import { ConsentAndSubmitOperations } from "@/features/wallet-operations/consent-and-submit-operations/consent-and-submit-operations";
 import type { CashOperationHistory } from "@/features/xlsx-utils/types";
 import { match } from "ts-pattern";
-import { $apiStockSheet } from "@/apis/stock-sheet/client";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { formatISO, parse as parseDate } from "date-fns";
+import { useOperationsImportMutation } from "@/features/operations-api/use-operations-import-mutation/use-operations-import-mutation";
 
 const STEPS: Array<StepItem> = [
   { title: "Wgranie pliku", icon: Upload },
@@ -27,13 +25,9 @@ export const Route = createFileRoute("/operations/import/")({
 });
 
 function Index() {
-  const queryClient = useQueryClient();
-
   const [currentStep, setCurrentStep] = useState<0 | 1 | 2>(0);
-  const { mutate, isPending } = $apiStockSheet.useMutation(
-    "post",
-    "/api/operations/import/{currency}",
-  );
+  const { mutate: onOperationsImportMutate, isPending } =
+    useOperationsImportMutation();
 
   const form = useForm({
     defaultValues: {
@@ -57,25 +51,15 @@ function Index() {
         totalPrice: position.totalPrice,
       }));
 
-      mutate(
-        { params: { path: { currency } }, body: { operations } },
+      onOperationsImportMutate(
+        {
+          params: { path: { currency } },
+          body: { operations },
+        },
         {
           onSuccess: () => {
-            const queryKey = $apiStockSheet.queryOptions(
-              "get",
-              "/api/operations/portfolio/{currency}",
-              { params: { path: { currency } } },
-            ).queryKey;
-
-            queryClient.invalidateQueries({
-              queryKey,
-            });
-
             formApi.reset();
             setCurrentStep(0);
-            toast.success(
-              `Pomyślnie zaimportowano ${operations.length} operacji`,
-            );
           },
         },
       );

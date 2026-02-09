@@ -20,9 +20,9 @@ import { Toaster } from "sonner";
 
 const interpolateRoute = <
   TOptions,
-  TRouter extends RegisteredRouter = RegisteredRouter
+  TRouter extends RegisteredRouter = RegisteredRouter,
 >(
-  navigate: ValidateNavigateOptions<TRouter, TOptions>
+  navigate: ValidateNavigateOptions<TRouter, TOptions>,
 ) => {
   const path = interpolatePath({
     path: navigate.to as string,
@@ -67,11 +67,11 @@ type RenderWithProvidersOptions = {
 
 export async function renderComponentWithRouterAndProviders<
   TOptions,
-  TRouter extends RegisteredRouter = RegisteredRouter
+  TRouter extends RegisteredRouter = RegisteredRouter,
 >(
   ui: ReactElement,
   navigate: ValidateNavigateOptions<TRouter, TOptions>,
-  options?: RenderWithProvidersOptions
+  options?: RenderWithProvidersOptions,
 ) {
   const rootRoute = createRootRoute({});
   const queryClient = options?.queryClient ?? createTestQueryClient();
@@ -114,7 +114,7 @@ export async function renderComponentWithRouterAndProviders<
         ...res,
         router,
         rerender,
-      }
+      },
   );
 }
 type RenderAppOptions = {
@@ -123,10 +123,10 @@ type RenderAppOptions = {
 
 export async function renderApp<
   TOptions,
-  TRouter extends RegisteredRouter = RegisteredRouter
+  TRouter extends RegisteredRouter = RegisteredRouter,
 >(
   navigate: ValidateNavigateOptions<TRouter, TOptions>,
-  options?: RenderAppOptions
+  options?: RenderAppOptions,
 ) {
   const queryClient = options?.queryClient ?? createTestQueryClient();
 
@@ -143,7 +143,7 @@ export async function renderApp<
   const result = render(
     <TestProviders queryClient={queryClient}>
       <RouterProvider router={router} />
-    </TestProviders>
+    </TestProviders>,
   );
 
   await act(() => router.navigate(navigate));
@@ -159,6 +159,6 @@ export async function renderApp<
         ...result,
         router,
         rerender,
-      }
+      },
   );
 }
