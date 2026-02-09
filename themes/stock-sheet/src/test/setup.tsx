@@ -7,6 +7,12 @@ import type { Ref } from "react";
 
 process.env.TZ = "Europe/Warsaw";
 
+if (typeof window !== "undefined") {
+  window.HTMLElement.prototype.scrollIntoView = vi.fn();
+  window.HTMLElement.prototype.hasPointerCapture = vi.fn();
+  window.HTMLElement.prototype.releasePointerCapture = vi.fn();
+}
+
 beforeAll(() => mswServer.listen({ onUnhandledRequest: "error" }));
 
 afterEach(() => {

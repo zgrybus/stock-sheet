@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/create-portfolio/")({
   component: RouteComponent,
@@ -35,9 +36,11 @@ function RouteComponent() {
       currency: "",
     },
     validators: {
-      onChange: portfolioSchema,
+      onSubmit: portfolioSchema,
     },
-    onSubmit: () => {},
+    onSubmit: ({ value }) => {
+      toast.success(`Portfel "${value.name}" został utworzony`);
+    },
   });
 
   return (
