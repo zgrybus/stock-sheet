@@ -10,45 +10,134 @@ import { Link } from "@tanstack/react-router";
 
 export const Sidebar = () => {
   return (
-    <div className="flex h-full flex-col gap-4 p-4">
-      <div className="px-2 pt-1 pb-2">
-        <Link to="/" aria-label="Przekieruj na stronę główną">
+    <div className="flex h-full w-64 flex-col">
+      <div className="px-6 pt-8 pb-6">
+        <Link to="/" aria-label="Przekieruj na stronę główną" className="block">
           <img
-            className="h-8 w-auto"
+            className="h-7 w-auto"
             srcSet={StockSheetLogo}
             alt="Stock Sheet"
           />
         </Link>
       </div>
-      <Accordion type="multiple" className="w-full space-y-1">
-        <AccordionItem value="wallet">
-          <AccordionTrigger>
-            <div className="flex items-center gap-3">
-              <Wallet className="h-4 w-4 text-primary" />
-              <span>Portfel</span>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <Link to="/wallet/structure">Struktura</Link>
-            <span>Analiza Zysków</span>
-            <span>Dywidendy</span>
-          </AccordionContent>
-        </AccordionItem>
 
-        <AccordionItem value="operation">
-          <AccordionTrigger>
-            <div className="flex items-center gap-3">
-              <IdCard className="h-4 w-4 text-primary" />
-              <span>Operacje</span>
-            </div>
-          </AccordionTrigger>
-          <AccordionContent>
-            <Link to="/operations/import">Import operacji</Link>
-            <span>Historia transakcji</span>
-            <span>Gotówka</span>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+      <div className="flex-1 px-3">
+        <Accordion type="single">
+          <AccordionItem value="wallet">
+            <AccordionTrigger
+              className={`
+                mb-4 rounded-md px-3 py-2 text-base font-medium
+                hover:bg-muted/50 hover:text-foreground hover:no-underline
+              `}
+            >
+              <div className="flex items-center gap-3">
+                <Wallet className="size-4 text-primary" />
+                <span>Portfel</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="ml-5">
+              <Link
+                to="/wallet/structure"
+                className={`
+                  block rounded-md px-3 py-2 text-sm text-muted-foreground
+                  transition-colors
+                  hover:bg-muted/50 hover:text-foreground
+                `}
+                activeProps={{
+                  className: "bg-accent text-accent-foreground font-semibold",
+                }}
+              >
+                Struktura
+              </Link>
+              <Link
+                to="/"
+                className={`
+                  block rounded-md px-3 py-2 text-sm text-muted-foreground
+                  transition-colors
+                  hover:bg-muted/50 hover:text-foreground
+                `}
+                activeProps={{
+                  className: "bg-accent text-accent-foreground font-semibold",
+                }}
+              >
+                Analiza Zysków
+              </Link>
+              <Link
+                to="/"
+                className={`
+                  block rounded-md px-3 py-2 text-sm text-muted-foreground
+                  transition-colors
+                  hover:bg-muted/50 hover:text-foreground
+                `}
+                activeProps={{
+                  className: "bg-accent text-accent-foreground font-semibold",
+                }}
+              >
+                Dywidendy
+              </Link>
+            </AccordionContent>
+          </AccordionItem>
+
+          <AccordionItem value="operation" className="border-none">
+            <AccordionTrigger
+              className={`
+                mb-4 rounded-md px-3 py-2 text-base font-medium
+                hover:bg-muted/50 hover:text-foreground hover:no-underline
+              `}
+            >
+              <div className="flex items-center gap-3">
+                <IdCard className="size-4 text-primary" />
+                <span>Operacje</span>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent
+              className={`
+                ml-5 space-y-1 border-l border-muted/50 pt-1 pb-1 pl-4
+              `}
+            >
+              <Link
+                to="/operations/import"
+                className={`
+                  block rounded-md px-3 py-2 text-sm text-muted-foreground
+                  transition-colors
+                  hover:bg-muted/50 hover:text-foreground
+                `}
+                activeProps={{
+                  className: "bg-accent text-accent-foreground font-semibold",
+                }}
+              >
+                Import operacji
+              </Link>
+              <Link
+                to="/"
+                className={`
+                  block rounded-md px-3 py-2 text-sm text-muted-foreground
+                  transition-colors
+                  hover:bg-muted/50 hover:text-foreground
+                `}
+                activeProps={{
+                  className: "bg-accent text-accent-foreground font-semibold",
+                }}
+              >
+                Historia transakcji
+              </Link>
+              <Link
+                to="/"
+                className={`
+                  block rounded-md px-3 py-2 text-sm text-muted-foreground
+                  transition-colors
+                  hover:bg-muted/50 hover:text-foreground
+                `}
+                activeProps={{
+                  className: "bg-accent text-accent-foreground font-semibold",
+                }}
+              >
+                Gotówka
+              </Link>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </div>
     </div>
   );
 };
