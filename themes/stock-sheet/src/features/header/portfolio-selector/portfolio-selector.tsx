@@ -6,7 +6,9 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
 import { PlusCircle, Wallet, ChevronDown } from "lucide-react";
+import { useState } from "react";
 
 const MOCK_PORTFOLIOS = [
   { id: "1", name: "Portfel REIT" },
@@ -15,13 +17,15 @@ const MOCK_PORTFOLIOS = [
 ];
 
 export const PortfolioSelector = () => {
+  const [isOpen, setOpen] = useState(false);
+
   const currentPortfolioId = "1";
   const currentPortfolio = MOCK_PORTFOLIOS.find(
     (p) => p.id === currentPortfolioId,
   );
 
   return (
-    <Popover>
+    <Popover open={isOpen} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" className="group">
           <Wallet className="mr-2 size-4 text-primary" />
@@ -74,14 +78,18 @@ export const PortfolioSelector = () => {
         </div>
         <Separator className="my-2" />
         <Button
+          asChild
           variant="ghost"
           className={`
             w-full justify-start text-primary
             hover:text-primary
           `}
+          onClick={() => setOpen(false)}
         >
-          <PlusCircle className="mr-2 size-4" />
-          Dodaj nowy portfel
+          <Link to="/create-portfolio">
+            <PlusCircle className="mr-2 size-4" />
+            Dodaj nowy portfel
+          </Link>
         </Button>
       </PopoverContent>
     </Popover>

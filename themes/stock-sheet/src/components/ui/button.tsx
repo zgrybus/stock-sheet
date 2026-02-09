@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slot, Slottable } from "@radix-ui/react-slot";
+import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
 
@@ -90,10 +90,20 @@ function Button({
     asChild?: boolean;
     loading?: boolean;
   }) {
-  const Comp = asChild ? Slot : "button";
+  if (asChild) {
+    return (
+      <Slot
+        data-slot="button"
+        className={cn(buttonVariants({ variant, size, className }))}
+        {...props}
+      >
+        {children}
+      </Slot>
+    );
+  }
 
   return (
-    <Comp
+    <button
       data-slot="button"
       disabled={loading || disabled}
       type={type}
@@ -106,9 +116,9 @@ function Button({
           invisible: loading,
         })}
       >
-        <Slottable>{children}</Slottable>
+        {children}
       </span>
-    </Comp>
+    </button>
   );
 }
 
