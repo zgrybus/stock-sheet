@@ -100,7 +100,7 @@ describe("Route - /operations/import", () => {
       operations: [
         {
           externalId: "1000001",
-          openDate: "2023-01-15T14:30:00+01:00",
+          openDate: "2023-01-15T13:30:00.000Z",
           pricePerVolume: 150,
           stockSymbol: "AAPL.US",
           totalPrice: 1500,
@@ -109,7 +109,7 @@ describe("Route - /operations/import", () => {
         },
         {
           externalId: "1000002",
-          openDate: "2023-02-10T10:15:00+01:00",
+          openDate: "2023-02-10T09:15:00.000Z",
           pricePerVolume: 300.2,
           stockSymbol: "MSFT.US",
           totalPrice: 1651.1,

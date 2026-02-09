@@ -11,7 +11,7 @@ import { WalletOperationsTable } from "@/features/wallet-operations/wallet-opera
 import { ConsentAndSubmitOperations } from "@/features/wallet-operations/consent-and-submit-operations/consent-and-submit-operations";
 import type { CashOperationHistory } from "@/features/xlsx-utils/types";
 import { match } from "ts-pattern";
-import { formatISO, parse as parseDate } from "date-fns";
+import { parse as parseDate } from "date-fns";
 import { useOperationsImportMutation } from "@/features/operations-api/use-operations-import-mutation/use-operations-import-mutation";
 
 const STEPS: Array<StepItem> = [
@@ -44,9 +44,11 @@ function Index() {
         stockSymbol: position.stockSymbol,
         type: position.type,
         volume: position.volume,
-        openDate: formatISO(
-          parseDate(position.openDate, "dd/MM/yyyy HH:mm:ss", new Date()),
-        ),
+        openDate: parseDate(
+          position.openDate,
+          "dd/MM/yyyy HH:mm:ss",
+          new Date(),
+        ).toISOString(),
         pricePerVolume: position.pricePerVolume,
         totalPrice: position.totalPrice,
       }));
