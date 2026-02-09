@@ -74,7 +74,7 @@ export function WalletStructurePieChart({
     <div className="flex items-center justify-center p-6">
       <ChartContainer
         config={chartConfig}
-        className="aspect-square max-h-140 w-full max-w-140"
+        className="aspect-square max-h-146 w-full max-w-146"
       >
         <PieChart>
           <ChartTooltip
@@ -100,10 +100,11 @@ export function WalletStructurePieChart({
           />
           <Pie
             data={data}
+            style={{ stroke: "var(--card)" }}
             dataKey="totalCost"
             nameKey="stockSymbol"
             innerRadius={80}
-            strokeWidth={5}
+            strokeWidth={3}
             labelLine={false}
             label={renderCustomizedLabel}
           >
@@ -118,7 +119,14 @@ export function WalletStructurePieChart({
               />
             ))}
           </Pie>
-          <ChartLegend content={<ChartLegendContent nameKey="stockSymbol" />} />
+          <ChartLegend
+            content={
+              <ChartLegendContent
+                nameKey="stockSymbol"
+                className={`flex-wrap justify-center gap-x-4 gap-y-2`}
+              />
+            }
+          />
         </PieChart>
       </ChartContainer>
     </div>
@@ -134,7 +142,12 @@ const renderCustomizedLabel = ({
   innerRadius,
   outerRadius,
   percentage,
+  percent,
 }: PieLabelRenderProps) => {
+  if (typeof percent === "number" && percent * 100 < 5) {
+    return null;
+  }
+
   if (cx == null || cy == null || innerRadius == null || outerRadius == null) {
     return null;
   }

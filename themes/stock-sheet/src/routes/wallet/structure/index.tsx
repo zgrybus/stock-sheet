@@ -5,6 +5,7 @@ import { WalletStructureTable } from "@/features/wallet-structure/wallet-structu
 import { WalletStructurePieChart } from "@/features/wallet-structure/wallet-structure-pie-chart/wallet-structure-pie-chart";
 import { WalletStructureBarChart } from "@/features/wallet-structure/wallet-structure-bar-chart/wallet-structure-bar-chart";
 import { $apiStockSheet } from "@/apis/stock-sheet/client";
+import { useMemo } from "react";
 
 export const Route = createFileRoute("/wallet/structure/")({
   component: Index,
@@ -20,6 +21,13 @@ function Index() {
     },
   );
 
+  const stocks = useMemo(() => {
+    if (!data?.positions) {
+      return [];
+    }
+    return data.positions.sort((a, b) => (a.totalCost > b.totalCost ? -1 : 1));
+  }, [data]);
+
   if (isPending) {
     return <div>Pobieranie..</div>;
   }
@@ -27,8 +35,6 @@ function Index() {
   if (isError) {
     return <div>Coś poszło nie tak..</div>;
   }
-
-  const stocks = data.positions;
 
   return (
     <div className="container mx-auto max-w-5xl">

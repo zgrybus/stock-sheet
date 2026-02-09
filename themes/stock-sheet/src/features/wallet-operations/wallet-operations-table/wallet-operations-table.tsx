@@ -43,7 +43,9 @@ export const WalletOperationsTable = ({
   return (
     <div className="rounded-md border">
       <Table>
-        <TableCaption>Historia operacji portfelowych</TableCaption>
+        <TableCaption className="sr-only">
+          Historia operacji portfelowych
+        </TableCaption>
         <TableHeader>
           <TableRow className="bg-muted/50">
             <TableHead className="w-25">ID</TableHead>

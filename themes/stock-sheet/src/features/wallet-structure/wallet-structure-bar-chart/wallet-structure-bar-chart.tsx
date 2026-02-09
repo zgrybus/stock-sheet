@@ -65,7 +65,7 @@ export function WalletStructureBarChart({
 
   return (
     <ChartContainer config={chartConfig}>
-      <BarChart data={data} layout="vertical" barCategoryGap={10}>
+      <BarChart data={data} layout="vertical" barCategoryGap={10} barSize={25}>
         <XAxis type="number" hide />
         <YAxis
           dataKey="stockSymbol"
@@ -104,7 +104,7 @@ export function WalletStructureBarChart({
         <Bar dataKey="totalCost" radius={[0, 4, 4, 0]}>
           <LabelList
             dataKey="percentage"
-            position="insideRight"
+            position="right"
             fontSize={13}
             fontWeight="bold"
             className="fill-foreground"
