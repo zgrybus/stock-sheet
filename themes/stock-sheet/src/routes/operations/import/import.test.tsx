@@ -128,6 +128,10 @@ describe("Route - /operations/import", () => {
         },
       }),
     ).toBeVisible();
+
+    expect(
+      screen.getByRole("heading", { name: "Import operacji" }),
+    ).toBeVisible();
   });
 
   test("displays correctly parsed operation details in the review table", async () => {

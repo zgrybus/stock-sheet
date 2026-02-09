@@ -29,18 +29,18 @@ describe("Route /wallet/structure/", () => {
     expect(rows).toHaveLength(3);
 
     const firstRowCells = within(rows[0]).getAllByRole("cell");
-    expect(firstRowCells[0]).toHaveTextContent("NVDA.US");
-    expect(firstRowCells[1]).toHaveTextContent("5");
-    expect(firstRowCells[2]).toHaveTextContent("100");
+    expect(firstRowCells[0]).toHaveTextContent("MID.US");
+    expect(firstRowCells[1]).toHaveTextContent("12");
+    expect(firstRowCells[2]).toHaveTextContent("520");
 
     const secondRowCells = within(rows[1]).getAllByRole("cell");
-    expect(secondRowCells[0]).toHaveTextContent("TSLA.US");
-    expect(secondRowCells[1]).toHaveTextContent("10");
-    expect(secondRowCells[2]).toHaveTextContent("50");
+    expect(secondRowCells[0]).toHaveTextContent("NVDA.US");
+    expect(secondRowCells[1]).toHaveTextContent("5");
+    expect(secondRowCells[2]).toHaveTextContent("100");
 
     const thirdRowCells = within(rows[2]).getAllByRole("cell");
-    expect(thirdRowCells[0]).toHaveTextContent("MID.US");
-    expect(thirdRowCells[1]).toHaveTextContent("12");
-    expect(thirdRowCells[2]).toHaveTextContent("520");
+    expect(thirdRowCells[0]).toHaveTextContent("TSLA.US");
+    expect(thirdRowCells[1]).toHaveTextContent("10");
+    expect(thirdRowCells[2]).toHaveTextContent("50");
   });
 });
