@@ -1,6 +1,5 @@
 import { Menu } from "lucide-react";
 import { UserDropdown } from "../user-dropdown/user-dropdown";
-import StockSheetLogo from "@/features/assets/stock-sheet-logo.png?w=112;224&as=srcset&imagetools";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -11,6 +10,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Sidebar } from "@/features/header/sidebar/sidebar";
+import { PortfolioSelector } from "../portfolio-selector/portfolio-selector";
 
 export const MobileHeader = () => {
   return (
@@ -39,8 +39,7 @@ export const MobileHeader = () => {
             <Sidebar />
           </DrawerContent>
         </Drawer>
-
-        <img className="h-6 w-auto" srcSet={StockSheetLogo} alt="logo" />
+        <PortfolioSelector />
       </div>
       <UserDropdown />
     </header>
