@@ -38,8 +38,6 @@ class OperationEntity(
     var pricePerVolume: BigDecimal,
     @Column(nullable = false)
     var totalPrice: BigDecimal,
-    @Column(nullable = false)
-    var currency: String,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "portfolio_id", nullable = false, updatable = false)
     var portfolio: PortfolioEntity,
