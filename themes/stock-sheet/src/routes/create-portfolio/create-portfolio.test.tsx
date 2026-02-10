@@ -7,10 +7,6 @@ describe("Route - /create-portfolio", () => {
     const user = userEvent.setup();
     await renderApp({ to: "/create-portfolio" });
 
-    await user.type(
-      screen.getByRole("textbox", { name: "Nazwa portfela" }),
-      "Test porftolio",
-    );
     await user.click(
       screen.getByRole("combobox", {
         name: "Waluta bazowa",
@@ -18,6 +14,10 @@ describe("Route - /create-portfolio", () => {
     );
     await user.click(
       await screen.findByRole("option", { name: "USD - Dolar amerykański" }),
+    );
+    await user.type(
+      screen.getByRole("textbox", { name: "Nazwa portfela" }),
+      "Test porftolio",
     );
 
     await user.click(screen.getByRole("button", { name: "Utwórz portfel" }));

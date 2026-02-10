@@ -104,7 +104,6 @@ function RouteComponent() {
                 </Field>
               )}
             />
-
             <form.Field
               name="currency"
               children={(field) => (
@@ -114,6 +113,7 @@ function RouteComponent() {
                 >
                   <FieldLabel htmlFor={field.name}>Waluta bazowa</FieldLabel>
                   <Select
+                    name={field.name}
                     value={field.state.value}
                     onValueChange={(value) => field.handleChange(value)}
                   >
