@@ -1,7 +1,9 @@
 package com.example.stocksheet.operations.dto
 
+import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
 import com.example.stocksheet.operations.validation.ValidTotalPrice
+import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
@@ -37,4 +39,16 @@ data class OperationRequestDTO(
     @field:NotNull(message = "Total Price is required")
     @field:Positive(message = "Total Price needs to be positive")
     var totalPrice: BigDecimal? = null,
-)
+) {
+    fun toEntity(portfolio: PortfolioEntity): OperationEntity =
+        OperationEntity(
+            externalId = requireNotNull(this.externalId),
+            stockSymbol = requireNotNull(this.stockSymbol),
+            type = requireNotNull(this.type),
+            volume = requireNotNull(this.volume),
+            openDate = requireNotNull(this.openDate),
+            pricePerVolume = requireNotNull(this.pricePerVolume),
+            totalPrice = requireNotNull(this.totalPrice),
+            portfolio = portfolio,
+        )
+}

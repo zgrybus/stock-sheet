@@ -1,14 +1,16 @@
 package com.example.stocksheet.operations.controller
 
 import com.example.stocksheet.BaseIntegrationTest
+import com.example.stocksheet.operations.dto.HoldingPositionDTO
 import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationRequestDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
-import com.example.stocksheet.operations.dto.PortfolioSummaryDTO
-import com.example.stocksheet.operations.dto.StockPositionDTO
+import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
 import com.example.stocksheet.operations.repository.OperationRepository
+import com.example.stocksheet.portfolio.entity.PortfolioEntity
+import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
@@ -24,7 +26,14 @@ import java.time.ZoneOffset
 class OperationControllerTest : BaseIntegrationTest() {
     @Autowired lateinit var operationRepository: OperationRepository
 
+    @Autowired lateinit var portfolioRepository: PortfolioRepository
+
+    private lateinit var portfolioUSD: PortfolioEntity
+    private lateinit var portfolioEURO: PortfolioEntity
+    private lateinit var portfolioPLN: PortfolioEntity
+
     init {
+
         fun getOperationEntity(): OperationEntity =
             OperationEntity(
                 externalId = "external-id-1",
@@ -34,10 +43,22 @@ class OperationControllerTest : BaseIntegrationTest() {
                 openDate = Instant.now(),
                 pricePerVolume = 150.toBigDecimal(),
                 totalPrice = 1500.toBigDecimal(),
-                currency = "USD",
+                portfolio = portfolioUSD,
             )
 
         beforeEach {
+            portfolioUSD = PortfolioEntity(name = "portfolio_name_1", currency = "USD")
+            portfolioPLN = PortfolioEntity(name = "portfolio_name_3", currency = "PLN")
+            portfolioEURO = PortfolioEntity(name = "portfolio_name_2", currency = "EUR")
+
+            portfolioRepository.saveAll(
+                listOf(
+                    portfolioUSD,
+                    portfolioEURO,
+                    portfolioPLN,
+                ),
+            )
+
             operationRepository.saveAll(
                 listOf(
                     getOperationEntity(),
@@ -46,7 +67,7 @@ class OperationControllerTest : BaseIntegrationTest() {
                         volume = 15.toBigDecimal()
                         pricePerVolume = 95.toBigDecimal()
                         totalPrice = 1425.toBigDecimal()
-                        currency = "EUR"
+                        portfolio = portfolioEURO
                     },
                     getOperationEntity().apply {
                         externalId = "external-id-3"
@@ -60,37 +81,36 @@ class OperationControllerTest : BaseIntegrationTest() {
         }
 
         afterEach {
-            operationRepository.deleteAll()
+            operationRepository.deleteAllInBatch()
+            portfolioRepository.deleteAllInBatch()
         }
 
-        val currency = "USD"
+        describe("GET /api/operations/holdings/{portfolioId}") {
+            it("gets holdings for provided portfolio id") {
+                val response = mockMvc.get("/api/operations/holdings/${portfolioUSD.id}").andReturn().response
 
-        describe("GET /api/operations/portfolio/{currency}") {
-            it("gets portfolio for provided currency") {
-                val response = mockMvc.get("/api/operations/portfolio/$currency").andReturn().response
+                val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioSummaryDTO::class.java)
-
-                returnedPortfolio.currency.shouldBe(currency)
-                returnedPortfolio.positions.shouldContainExactly(
+                returnedHoldings.portfolioId.shouldBe(portfolioUSD.id)
+                returnedHoldings.positions.shouldContainExactly(
                     listOf(
-                        StockPositionDTO(stockSymbol = "GOOG.US", totalVolume = 10.toBigDecimal(), totalCost = 1500.toBigDecimal()),
-                        StockPositionDTO(stockSymbol = "TSLA.US", totalVolume = 2.toBigDecimal(), totalCost = 1000.toBigDecimal()),
+                        HoldingPositionDTO(stockSymbol = "GOOG.US", totalVolume = 10.toBigDecimal(), totalCost = 1500.toBigDecimal()),
+                        HoldingPositionDTO(stockSymbol = "TSLA.US", totalVolume = 2.toBigDecimal(), totalCost = 1000.toBigDecimal()),
                     ),
                 )
             }
 
-            it("gets empty positions, when operations does not exist for provided currency") {
-                val response = mockMvc.get("/api/operations/portfolio/PLN").andReturn().response
+            it("gets empty holdings, when operations does not exist for provided portfolio id") {
+                val response = mockMvc.get("/api/operations/holdings/${portfolioPLN.id}").andReturn().response
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioSummaryDTO::class.java)
+                val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
 
-                returnedPortfolio.currency.shouldBe("PLN")
-                returnedPortfolio.positions.shouldBeEmpty()
+                returnedHoldings.portfolioId.shouldBe(portfolioPLN.id)
+                returnedHoldings.positions.shouldBeEmpty()
             }
         }
 
-        describe("POST /api/operations/import/{currency}") {
+        describe("POST /api/operations/import/{portfolioId}") {
             fun getOperationRequestDTO(): OperationRequestDTO =
                 OperationRequestDTO(
                     externalId = "external-id-1",
@@ -119,7 +139,7 @@ class OperationControllerTest : BaseIntegrationTest() {
 
                 val response =
                     mockMvc
-                        .post("/api/operations/import/$currency") {
+                        .post("/api/operations/import/${portfolioUSD.id}") {
                             contentType = MediaType.APPLICATION_JSON
                             content = objectMapper.writeValueAsString(body)
                         }.andReturn()
@@ -150,7 +170,7 @@ class OperationControllerTest : BaseIntegrationTest() {
 
                 val response =
                     mockMvc
-                        .post("/api/operations/import/$currency") {
+                        .post("/api/operations/import/${portfolioUSD.id}") {
                             contentType = MediaType.APPLICATION_JSON
                             content = objectMapper.writeValueAsString(body)
                         }.andReturn()
@@ -183,7 +203,7 @@ class OperationControllerTest : BaseIntegrationTest() {
 
                 val response =
                     mockMvc
-                        .post("/api/operations/import/$currency") {
+                        .post("/api/operations/import/${portfolioUSD.id}") {
                             contentType = MediaType.APPLICATION_JSON
                             content = objectMapper.writeValueAsString(body)
                         }.andReturn()

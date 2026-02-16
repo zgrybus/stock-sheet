@@ -2,12 +2,12 @@ package com.example.stocksheet.operations.dto
 
 import java.math.BigDecimal
 
-data class PortfolioSummaryDTO(
-    val currency: String,
-    val positions: List<StockPositionDTO>,
+data class PortfolioHoldingsDTO(
+    val portfolioId: Long,
+    val positions: List<HoldingPositionDTO>,
 )
 
-data class StockPositionDTO(
+data class HoldingPositionDTO(
     val stockSymbol: String,
     val totalVolume: BigDecimal,
     val totalCost: BigDecimal,

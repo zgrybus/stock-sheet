@@ -10,7 +10,7 @@ import { TestProviders } from "@/test/test-utils";
 vi.mock("../use-xtb-xlsx-parser/use-xtb-xlsx-parser", { spy: true });
 vi.mock(
   "@/features/loading-utils/use-minimum-loading-time/use-minimum-loading-time",
-  { spy: true }
+  { spy: true },
 );
 
 describe("useXlsxParser", () => {
@@ -28,7 +28,7 @@ describe("useXlsxParser", () => {
     });
 
     const { result } = renderHook(() =>
-      useXlsxParser({ onParse: onParseMock })
+      useXlsxParser({ onParse: onParseMock }),
     );
 
     const dummyFile = new File([""], "test.xlsx");
@@ -57,15 +57,15 @@ describe("useXlsxParser", () => {
 
       const { result } = renderHook(
         () => useXlsxParser({ onParse: onParseMock }),
-        { wrapper: TestProviders }
+        { wrapper: TestProviders },
       );
 
       await result.current.parse(new File([""], "test.xlsx"));
 
       expect(
         await screen.findByText(
-          "Niepowodzenie importu. Sprawdź format pliku i spróbuj ponownie."
-        )
+          "Niepowodzenie importu. Sprawdź format pliku i spróbuj ponownie.",
+        ),
       ).toBeVisible();
       expect(onParseMock).not.toHaveBeenCalled();
     });
@@ -80,15 +80,15 @@ describe("useXlsxParser", () => {
 
       const { result } = renderHook(
         () => useXlsxParser({ onParse: onParseMock }),
-        { wrapper: TestProviders }
+        { wrapper: TestProviders },
       );
 
       await result.current.parse(new File([""], "test.xlsx"));
 
       expect(
         await screen.findByText(
-          "Nieprawidłowy format pliku. Upewnij się, że eksportujesz raport z XTB z historią pozycji."
-        )
+          "Nieprawidłowy format pliku. Upewnij się, że eksportujesz raport z XTB z historią pozycji.",
+        ),
       ).toBeVisible();
       expect(onParseMock).not.toHaveBeenCalled();
     });
@@ -101,15 +101,15 @@ describe("useXlsxParser", () => {
 
       const { result } = renderHook(
         () => useXlsxParser({ onParse: onParseMock }),
-        { wrapper: TestProviders }
+        { wrapper: TestProviders },
       );
 
       await result.current.parse(new File([""], "test.xlsx"));
 
       expect(
         await screen.findByText(
-          "Format danych jest niezgodny z oczekiwanym. Spróbuj wygenerować raport ponownie."
-        )
+          "Format danych jest niezgodny z oczekiwanym. Spróbuj wygenerować raport ponownie.",
+        ),
       ).toBeVisible();
       expect(onParseMock).not.toHaveBeenCalled();
     });
@@ -122,15 +122,38 @@ describe("useXlsxParser", () => {
 
       const { result } = renderHook(
         () => useXlsxParser({ onParse: onParseMock }),
-        { wrapper: TestProviders }
+        { wrapper: TestProviders },
       );
 
       await result.current.parse(new File([""], "test.xlsx"));
 
       expect(
         await screen.findByText(
-          "Wykryto nieobsługiwaną walutę. Upewnij się, że importujesz raport z właściwego rachunku."
-        )
+          "Wykryto nieobsługiwaną walutę. Upewnij się, że importujesz raport z właściwego rachunku.",
+        ),
+      ).toBeVisible();
+      expect(onParseMock).not.toHaveBeenCalled();
+    });
+
+    test(`displays specific error toast for ${ParseError.CurrencyMismatch}`, async () => {
+      const onParseMock = vi.fn();
+      vi.mocked(useXtbXlsxParser).mockReturnValue({
+        parse: vi
+          .fn()
+          .mockRejectedValue(new Error(ParseError.CurrencyMismatch)),
+      });
+
+      const { result } = renderHook(
+        () => useXlsxParser({ onParse: onParseMock }),
+        { wrapper: TestProviders },
+      );
+
+      await result.current.parse(new File([""], "test.xlsx"));
+
+      expect(
+        await screen.findByText(
+          "Waluta w pliku nie zgadza się z walutą portfela. Sprawdź, czy wgrywasz właściwy raport.",
+        ),
       ).toBeVisible();
       expect(onParseMock).not.toHaveBeenCalled();
     });
@@ -145,13 +168,13 @@ describe("useXlsxParser", () => {
 
       const { result } = renderHook(
         () => useXlsxParser({ onParse: onParseMock }),
-        { wrapper: TestProviders }
+        { wrapper: TestProviders },
       );
 
       await result.current.parse(new File([""], "test.xlsx"));
 
       expect(
-        await screen.findByText("Blad formatowania danych. Spróbuj ponownie.")
+        await screen.findByText("Blad formatowania danych. Spróbuj ponownie."),
       ).toBeVisible();
       expect(onParseMock).not.toHaveBeenCalled();
     });

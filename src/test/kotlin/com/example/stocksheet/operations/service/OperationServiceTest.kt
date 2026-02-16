@@ -1,12 +1,13 @@
 package com.example.stocksheet.operations.service
 
+import com.example.stocksheet.operations.dto.HoldingPositionDTO
 import com.example.stocksheet.operations.dto.OperationRequestDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
-import com.example.stocksheet.operations.dto.StockPositionDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
-import com.example.stocksheet.operations.mapper.toEntity
 import com.example.stocksheet.operations.repository.OperationRepository
+import com.example.stocksheet.portfolio.entity.PortfolioEntity
+import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
@@ -21,12 +22,15 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
+import java.util.Optional
 
 class OperationServiceTest : DescribeSpec() {
     private var operationRepositoryMock: OperationRepository = mockk()
-    private val operationService = OperationService(operationRepositoryMock)
+    private var portfolioRepositoryMock: PortfolioRepository = mockk()
+    private val operationService = OperationService(operationRepositoryMock, portfolioRepositoryMock)
 
     init {
+        val portfolio = PortfolioEntity(id = 10003, name = "portfolio_name_1", currency = "USD")
 
         fun getOperationEntity(): OperationEntity =
             OperationEntity(
@@ -38,7 +42,7 @@ class OperationServiceTest : DescribeSpec() {
                 openDate = Instant.now(),
                 pricePerVolume = 150.toBigDecimal(),
                 totalPrice = 1500.toBigDecimal(),
-                currency = "USD",
+                portfolio = portfolio,
             )
 
         val operations =
@@ -77,33 +81,31 @@ class OperationServiceTest : DescribeSpec() {
                 },
             )
 
-        val currency = "USD"
-
         afterEach {
             clearAllMocks()
         }
 
         describe("OperationServiceTest") {
-            describe("getPortfolioSummary") {
+            describe("getHoldings") {
                 beforeEach {
-                    every { operationRepositoryMock.findAllByCurrency("USD") } returns operations
+                    every { operationRepositoryMock.findAllByPortfolioId(portfolio.id!!) } returns operations
                 }
 
                 it("groups and sum operations correctly") {
-                    val result = operationService.getPortfolioSummary(currency)
+                    val result = operationService.getHoldings(portfolio.id!!)
 
-                    result.currency.shouldBe(currency)
+                    result.portfolioId.shouldBe(portfolio.id)
                     result.positions.shouldContainExactly(
                         listOf(
-                            StockPositionDTO(stockSymbol = "GOOG.US", totalCost = 2925.toBigDecimal(), totalVolume = 25.toBigDecimal()),
-                            StockPositionDTO(stockSymbol = "TSLA.US", totalCost = 1050.toBigDecimal(), totalVolume = 12.toBigDecimal()),
-                            StockPositionDTO(stockSymbol = "ALPH.US", totalCost = 190.toBigDecimal(), totalVolume = 95.toBigDecimal()),
+                            HoldingPositionDTO(stockSymbol = "GOOG.US", totalCost = 2925.toBigDecimal(), totalVolume = 25.toBigDecimal()),
+                            HoldingPositionDTO(stockSymbol = "TSLA.US", totalCost = 1050.toBigDecimal(), totalVolume = 12.toBigDecimal()),
+                            HoldingPositionDTO(stockSymbol = "ALPH.US", totalCost = 190.toBigDecimal(), totalVolume = 95.toBigDecimal()),
                         ),
                     )
                 }
             }
 
-            describe("addOperations") {
+            describe("importOperations") {
                 fun getOperationRequestDTO(): OperationRequestDTO =
                     OperationRequestDTO(
                         externalId = "external-id-1",
@@ -130,10 +132,11 @@ class OperationServiceTest : DescribeSpec() {
                 beforeEach {
                     every { operationRepositoryMock.findAllByExternalIdIn(any()) } returns operations
                     every { operationRepositoryMock.saveAll<OperationEntity>(any()) } returns listOf<OperationEntity>()
+                    every { portfolioRepositoryMock.findById(portfolio.id!!) } returns Optional.of(portfolio)
                 }
 
                 it("fetches entities for requested external ids") {
-                    operationService.addOperations(getOperationsBatchRequestDTO(), currency)
+                    operationService.importOperations(getOperationsBatchRequestDTO(), portfolio.id!!)
 
                     val externalIds = slot<List<String>>()
                     verify {
@@ -145,7 +148,7 @@ class OperationServiceTest : DescribeSpec() {
 
                 it("saves only new operations to the database") {
                     val batch = getOperationsBatchRequestDTO()
-                    operationService.addOperations(batch, currency)
+                    operationService.importOperations(batch, portfolio.id!!)
 
                     val newOperations = slot<List<OperationEntity>>()
                     verify {
@@ -154,7 +157,7 @@ class OperationServiceTest : DescribeSpec() {
 
                     val nvdaOperation = batch.operations!![1]
                     newOperations.captured.shouldHaveSize(1)
-                    newOperations.captured[0].shouldBeEqualToComparingFields(nvdaOperation.toEntity(currency))
+                    newOperations.captured[0].shouldBeEqualToComparingFields(nvdaOperation.toEntity(portfolio))
                 }
             }
         }

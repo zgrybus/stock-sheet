@@ -2,6 +2,7 @@ export enum ParseError {
   MissingCashOperationHistory = "MissingCashOperationHistory",
   ParsingError = "ParsingError",
   CurrencyError = "CurrencyError",
+  CurrencyMismatch = "CurrencyMismatch",
 }
 
 export type CashOperationHistoryPosition = {
@@ -15,6 +16,5 @@ export type CashOperationHistoryPosition = {
 };
 
 export type CashOperationHistory = {
-  currency: string;
   positions: Array<CashOperationHistoryPosition>;
 };

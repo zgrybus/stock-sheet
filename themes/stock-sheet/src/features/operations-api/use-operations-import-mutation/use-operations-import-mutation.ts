@@ -6,7 +6,7 @@ export const useOperationsImportMutation = () => {
   const queryClient = useQueryClient();
   const mutation = $apiStockSheet.useMutation(
     "post",
-    "/api/operations/import/{currency}",
+    "/api/operations/import/{portfolioId}",
   );
 
   const mutate = (
@@ -15,13 +15,13 @@ export const useOperationsImportMutation = () => {
   ) => {
     mutation.mutate(variables, {
       onSuccess: (data, _variables, result, context) => {
-        const currency = _variables.params.path.currency;
+        const portfolioId = _variables.params.path.portfolioId;
         const { added, duplicated } = data;
 
         const queryKey = $apiStockSheet.queryOptions(
           "get",
-          "/api/operations/portfolio/{currency}",
-          { params: { path: { currency } } },
+          "/api/operations/holdings/{portfolioId}",
+          { params: { path: { portfolioId } } },
         ).queryKey;
 
         queryClient.invalidateQueries({

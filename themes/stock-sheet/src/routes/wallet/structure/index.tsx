@@ -12,21 +12,24 @@ export const Route = createFileRoute("/wallet/structure/")({
 });
 
 function Index() {
-  const currency = "USD";
-  const { data, isPending, isError } = $apiStockSheet.useQuery(
-    "get",
-    "/api/operations/portfolio/{currency}",
-    {
-      params: { path: { currency } },
-    },
-  );
+  const portfolioId = 1;
+  const {
+    data: holdings,
+    isPending,
+    isError,
+  } = $apiStockSheet.useQuery("get", "/api/operations/holdings/{portfolioId}", {
+    params: { path: { portfolioId } },
+  });
 
+  const currency = "USD";
   const stocks = useMemo(() => {
-    if (!data?.positions) {
+    if (!holdings?.positions) {
       return [];
     }
-    return data.positions.sort((a, b) => (a.totalCost > b.totalCost ? -1 : 1));
-  }, [data]);
+    return holdings.positions.sort((a, b) =>
+      a.totalCost > b.totalCost ? -1 : 1,
+    );
+  }, [holdings]);
 
   if (isPending) {
     return <div>Pobieranie..</div>;

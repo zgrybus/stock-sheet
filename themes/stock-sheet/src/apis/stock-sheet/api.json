@@ -11,17 +11,46 @@
     }
   ],
   "paths": {
-    "/api/operations/import/{currency}": {
+    "/api/portfolio": {
+      "post": {
+        "tags": ["portfolio-controller"],
+        "operationId": "createPortfolio",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PortfolioRequestDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioResponseDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/operations/import/{portfolioId}": {
       "post": {
         "tags": ["operation-controller"],
-        "operationId": "addOperations",
+        "operationId": "importOperations",
         "parameters": [
           {
-            "name": "currency",
+            "name": "portfolioId",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int64"
             }
           }
         ],
@@ -49,17 +78,39 @@
         }
       }
     },
-    "/api/operations/portfolio/{currency}": {
+    "/api/portfolio/list": {
+      "get": {
+        "tags": ["portfolio-controller"],
+        "operationId": "getPortfolioList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortfolioResponseDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/operations/holdings/{portfolioId}": {
       "get": {
         "tags": ["operation-controller"],
-        "operationId": "getPortfolioSummary",
+        "operationId": "getHoldings",
         "parameters": [
           {
-            "name": "currency",
+            "name": "portfolioId",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer",
+              "format": "int64"
             }
           }
         ],
@@ -69,7 +120,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PortfolioSummaryDTO"
+                  "$ref": "#/components/schemas/PortfolioHoldingsDTO"
                 }
               }
             }
@@ -80,6 +131,36 @@
   },
   "components": {
     "schemas": {
+      "PortfolioRequestDTO": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["currency", "name"]
+      },
+      "PortfolioResponseDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          }
+        },
+        "required": ["currency", "id", "name"]
+      },
       "OperationRequestDTO": {
         "type": "object",
         "properties": {
@@ -162,22 +243,7 @@
           }
         }
       },
-      "PortfolioSummaryDTO": {
-        "type": "object",
-        "properties": {
-          "currency": {
-            "type": "string"
-          },
-          "positions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/StockPositionDTO"
-            }
-          }
-        },
-        "required": ["currency", "positions"]
-      },
-      "StockPositionDTO": {
+      "HoldingPositionDTO": {
         "type": "object",
         "properties": {
           "stockSymbol": {
@@ -191,6 +257,22 @@
           }
         },
         "required": ["stockSymbol", "totalCost", "totalVolume"]
+      },
+      "PortfolioHoldingsDTO": {
+        "type": "object",
+        "properties": {
+          "portfolioId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HoldingPositionDTO"
+            }
+          }
+        },
+        "required": ["portfolioId", "positions"]
       }
     }
   }

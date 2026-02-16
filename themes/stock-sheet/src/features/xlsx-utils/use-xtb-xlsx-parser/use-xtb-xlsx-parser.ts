@@ -81,6 +81,13 @@ const parsePositions = (
     (row) => row["__rowNum__"] === 11,
   );
 
+  const currency = parseCurrency(json);
+
+  // todo
+  if (currency !== "USD") {
+    throw new Error(ParseError.CurrencyMismatch);
+  }
+
   if (positionsTableStartIndex < 0) {
     throw new Error(ParseError.ParsingError);
   }
@@ -104,7 +111,6 @@ const parsePositions = (
 };
 
 const mapXtbXlsx = (json: Array<XtbXlsxRowType>): CashOperationHistory => ({
-  currency: parseCurrency(json),
   positions: parsePositions(json),
 });
 
@@ -134,7 +140,7 @@ export const useXtbXlsxParser = () => {
           );
 
           if (json.length === 0) {
-            return resolve({ currency: "", positions: [] });
+            return resolve({ positions: [] });
           }
 
           return resolve(mapXtbXlsx(json));

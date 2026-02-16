@@ -15,7 +15,7 @@ describe("useOperationsImportMutation", () => {
 
     mswServer.use(
       $mswStockSheetApi.post(
-        "/api/operations/import/{currency}",
+        "/api/operations/import/{portfolioId}",
         ({ response, request }) => {
           importRequestMsw.push(request);
           return response(200).json({
@@ -39,14 +39,14 @@ describe("useOperationsImportMutation", () => {
     });
 
     result.current.mutate({
-      params: { path: { currency: "USD" } },
+      params: { path: { portfolioId: 101 } },
       body: { operations: [] },
     });
 
     await waitFor(() => {
       expect(importRequestMsw).toHaveLength(1);
     });
-    expect(importRequestMsw[0].url).toContain("/api/operations/import/USD");
+    expect(importRequestMsw[0].url).toContain("/api/operations/import/101");
   });
 
   test("shows success toast with both added and duplicated counts", async () => {
@@ -55,7 +55,7 @@ describe("useOperationsImportMutation", () => {
     });
 
     result.current.mutate({
-      params: { path: { currency: "USD" } },
+      params: { path: { portfolioId: 101 } },
       body: { operations: [] },
     });
 
@@ -74,7 +74,7 @@ describe("useOperationsImportMutation", () => {
   test("shows success toast without duplicates part when none exist", async () => {
     mswServer.use(
       $mswStockSheetApi.post(
-        "/api/operations/import/{currency}",
+        "/api/operations/import/{portfolioId}",
         ({ response, request }) => {
           importRequestMsw.push(request);
           return response(200).json({
@@ -92,7 +92,7 @@ describe("useOperationsImportMutation", () => {
     });
 
     result.current.mutate({
-      params: { path: { currency: "USD" } },
+      params: { path: { portfolioId: 101 } },
       body: { operations: [] },
     });
 
@@ -116,7 +116,7 @@ describe("useOperationsImportMutation", () => {
     });
 
     result.current.mutate({
-      params: { path: { currency: "USD" } },
+      params: { path: { portfolioId: 101 } },
       body: { operations: [] },
     });
 
@@ -125,8 +125,8 @@ describe("useOperationsImportMutation", () => {
     expect(queryClient.invalidateQueries).toHaveBeenCalledWith({
       queryKey: $apiStockSheet.queryOptions(
         "get",
-        "/api/operations/portfolio/{currency}",
-        { params: { path: { currency: "USD" } } },
+        "/api/operations/holdings/{portfolioId}",
+        { params: { path: { portfolioId: 101 } } },
       ).queryKey,
     });
   });

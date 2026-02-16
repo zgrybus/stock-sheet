@@ -3,10 +3,11 @@ import { setupServer } from "msw/node";
 
 export const mswServer = setupServer(
   $mswStockSheetApi.get(
-    "/api/operations/portfolio/{currency}",
-    ({ response }) => response(200).json({ currency: "", positions: [] }),
+    "/api/operations/holdings/{portfolioId}",
+    ({ response }) => response(200).json({ portfolioId: 100, positions: [] }),
   ),
-  $mswStockSheetApi.post("/api/operations/import/{currency}", ({ response }) =>
-    response(200).json({ added: [], duplicated: [] }),
+  $mswStockSheetApi.post(
+    "/api/operations/import/{portfolioId}",
+    ({ response }) => response(200).json({ added: [], duplicated: [] }),
   ),
 );

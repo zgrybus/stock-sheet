@@ -8,7 +8,7 @@ describe("Route /wallet/structure/", () => {
   beforeEach(() => {
     mswServer.use(
       $mswStockSheetApi.get(
-        "/api/operations/portfolio/{currency}",
+        "/api/operations/holdings/{portfolioId}",
         ({ response }) => {
           return response(200).json(mockPortfolioSummary);
         },

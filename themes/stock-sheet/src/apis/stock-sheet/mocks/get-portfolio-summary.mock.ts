@@ -1,8 +1,8 @@
 import type { components } from "../generated/client";
 
-export const mockPortfolioSummary: components["schemas"]["PortfolioSummaryDTO"] =
+export const mockPortfolioSummary: components["schemas"]["PortfolioHoldingsDTO"] =
   {
-    currency: "USD",
+    portfolioId: 101,
     positions: [
       { stockSymbol: "NVDA.US", totalCost: 100, totalVolume: 5 },
       { stockSymbol: "TSLA.US", totalCost: 50, totalVolume: 10 },

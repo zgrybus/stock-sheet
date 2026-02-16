@@ -2,7 +2,7 @@ package com.example.stocksheet.operations.controller
 
 import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
-import com.example.stocksheet.operations.dto.PortfolioSummaryDTO
+import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.service.OperationService
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,20 +19,20 @@ class OperationController(
     private val operationService: OperationService,
 ) {
     @GetMapping(
-        value = ["/portfolio/{currency}"],
+        value = ["/holdings/{portfolioId}"],
         produces = ["application/json"],
     )
-    fun getPortfolioSummary(
-        @PathVariable currency: String,
-    ): PortfolioSummaryDTO = operationService.getPortfolioSummary(currency)
+    fun getHoldings(
+        @PathVariable portfolioId: Long,
+    ): PortfolioHoldingsDTO = operationService.getHoldings(portfolioId)
 
     @PostMapping(
-        value = ["/import/{currency}"],
+        value = ["/import/{portfolioId}"],
         consumes = ["application/json"],
         produces = ["application/json"],
     )
-    fun addOperations(
-        @RequestBody operations: OperationsBatchRequestDTO,
-        @PathVariable currency: String,
-    ): OperationImportResponseDTO = operationService.addOperations(operations, currency)
+    fun importOperations(
+        @RequestBody body: OperationsBatchRequestDTO,
+        @PathVariable portfolioId: Long,
+    ): OperationImportResponseDTO = operationService.importOperations(body, portfolioId)
 }

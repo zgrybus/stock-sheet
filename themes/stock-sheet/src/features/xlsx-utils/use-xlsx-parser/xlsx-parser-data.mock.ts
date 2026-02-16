@@ -1,7 +1,6 @@
 import type { CashOperationHistory } from "../types";
 
 export const mockCashOperationHistory: CashOperationHistory = {
-  currency: "USD",
   positions: [
     {
       id: "1000001",

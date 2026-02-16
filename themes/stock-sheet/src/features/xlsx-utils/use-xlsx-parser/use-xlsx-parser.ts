@@ -26,7 +26,7 @@ export const useXlsxParser = ({ onParse }: UseXlsxParserProps) => {
       } catch (error) {
         if (!(error instanceof Error)) {
           toast.error(
-            "Niepowodzenie importu. Sprawdź format pliku i spróbuj ponownie."
+            "Niepowodzenie importu. Sprawdź format pliku i spróbuj ponownie.",
           );
           return;
         }
@@ -34,25 +34,30 @@ export const useXlsxParser = ({ onParse }: UseXlsxParserProps) => {
         match(error.message)
           .with(ParseError.MissingCashOperationHistory, () =>
             toast.error(
-              "Nieprawidłowy format pliku. Upewnij się, że eksportujesz raport z XTB z historią pozycji."
-            )
+              "Nieprawidłowy format pliku. Upewnij się, że eksportujesz raport z XTB z historią pozycji.",
+            ),
           )
           .with(ParseError.ParsingError, () =>
             toast.error(
-              "Format danych jest niezgodny z oczekiwanym. Spróbuj wygenerować raport ponownie."
-            )
+              "Format danych jest niezgodny z oczekiwanym. Spróbuj wygenerować raport ponownie.",
+            ),
+          )
+          .with(ParseError.CurrencyMismatch, () =>
+            toast.error(
+              "Waluta w pliku nie zgadza się z walutą portfela. Sprawdź, czy wgrywasz właściwy raport.",
+            ),
           )
           .with(ParseError.CurrencyError, () =>
             toast.error(
-              "Wykryto nieobsługiwaną walutę. Upewnij się, że importujesz raport z właściwego rachunku."
-            )
+              "Wykryto nieobsługiwaną walutę. Upewnij się, że importujesz raport z właściwego rachunku.",
+            ),
           )
           .otherwise(() =>
-            toast.error("Blad formatowania danych. Spróbuj ponownie.")
+            toast.error("Blad formatowania danych. Spróbuj ponownie."),
           );
       }
     },
-    [xtbParse, onParse, runWithDelay]
+    [xtbParse, onParse, runWithDelay],
   );
 
   return { parse, isParsing };
