@@ -21,7 +21,6 @@ describe("useXtbXlsxParser", () => {
     const dummyFile = new File([""], "test.xlsx");
 
     await expect(result.current.parse(dummyFile)).resolves.toEqual({
-      currency: "USD",
       positions: [
         {
           id: "1000001",
@@ -59,7 +58,6 @@ describe("useXtbXlsxParser", () => {
     const dummyFile = new File([""], "test.xlsx");
 
     await expect(result.current.parse(dummyFile)).resolves.toEqual({
-      currency: "",
       positions: [],
     });
   });
@@ -79,7 +77,7 @@ describe("useXtbXlsxParser", () => {
       const dummyFile = new File([""], "test.xlsx");
 
       await expect(result.current.parse(dummyFile)).rejects.toStrictEqual(
-        new Error(ParseError.MissingCashOperationHistory)
+        new Error(ParseError.MissingCashOperationHistory),
       );
     });
 
@@ -87,7 +85,7 @@ describe("useXtbXlsxParser", () => {
       vi.mocked(utils.sheet_to_json).mockReturnValue(
         produce(MockXtbXlsxParserData, (draft) => {
           draft[0].__EMPTY_4 = "USDD";
-        })
+        }),
       );
       vi.mocked(read).mockReturnValue({
         SheetNames: [],
@@ -101,7 +99,7 @@ describe("useXtbXlsxParser", () => {
       const dummyFile = new File([""], "test.xlsx");
 
       await expect(result.current.parse(dummyFile)).rejects.toStrictEqual(
-        new Error(ParseError.CurrencyError)
+        new Error(ParseError.CurrencyError),
       );
     });
 
@@ -109,7 +107,7 @@ describe("useXtbXlsxParser", () => {
       vi.mocked(utils.sheet_to_json).mockReturnValue(
         produce(MockXtbXlsxParserData, (draft) => {
           draft[1].__rowNum__ = 10;
-        })
+        }),
       );
       vi.mocked(read).mockReturnValue({
         SheetNames: [],
@@ -123,7 +121,7 @@ describe("useXtbXlsxParser", () => {
       const dummyFile = new File([""], "test.xlsx");
 
       await expect(result.current.parse(dummyFile)).rejects.toStrictEqual(
-        new Error(ParseError.ParsingError)
+        new Error(ParseError.ParsingError),
       );
     });
 
@@ -132,7 +130,7 @@ describe("useXtbXlsxParser", () => {
         vi.mocked(utils.sheet_to_json).mockReturnValue(
           produce(MockXtbXlsxParserData, (draft) => {
             draft[2].__EMPTY_3 = "OPEN BUY _ @ 150.00";
-          })
+          }),
         );
         vi.mocked(read).mockReturnValue({
           SheetNames: [],
@@ -146,7 +144,7 @@ describe("useXtbXlsxParser", () => {
         const dummyFile = new File([""], "test.xlsx");
 
         await expect(result.current.parse(dummyFile)).rejects.toStrictEqual(
-          new Error(ParseError.ParsingError)
+          new Error(ParseError.ParsingError),
         );
       });
 
@@ -154,7 +152,7 @@ describe("useXtbXlsxParser", () => {
         vi.mocked(utils.sheet_to_json).mockReturnValue(
           produce(MockXtbXlsxParserData, (draft) => {
             draft[2].__EMPTY_3 = "OPEN BUY 10 @ _";
-          })
+          }),
         );
         vi.mocked(read).mockReturnValue({
           SheetNames: [],
@@ -168,7 +166,7 @@ describe("useXtbXlsxParser", () => {
         const dummyFile = new File([""], "test.xlsx");
 
         await expect(result.current.parse(dummyFile)).rejects.toStrictEqual(
-          new Error(ParseError.ParsingError)
+          new Error(ParseError.ParsingError),
         );
       });
 
@@ -176,7 +174,7 @@ describe("useXtbXlsxParser", () => {
         vi.mocked(utils.sheet_to_json).mockReturnValue(
           produce(MockXtbXlsxParserData, (draft) => {
             draft[2].__EMPTY_3 = "NOT 10 @ 105";
-          })
+          }),
         );
         vi.mocked(read).mockReturnValue({
           SheetNames: [],
@@ -190,7 +188,7 @@ describe("useXtbXlsxParser", () => {
         const dummyFile = new File([""], "test.xlsx");
 
         await expect(result.current.parse(dummyFile)).rejects.toStrictEqual(
-          new Error(ParseError.ParsingError)
+          new Error(ParseError.ParsingError),
         );
       });
     });

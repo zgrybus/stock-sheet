@@ -25,6 +25,8 @@ export const Route = createFileRoute("/operations/import/")({
 });
 
 function Index() {
+  const portfolioId = 1001;
+  const currency = "USD";
   const [currentStep, setCurrentStep] = useState<0 | 1 | 2>(0);
   const { mutate: onOperationsImportMutate, isPending } =
     useOperationsImportMutation();
@@ -37,7 +39,7 @@ function Index() {
       if (!value.cashOperationHistoryJson) {
         return;
       }
-      const { currency, positions } = value.cashOperationHistoryJson;
+      const { positions } = value.cashOperationHistoryJson;
 
       const operations = positions.map((position) => ({
         externalId: position.id,
@@ -55,7 +57,7 @@ function Index() {
 
       onOperationsImportMutate(
         {
-          params: { path: { currency } },
+          params: { path: { portfolioId } },
           body: { operations },
         },
         {
@@ -140,7 +142,7 @@ function Index() {
         .with(1, () => (
           <div>
             <WalletOperationsTable
-              currency={cashOperationHistory?.currency}
+              currency={currency}
               operations={cashOperationHistory?.positions}
             />
             <div className="mt-10 flex justify-end gap-4">
