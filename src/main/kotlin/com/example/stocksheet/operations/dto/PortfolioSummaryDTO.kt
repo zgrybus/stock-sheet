@@ -3,7 +3,7 @@ package com.example.stocksheet.operations.dto
 import java.math.BigDecimal
 
 data class PortfolioSummaryDTO(
-    val currency: Long,
+    val portfolioId: Long,
     val positions: List<StockPositionDTO>,
 )
 

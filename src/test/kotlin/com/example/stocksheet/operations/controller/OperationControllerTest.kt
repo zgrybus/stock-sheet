@@ -10,6 +10,7 @@ import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
+import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
@@ -25,10 +26,13 @@ import java.time.ZoneOffset
 class OperationControllerTest : BaseIntegrationTest() {
     @Autowired lateinit var operationRepository: OperationRepository
 
+    @Autowired lateinit var portfolioRepository: PortfolioRepository
+
+    private lateinit var portfolioUSD: PortfolioEntity
+    private lateinit var portfolioEURO: PortfolioEntity
+    private lateinit var portfolioPLN: PortfolioEntity
+
     init {
-        val portfolioUSD = PortfolioEntity(id = 10003, name = "portfolio_name_1", currency = "USD")
-        val portfolioEURO = PortfolioEntity(id = 10004, name = "portfolio_name_2", currency = "EUR")
-        val portfolioPLN = PortfolioEntity(id = 10005, name = "portfolio_name_3", currency = "PLN")
 
         fun getOperationEntity(): OperationEntity =
             OperationEntity(
@@ -43,6 +47,18 @@ class OperationControllerTest : BaseIntegrationTest() {
             )
 
         beforeEach {
+            portfolioUSD = PortfolioEntity(name = "portfolio_name_1", currency = "USD")
+            portfolioPLN = PortfolioEntity(name = "portfolio_name_3", currency = "PLN")
+            portfolioEURO = PortfolioEntity(name = "portfolio_name_2", currency = "EUR")
+
+            portfolioRepository.saveAll(
+                listOf(
+                    portfolioUSD,
+                    portfolioEURO,
+                    portfolioPLN,
+                ),
+            )
+
             operationRepository.saveAll(
                 listOf(
                     getOperationEntity(),
@@ -65,16 +81,17 @@ class OperationControllerTest : BaseIntegrationTest() {
         }
 
         afterEach {
-            operationRepository.deleteAll()
+            operationRepository.deleteAllInBatch()
+            portfolioRepository.deleteAllInBatch()
         }
 
         describe("GET /api/operations/portfolio/{portfolioId}") {
-            it("gets portfolio for provided currency") {
+            it("gets portfolio summary for provided portfolio id") {
                 val response = mockMvc.get("/api/operations/portfolio/${portfolioUSD.id}").andReturn().response
 
                 val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioSummaryDTO::class.java)
 
-                returnedPortfolio.currency.shouldBe(portfolioUSD.currency)
+                returnedPortfolio.portfolioId.shouldBe(portfolioUSD.id)
                 returnedPortfolio.positions.shouldContainExactly(
                     listOf(
                         StockPositionDTO(stockSymbol = "GOOG.US", totalVolume = 10.toBigDecimal(), totalCost = 1500.toBigDecimal()),
@@ -88,7 +105,7 @@ class OperationControllerTest : BaseIntegrationTest() {
 
                 val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioSummaryDTO::class.java)
 
-                returnedPortfolio.currency.shouldBe(portfolioPLN.currency)
+                returnedPortfolio.portfolioId.shouldBe(portfolioPLN.id)
                 returnedPortfolio.positions.shouldBeEmpty()
             }
         }

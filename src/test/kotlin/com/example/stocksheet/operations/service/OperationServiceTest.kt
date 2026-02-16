@@ -22,6 +22,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
+import java.util.Optional
 
 class OperationServiceTest : DescribeSpec() {
     private var operationRepositoryMock: OperationRepository = mockk()
@@ -93,7 +94,7 @@ class OperationServiceTest : DescribeSpec() {
                 it("groups and sum operations correctly") {
                     val result = operationService.getPortfolioSummary(portfolio.id!!)
 
-                    result.currency.shouldBe(portfolio.currency)
+                    result.portfolioId.shouldBe(portfolio.id)
                     result.positions.shouldContainExactly(
                         listOf(
                             StockPositionDTO(stockSymbol = "GOOG.US", totalCost = 2925.toBigDecimal(), totalVolume = 25.toBigDecimal()),
@@ -131,6 +132,7 @@ class OperationServiceTest : DescribeSpec() {
                 beforeEach {
                     every { operationRepositoryMock.findAllByExternalIdIn(any()) } returns operations
                     every { operationRepositoryMock.saveAll<OperationEntity>(any()) } returns listOf<OperationEntity>()
+                    every { portfolioRepositoryMock.findById(portfolio.id!!) } returns Optional.of(portfolio)
                 }
 
                 it("fetches entities for requested external ids") {
