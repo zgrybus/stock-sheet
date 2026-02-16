@@ -1,10 +1,10 @@
 package com.example.stocksheet.operations.service
 
 import com.example.stocksheet.Loggable
+import com.example.stocksheet.operations.dto.HoldingPositionDTO
 import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
-import com.example.stocksheet.operations.dto.PortfolioSummaryDTO
-import com.example.stocksheet.operations.dto.StockPositionDTO
+import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import org.springframework.http.HttpStatus
@@ -19,7 +19,7 @@ class OperationService(
     private val portfolioRepository: PortfolioRepository,
 ) : Loggable {
     @Transactional(readOnly = true)
-    fun getPortfolioSummary(portfolioId: Long): PortfolioSummaryDTO {
+    fun getHoldings(portfolioId: Long): PortfolioHoldingsDTO {
         logger.info { "Generating portfolio summary for portfolio: $portfolioId" }
 
         // TODO
@@ -36,7 +36,7 @@ class OperationService(
                                 key,
                                 _,
                                 ->
-                                StockPositionDTO(key, BigDecimal.ZERO, BigDecimal.ZERO)
+                                HoldingPositionDTO(key, BigDecimal.ZERO, BigDecimal.ZERO)
                             },
                             { _, acc, element ->
                                 acc.copy(
@@ -47,7 +47,7 @@ class OperationService(
                         ).values
                         .toList()
 
-                PortfolioSummaryDTO(portfolioId, items)
+                PortfolioHoldingsDTO(portfolioId, items)
             }.also { logger.info { "Portfolio summary generated for $portfolioId" } }
     }
 

@@ -1,8 +1,8 @@
 package com.example.stocksheet.operations.service
 
+import com.example.stocksheet.operations.dto.HoldingPositionDTO
 import com.example.stocksheet.operations.dto.OperationRequestDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
-import com.example.stocksheet.operations.dto.StockPositionDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
 import com.example.stocksheet.operations.repository.OperationRepository
@@ -86,20 +86,20 @@ class OperationServiceTest : DescribeSpec() {
         }
 
         describe("OperationServiceTest") {
-            describe("getPortfolioSummary") {
+            describe("getHoldings") {
                 beforeEach {
                     every { operationRepositoryMock.findAllByPortfolioId(portfolio.id!!) } returns operations
                 }
 
                 it("groups and sum operations correctly") {
-                    val result = operationService.getPortfolioSummary(portfolio.id!!)
+                    val result = operationService.getHoldings(portfolio.id!!)
 
                     result.portfolioId.shouldBe(portfolio.id)
                     result.positions.shouldContainExactly(
                         listOf(
-                            StockPositionDTO(stockSymbol = "GOOG.US", totalCost = 2925.toBigDecimal(), totalVolume = 25.toBigDecimal()),
-                            StockPositionDTO(stockSymbol = "TSLA.US", totalCost = 1050.toBigDecimal(), totalVolume = 12.toBigDecimal()),
-                            StockPositionDTO(stockSymbol = "ALPH.US", totalCost = 190.toBigDecimal(), totalVolume = 95.toBigDecimal()),
+                            HoldingPositionDTO(stockSymbol = "GOOG.US", totalCost = 2925.toBigDecimal(), totalVolume = 25.toBigDecimal()),
+                            HoldingPositionDTO(stockSymbol = "TSLA.US", totalCost = 1050.toBigDecimal(), totalVolume = 12.toBigDecimal()),
+                            HoldingPositionDTO(stockSymbol = "ALPH.US", totalCost = 190.toBigDecimal(), totalVolume = 95.toBigDecimal()),
                         ),
                     )
                 }

@@ -2,7 +2,7 @@ package com.example.stocksheet.operations.controller
 
 import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
-import com.example.stocksheet.operations.dto.PortfolioSummaryDTO
+import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.service.OperationService
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,12 +19,12 @@ class OperationController(
     private val operationService: OperationService,
 ) {
     @GetMapping(
-        value = ["/portfolio/{portfolioId}"],
+        value = ["/holdings/{portfolioId}"],
         produces = ["application/json"],
     )
     fun getHoldings(
         @PathVariable portfolioId: Long,
-    ): PortfolioSummaryDTO = operationService.getPortfolioSummary(portfolioId)
+    ): PortfolioHoldingsDTO = operationService.getHoldings(portfolioId)
 
     @PostMapping(
         value = ["/import/{portfolioId}"],

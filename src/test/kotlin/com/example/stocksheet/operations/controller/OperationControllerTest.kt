@@ -1,11 +1,11 @@
 package com.example.stocksheet.operations.controller
 
 import com.example.stocksheet.BaseIntegrationTest
+import com.example.stocksheet.operations.dto.HoldingPositionDTO
 import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationRequestDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
-import com.example.stocksheet.operations.dto.PortfolioSummaryDTO
-import com.example.stocksheet.operations.dto.StockPositionDTO
+import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
 import com.example.stocksheet.operations.repository.OperationRepository
@@ -85,25 +85,25 @@ class OperationControllerTest : BaseIntegrationTest() {
             portfolioRepository.deleteAllInBatch()
         }
 
-        describe("GET /api/operations/portfolio/{portfolioId}") {
+        describe("GET /api/operations/holdings/{portfolioId}") {
             it("gets portfolio summary for provided portfolio id") {
-                val response = mockMvc.get("/api/operations/portfolio/${portfolioUSD.id}").andReturn().response
+                val response = mockMvc.get("/api/operations/holdings/${portfolioUSD.id}").andReturn().response
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioSummaryDTO::class.java)
+                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
 
                 returnedPortfolio.portfolioId.shouldBe(portfolioUSD.id)
                 returnedPortfolio.positions.shouldContainExactly(
                     listOf(
-                        StockPositionDTO(stockSymbol = "GOOG.US", totalVolume = 10.toBigDecimal(), totalCost = 1500.toBigDecimal()),
-                        StockPositionDTO(stockSymbol = "TSLA.US", totalVolume = 2.toBigDecimal(), totalCost = 1000.toBigDecimal()),
+                        HoldingPositionDTO(stockSymbol = "GOOG.US", totalVolume = 10.toBigDecimal(), totalCost = 1500.toBigDecimal()),
+                        HoldingPositionDTO(stockSymbol = "TSLA.US", totalVolume = 2.toBigDecimal(), totalCost = 1000.toBigDecimal()),
                     ),
                 )
             }
 
             it("gets empty positions, when operations does not exist for provided currency") {
-                val response = mockMvc.get("/api/operations/portfolio/${portfolioPLN.id}").andReturn().response
+                val response = mockMvc.get("/api/operations/holdings/${portfolioPLN.id}").andReturn().response
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioSummaryDTO::class.java)
+                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
 
                 returnedPortfolio.portfolioId.shouldBe(portfolioPLN.id)
                 returnedPortfolio.positions.shouldBeEmpty()
