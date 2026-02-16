@@ -209,25 +209,23 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
                         }
                     }
                 }
-            }
-        }
 
-        describe("OperationRequestDTO") {
-            describe("toEntity") {
+                describe("toEntity") {
 
-                it("should correctly map all fields from DTO to Entity") {
-                    val dto = getOperationRequestDTO()
-                    val portfolio = PortfolioEntity(id = 10003, name = "portfolio_name_1", currency = "USD")
+                    it("should correctly map all fields from DTO to Entity") {
+                        val dto = getOperationRequestDTO()
+                        val portfolio = PortfolioEntity(id = 10003, name = "portfolio_name_1", currency = "USD")
 
-                    dto.toEntity(portfolio).should {
-                        it.externalId.shouldBe(dto.externalId)
-                        it.stockSymbol.shouldBe(dto.stockSymbol)
-                        it.type.shouldBe(dto.type)
-                        it.volume.shouldBe(dto.volume)
-                        it.openDate.shouldBe(dto.openDate)
-                        it.pricePerVolume.shouldBe(dto.pricePerVolume)
-                        it.totalPrice.shouldBe(dto.totalPrice)
-                        it.portfolio.shouldBe(portfolio)
+                        dto.toEntity(portfolio).should {
+                            it.externalId.shouldBe(dto.externalId)
+                            it.stockSymbol.shouldBe(dto.stockSymbol)
+                            it.type.shouldBe(dto.type)
+                            it.volume.shouldBe(dto.volume)
+                            it.openDate.shouldBe(dto.openDate)
+                            it.pricePerVolume.shouldBe(dto.pricePerVolume)
+                            it.totalPrice.shouldBe(dto.totalPrice)
+                            it.portfolio.shouldBe(portfolio)
+                        }
                     }
                 }
             }

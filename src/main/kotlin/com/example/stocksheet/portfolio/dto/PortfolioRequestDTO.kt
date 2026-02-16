@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank
 data class PortfolioRequestDTO(
     @field:NotBlank(message = "Name cannot be empty")
     val name: String? = null,
+    @field:NotBlank(message = "Currency cannot be empty")
     @field:ValidCurrency(message = "Currency is not valid")
     val currency: String? = null,
 ) {
