@@ -52,7 +52,7 @@ class OperationService(
     }
 
     @Transactional()
-    fun addOperations(
+    fun importOperations(
         batch: OperationsBatchRequestDTO,
         portfolioId: Long,
     ): OperationImportResponseDTO {

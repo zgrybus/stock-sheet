@@ -31,8 +31,8 @@ class OperationController(
         consumes = ["application/json"],
         produces = ["application/json"],
     )
-    fun addOperations(
+    fun importOperations(
         @RequestBody body: OperationsBatchRequestDTO,
         @PathVariable portfolioId: Long,
-    ): OperationImportResponseDTO = operationService.addOperations(body, portfolioId)
+    ): OperationImportResponseDTO = operationService.importOperations(body, portfolioId)
 }

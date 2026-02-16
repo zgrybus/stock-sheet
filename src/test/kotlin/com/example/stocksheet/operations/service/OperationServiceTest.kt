@@ -105,7 +105,7 @@ class OperationServiceTest : DescribeSpec() {
                 }
             }
 
-            describe("addOperations") {
+            describe("importOperations") {
                 fun getOperationRequestDTO(): OperationRequestDTO =
                     OperationRequestDTO(
                         externalId = "external-id-1",
@@ -136,7 +136,7 @@ class OperationServiceTest : DescribeSpec() {
                 }
 
                 it("fetches entities for requested external ids") {
-                    operationService.addOperations(getOperationsBatchRequestDTO(), portfolio.id!!)
+                    operationService.importOperations(getOperationsBatchRequestDTO(), portfolio.id!!)
 
                     val externalIds = slot<List<String>>()
                     verify {
@@ -148,7 +148,7 @@ class OperationServiceTest : DescribeSpec() {
 
                 it("saves only new operations to the database") {
                     val batch = getOperationsBatchRequestDTO()
-                    operationService.addOperations(batch, portfolio.id!!)
+                    operationService.importOperations(batch, portfolio.id!!)
 
                     val newOperations = slot<List<OperationEntity>>()
                     verify {
