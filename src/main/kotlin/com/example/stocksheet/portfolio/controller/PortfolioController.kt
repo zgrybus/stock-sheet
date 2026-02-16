@@ -24,7 +24,6 @@ class PortfolioController(
 
     @GetMapping(
         value = ["/list"],
-        consumes = ["application/json"],
         produces = ["application/json"],
     )
     fun getPortfolioList(): List<PortfolioResponseDTO> = portfolioService.getPortfolioList()

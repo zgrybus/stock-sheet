@@ -86,13 +86,13 @@ class OperationControllerTest : BaseIntegrationTest() {
         }
 
         describe("GET /api/operations/holdings/{portfolioId}") {
-            it("gets portfolio summary for provided portfolio id") {
+            it("gets holdings for provided portfolio id") {
                 val response = mockMvc.get("/api/operations/holdings/${portfolioUSD.id}").andReturn().response
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
+                val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
 
-                returnedPortfolio.portfolioId.shouldBe(portfolioUSD.id)
-                returnedPortfolio.positions.shouldContainExactly(
+                returnedHoldings.portfolioId.shouldBe(portfolioUSD.id)
+                returnedHoldings.positions.shouldContainExactly(
                     listOf(
                         HoldingPositionDTO(stockSymbol = "GOOG.US", totalVolume = 10.toBigDecimal(), totalCost = 1500.toBigDecimal()),
                         HoldingPositionDTO(stockSymbol = "TSLA.US", totalVolume = 2.toBigDecimal(), totalCost = 1000.toBigDecimal()),
@@ -100,13 +100,13 @@ class OperationControllerTest : BaseIntegrationTest() {
                 )
             }
 
-            it("gets empty positions, when operations does not exist for provided currency") {
+            it("gets empty holdings, when operations does not exist for provided portfolio id") {
                 val response = mockMvc.get("/api/operations/holdings/${portfolioPLN.id}").andReturn().response
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
+                val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
 
-                returnedPortfolio.portfolioId.shouldBe(portfolioPLN.id)
-                returnedPortfolio.positions.shouldBeEmpty()
+                returnedHoldings.portfolioId.shouldBe(portfolioPLN.id)
+                returnedHoldings.positions.shouldBeEmpty()
             }
         }
 
