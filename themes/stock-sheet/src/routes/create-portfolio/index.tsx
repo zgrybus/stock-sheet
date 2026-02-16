@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,6 +19,8 @@ import {
 import { useForm } from "@tanstack/react-form";
 import { z } from "zod";
 import { toast } from "sonner";
+import { $apiStockSheet } from "@/apis/stock-sheet/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/create-portfolio/")({
   component: RouteComponent,
@@ -30,6 +32,11 @@ const portfolioSchema = z.object({
 });
 
 function RouteComponent() {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  const { mutate } = $apiStockSheet.useMutation("post", "/api/portfolio");
+
   const form = useForm({
     defaultValues: {
       name: "",
@@ -39,7 +46,29 @@ function RouteComponent() {
       onSubmit: portfolioSchema,
     },
     onSubmit: ({ value }) => {
-      toast.success(`Portfel "${value.name}" został utworzony`);
+      mutate(
+        { body: value },
+        {
+          onSuccess: (data) => {
+            const portfolioListQueryKey = $apiStockSheet.queryOptions(
+              "get",
+              "/api/portfolio/list",
+            ).queryKey;
+            queryClient.invalidateQueries({
+              queryKey: portfolioListQueryKey,
+            });
+
+            toast.success(`Portfel "${value.name}" został utworzony`);
+            navigate({
+              to: "/",
+              search: (prev) => ({ ...prev, portfolioId: data.id }),
+            });
+          },
+          onError: () => {
+            toast.success("Błąd podczas tworzenia portfela. Spróbuj ponownie.");
+          },
+        },
+      );
     },
   });
 

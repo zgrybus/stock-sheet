@@ -5,13 +5,19 @@ import { DesktopHeader } from "@/features/header/desktop-header/desktop-header";
 import { MobileHeader } from "@/features/header/mobile-header/mobile-header";
 import { Sidebar } from "@/features/header/sidebar/sidebar";
 import { RouteBreadcrumb } from "@/features/navigation/route-breadcrumb/route-breadcrumb";
+import z from "zod";
 
 type MyRouterContext = {
   queryClient: QueryClient;
 };
 
+const appSearchSchema = z.object({
+  portfolioId: z.number().optional(),
+});
+
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   component: RootComponent,
+  validateSearch: appSearchSchema,
 });
 
 function RootComponent() {

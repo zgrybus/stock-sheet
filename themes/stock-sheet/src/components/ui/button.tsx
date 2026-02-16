@@ -4,7 +4,7 @@ import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
-import { Spinner } from "./spinner";
+// import { Spinner } from "./spinner";
 
 const buttonVariants = cva(
   `
@@ -110,14 +110,15 @@ function Button({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
-      {loading && <Spinner size={size} className="absolute" />}
+      {children}
+      {/* {loading && <Spinner size={size} className="absolute" />}
       <span
-        className={cn("flex items-center gap-2", {
+        className={cn("flex w-full items-center gap-2", {
           invisible: loading,
         })}
       >
         {children}
-      </span>
+      </span> */}
     </button>
   );
 }

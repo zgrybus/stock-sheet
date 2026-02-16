@@ -1,3 +1,4 @@
+import { $apiStockSheet } from "@/apis/stock-sheet/client";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -6,35 +7,48 @@ import {
 } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { Link } from "@tanstack/react-router";
-import { PlusCircle, Wallet, ChevronDown } from "lucide-react";
+import { Link, useSearch } from "@tanstack/react-router";
+import {
+  PlusCircle,
+  Wallet,
+  ChevronDown,
+  AlertCircle,
+  Inbox,
+} from "lucide-react";
 import { useState } from "react";
-
-const MOCK_PORTFOLIOS = [
-  { id: "1", name: "Portfel REIT" },
-  { id: "2", name: "Portfel Polski" },
-  { id: "3", name: "Akcje USA" },
-];
+import { match, P } from "ts-pattern";
 
 export const PortfolioSelector = () => {
+  const selectedPortfolioId = useSearch({
+    from: "__root__",
+    select: (search) => search.portfolioId,
+  });
+
   const [isOpen, setOpen] = useState(false);
 
-  const currentPortfolioId = "4";
-  const currentPortfolio = MOCK_PORTFOLIOS.find(
-    (p) => p.id === currentPortfolioId,
+  const portfolioQuery = $apiStockSheet.useQuery("get", "/api/portfolio/list");
+  const { data = [] } = portfolioQuery;
+
+  const selectedPortfolio = data.find(
+    (portfolio) => selectedPortfolioId === portfolio.id,
   );
 
   return (
     <Popover open={isOpen} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" className="group">
-          <Wallet className="mr-2 size-4 text-primary" />
-          <span className="text-base text-foreground">
-            {currentPortfolio?.name || "Wybierz portfel"}
+        <Button
+          variant="ghost"
+          className="group flex w-50 items-center justify-start px-3"
+          title={selectedPortfolio?.name}
+        >
+          <Wallet className="mr-2 size-4 shrink-0 text-primary" />
+          <span className="flex-1 truncate text-left text-base text-foreground">
+            {selectedPortfolio?.name || "Wybierz portfel"}
           </span>
           <ChevronDown
             className={`
-              size-4 text-muted-foreground transition-transform duration-200
+              ml-2 size-4 shrink-0 text-muted-foreground transition-transform
+              duration-200
               group-data-[state=open]:rotate-180
             `}
           />
@@ -54,31 +68,78 @@ export const PortfolioSelector = () => {
           Moje Portfele
         </div>
         <div className="mt-3 flex flex-col gap-1">
-          {MOCK_PORTFOLIOS.map((portfolio) => {
-            const isActive = portfolio.id === currentPortfolioId;
-            return (
-              <Button
-                key={portfolio.id}
-                variant="ghost"
-                className="w-full justify-between px-2 font-normal"
+          {match(portfolioQuery)
+            .with({ isPending: true }, () => (
+              <>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex h-9 w-full items-center px-2">
+                    <div
+                      className={`
+                        mr-2 size-4 animate-pulse rounded-full bg-muted
+                      `}
+                    />
+                    <div className="h-4 w-24 animate-pulse rounded bg-muted" />
+                  </div>
+                ))}
+              </>
+            ))
+            .with({ isError: true }, () => (
+              <div
+                className={`
+                  flex flex-col items-center gap-2 px-2 py-4 text-center text-xs
+                  text-destructive
+                `}
               >
-                <div className="flex items-center">
-                  <Wallet
-                    className={cn("mr-2 size-4 opacity-30", {
-                      "text-primary opacity-100": isActive,
-                    })}
-                  />
-                  <span
-                    className={cn({
-                      "text-primary": isActive,
-                    })}
+                <AlertCircle className="size-4" />
+                <span>Nie udało się pobrać danych</span>
+              </div>
+            ))
+            .with({ data: P.when((d) => d.length === 0) }, () => (
+              <div
+                className={`
+                  flex flex-col items-center gap-2 px-2 py-4 text-center text-xs
+                  text-muted-foreground
+                `}
+              >
+                <Inbox className="size-4 opacity-20" />
+                <span>Brak portfeli</span>
+              </div>
+            ))
+            .with({ data: P.select() }, (portfolios) =>
+              portfolios.map((portfolio) => {
+                const isActive = portfolio.id === selectedPortfolioId;
+                return (
+                  <Button
+                    asChild
+                    key={portfolio.id}
+                    variant="ghost"
+                    className="w-full justify-between px-2 font-normal"
+                    onClick={() => setOpen(false)}
                   >
-                    {portfolio.name}
-                  </span>
-                </div>
-              </Button>
-            );
-          })}
+                    <Link
+                      to="."
+                      search={(prev) => ({
+                        ...prev,
+                        portfolioId: portfolio.id,
+                      })}
+                    >
+                      <div className="flex items-center">
+                        <Wallet
+                          className={cn(
+                            "mr-2 size-4 opacity-30",
+                            isActive && "text-primary opacity-100",
+                          )}
+                        />
+                        <span className={cn(isActive && "text-primary")}>
+                          {portfolio.name}
+                        </span>
+                      </div>
+                    </Link>
+                  </Button>
+                );
+              }),
+            )
+            .exhaustive()}
         </div>
         <Separator className="my-2" />
         <Button
