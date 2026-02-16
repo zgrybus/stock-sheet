@@ -23,7 +23,7 @@ class OperationService(
         logger.info { "Generating portfolio summary for portfolio: $portfolioId" }
 
         // TODO
-        // VALIDATE PORTFOLIO ID
+        // VALIDATE PORTFOLIO ID and add test
         return operationRepository
             .findAllByPortfolioId(portfolioId)
             .let { operations ->
@@ -59,7 +59,7 @@ class OperationService(
         logger.info { "Processing batch import for portfolioId - $portfolioId" }
 
         // TODO
-        // VALIDATE PORTFOLIO ID
+        // VALIDATE PORTFOLIO ID and add test
         val portfolio =
             portfolioRepository.findById(portfolioId).orElseThrow {
                 ResponseStatusException(HttpStatus.NOT_FOUND, "Portfolio not found with id: $portfolioId")

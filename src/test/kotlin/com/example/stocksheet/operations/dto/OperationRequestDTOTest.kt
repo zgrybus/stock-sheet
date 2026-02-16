@@ -1,6 +1,5 @@
-package com.example.stocksheet.operations.mapper
+package com.example.stocksheet.operations.dto
 
-import com.example.stocksheet.operations.dto.OperationRequestDTO
 import com.example.stocksheet.operations.entity.OperationType
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import io.kotest.core.spec.style.DescribeSpec
@@ -10,7 +9,7 @@ import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
 
-class OperationRequestDTOMappers : DescribeSpec() {
+class OperationRequestDTOTest : DescribeSpec() {
     init {
         fun getOperationRequestDTO(): OperationRequestDTO =
             OperationRequestDTO(
