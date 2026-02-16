@@ -32,7 +32,7 @@ class OperationController(
         produces = ["application/json"],
     )
     fun addOperations(
-        @RequestBody operations: OperationsBatchRequestDTO,
+        @RequestBody body: OperationsBatchRequestDTO,
         @PathVariable currency: String,
-    ): OperationImportResponseDTO = operationService.addOperations(operations, currency)
+    ): OperationImportResponseDTO = operationService.addOperations(body, currency)
 }
