@@ -19,20 +19,20 @@ class OperationController(
     private val operationService: OperationService,
 ) {
     @GetMapping(
-        value = ["/portfolio/{currency}"],
+        value = ["/portfolio/{portfolioId}"],
         produces = ["application/json"],
     )
-    fun getPortfolioSummary(
-        @PathVariable currency: String,
-    ): PortfolioSummaryDTO = operationService.getPortfolioSummary(currency)
+    fun getHoldings(
+        @PathVariable portfolioId: Long,
+    ): PortfolioSummaryDTO = operationService.getPortfolioSummary(portfolioId)
 
     @PostMapping(
-        value = ["/import/{currency}"],
+        value = ["/import/{portfolioId}"],
         consumes = ["application/json"],
         produces = ["application/json"],
     )
     fun addOperations(
         @RequestBody body: OperationsBatchRequestDTO,
-        @PathVariable currency: String,
-    ): OperationImportResponseDTO = operationService.addOperations(body, currency)
+        @PathVariable portfolioId: Long,
+    ): OperationImportResponseDTO = operationService.addOperations(body, portfolioId)
 }

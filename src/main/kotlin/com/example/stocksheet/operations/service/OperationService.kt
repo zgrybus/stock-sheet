@@ -5,22 +5,27 @@ import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
 import com.example.stocksheet.operations.dto.PortfolioSummaryDTO
 import com.example.stocksheet.operations.dto.StockPositionDTO
-import com.example.stocksheet.operations.mapper.toEntity
 import com.example.stocksheet.operations.repository.OperationRepository
+import com.example.stocksheet.portfolio.repository.PortfolioRepository
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.server.ResponseStatusException
 import java.math.BigDecimal
 
 @Service
 class OperationService(
     private val operationRepository: OperationRepository,
+    private val portfolioRepository: PortfolioRepository,
 ) : Loggable {
     @Transactional(readOnly = true)
-    fun getPortfolioSummary(currency: String): PortfolioSummaryDTO {
-        logger.info { "Generating portfolio summary for currency: $currency" }
+    fun getPortfolioSummary(portfolioId: Long): PortfolioSummaryDTO {
+        logger.info { "Generating portfolio summary for portfolio: $portfolioId" }
 
+        // TODO
+        // VALIDATE PORTFOLIO ID
         return operationRepository
-            .findAllByCurrency(currency)
+            .findAllByPortfolioId(portfolioId)
             .let { operations ->
                 val items =
                     operations
@@ -42,16 +47,23 @@ class OperationService(
                         ).values
                         .toList()
 
-                PortfolioSummaryDTO(currency, items)
-            }.also { logger.info { "Portfolio summary generated for $currency" } }
+                PortfolioSummaryDTO(portfolioId, items)
+            }.also { logger.info { "Portfolio summary generated for $portfolioId" } }
     }
 
     @Transactional()
     fun addOperations(
         batch: OperationsBatchRequestDTO,
-        currency: String,
+        portfolioId: Long,
     ): OperationImportResponseDTO {
-        logger.info { "Processing batch import for currency: $currency" }
+        logger.info { "Processing batch import for portfolioId - $portfolioId" }
+
+        // TODO
+        // VALIDATE PORTFOLIO ID
+        val portfolio =
+            portfolioRepository.findById(portfolioId).orElseThrow {
+                ResponseStatusException(HttpStatus.NOT_FOUND, "Portfolio not found with id: $portfolioId")
+            }
 
         val requestedExternalIds = batch.operations?.mapNotNull { it.externalId } ?: emptyList()
         val existingEntities = operationRepository.findAllByExternalIdIn(requestedExternalIds)
@@ -64,7 +76,7 @@ class OperationService(
                 )
             }
 
-        val savedOperations = operationRepository.saveAll(newOperations.map { it.toEntity(currency) })
+        val savedOperations = operationRepository.saveAll(newOperations.map { it.toEntity(portfolio) })
 
         logger.info { "Import finished. Added: ${savedOperations.size}, Duplicated: ${duplicatedOperations.size}" }
 
