@@ -21,7 +21,7 @@ const STEPS: Array<StepItem> = [
   { title: "Wysyłka", icon: Send },
 ];
 
-export const Route = createFileRoute("/operations/import/")({
+export const Route = createFileRoute("/_app/_portfolio/operations/import/")({
   component: Index,
 });
 

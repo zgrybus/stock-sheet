@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { $apiStockSheet } from "@/apis/stock-sheet/client";
 import { useQueryClient } from "@tanstack/react-query";
 
-export const Route = createFileRoute("/create-portfolio/")({
+export const Route = createFileRoute("/_app/_portfolio/create-portfolio/")({
   component: RouteComponent,
 });
 

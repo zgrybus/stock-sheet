@@ -7,7 +7,7 @@ import { WalletStructureBarChart } from "@/features/wallet-structure/wallet-stru
 import { $apiStockSheet } from "@/apis/stock-sheet/client";
 import { useMemo } from "react";
 
-export const Route = createFileRoute("/wallet/structure/")({
+export const Route = createFileRoute("/_app/_portfolio/wallet/structure/")({
   component: Index,
 });
 
