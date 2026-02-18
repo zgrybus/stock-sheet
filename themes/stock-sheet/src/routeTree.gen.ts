@@ -9,50 +9,65 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as CreatePortfolioIndexRouteImport } from './routes/create-portfolio/index'
-import { Route as WalletStructureIndexRouteImport } from './routes/wallet/structure/index'
-import { Route as OperationsImportIndexRouteImport } from './routes/operations/import/index'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as AppPortfolioRouteImport } from './routes/_app/_portfolio'
+import { Route as AppPortfolioIndexRouteImport } from './routes/_app/_portfolio/index'
+import { Route as AppPortfolioCreatePortfolioIndexRouteImport } from './routes/_app/_portfolio/create-portfolio/index'
+import { Route as AppPortfolioWalletStructureIndexRouteImport } from './routes/_app/_portfolio/wallet/structure/index'
+import { Route as AppPortfolioOperationsImportIndexRouteImport } from './routes/_app/_portfolio/operations/import/index'
 
-const IndexRoute = IndexRouteImport.update({
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppPortfolioRoute = AppPortfolioRouteImport.update({
+  id: '/_portfolio',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPortfolioIndexRoute = AppPortfolioIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppPortfolioRoute,
 } as any)
-const CreatePortfolioIndexRoute = CreatePortfolioIndexRouteImport.update({
-  id: '/create-portfolio/',
-  path: '/create-portfolio/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const WalletStructureIndexRoute = WalletStructureIndexRouteImport.update({
-  id: '/wallet/structure/',
-  path: '/wallet/structure/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OperationsImportIndexRoute = OperationsImportIndexRouteImport.update({
-  id: '/operations/import/',
-  path: '/operations/import/',
-  getParentRoute: () => rootRouteImport,
-} as any)
+const AppPortfolioCreatePortfolioIndexRoute =
+  AppPortfolioCreatePortfolioIndexRouteImport.update({
+    id: '/create-portfolio/',
+    path: '/create-portfolio/',
+    getParentRoute: () => AppPortfolioRoute,
+  } as any)
+const AppPortfolioWalletStructureIndexRoute =
+  AppPortfolioWalletStructureIndexRouteImport.update({
+    id: '/wallet/structure/',
+    path: '/wallet/structure/',
+    getParentRoute: () => AppPortfolioRoute,
+  } as any)
+const AppPortfolioOperationsImportIndexRoute =
+  AppPortfolioOperationsImportIndexRouteImport.update({
+    id: '/operations/import/',
+    path: '/operations/import/',
+    getParentRoute: () => AppPortfolioRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/create-portfolio': typeof CreatePortfolioIndexRoute
-  '/operations/import': typeof OperationsImportIndexRoute
-  '/wallet/structure': typeof WalletStructureIndexRoute
+  '/': typeof AppPortfolioIndexRoute
+  '/create-portfolio': typeof AppPortfolioCreatePortfolioIndexRoute
+  '/operations/import': typeof AppPortfolioOperationsImportIndexRoute
+  '/wallet/structure': typeof AppPortfolioWalletStructureIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/create-portfolio': typeof CreatePortfolioIndexRoute
-  '/operations/import': typeof OperationsImportIndexRoute
-  '/wallet/structure': typeof WalletStructureIndexRoute
+  '/': typeof AppPortfolioIndexRoute
+  '/create-portfolio': typeof AppPortfolioCreatePortfolioIndexRoute
+  '/operations/import': typeof AppPortfolioOperationsImportIndexRoute
+  '/wallet/structure': typeof AppPortfolioWalletStructureIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/create-portfolio/': typeof CreatePortfolioIndexRoute
-  '/operations/import/': typeof OperationsImportIndexRoute
-  '/wallet/structure/': typeof WalletStructureIndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/_app/_portfolio': typeof AppPortfolioRouteWithChildren
+  '/_app/_portfolio/': typeof AppPortfolioIndexRoute
+  '/_app/_portfolio/create-portfolio/': typeof AppPortfolioCreatePortfolioIndexRoute
+  '/_app/_portfolio/operations/import/': typeof AppPortfolioOperationsImportIndexRoute
+  '/_app/_portfolio/wallet/structure/': typeof AppPortfolioWalletStructureIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -65,57 +80,96 @@ export interface FileRouteTypes {
   to: '/' | '/create-portfolio' | '/operations/import' | '/wallet/structure'
   id:
     | '__root__'
-    | '/'
-    | '/create-portfolio/'
-    | '/operations/import/'
-    | '/wallet/structure/'
+    | '/_app'
+    | '/_app/_portfolio'
+    | '/_app/_portfolio/'
+    | '/_app/_portfolio/create-portfolio/'
+    | '/_app/_portfolio/operations/import/'
+    | '/_app/_portfolio/wallet/structure/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  CreatePortfolioIndexRoute: typeof CreatePortfolioIndexRoute
-  OperationsImportIndexRoute: typeof OperationsImportIndexRoute
-  WalletStructureIndexRoute: typeof WalletStructureIndexRoute
+  AppRoute: typeof AppRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/_portfolio': {
+      id: '/_app/_portfolio'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AppPortfolioRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/_portfolio/': {
+      id: '/_app/_portfolio/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppPortfolioIndexRouteImport
+      parentRoute: typeof AppPortfolioRoute
     }
-    '/create-portfolio/': {
-      id: '/create-portfolio/'
+    '/_app/_portfolio/create-portfolio/': {
+      id: '/_app/_portfolio/create-portfolio/'
       path: '/create-portfolio'
       fullPath: '/create-portfolio'
-      preLoaderRoute: typeof CreatePortfolioIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppPortfolioCreatePortfolioIndexRouteImport
+      parentRoute: typeof AppPortfolioRoute
     }
-    '/wallet/structure/': {
-      id: '/wallet/structure/'
+    '/_app/_portfolio/wallet/structure/': {
+      id: '/_app/_portfolio/wallet/structure/'
       path: '/wallet/structure'
       fullPath: '/wallet/structure'
-      preLoaderRoute: typeof WalletStructureIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppPortfolioWalletStructureIndexRouteImport
+      parentRoute: typeof AppPortfolioRoute
     }
-    '/operations/import/': {
-      id: '/operations/import/'
+    '/_app/_portfolio/operations/import/': {
+      id: '/_app/_portfolio/operations/import/'
       path: '/operations/import'
       fullPath: '/operations/import'
-      preLoaderRoute: typeof OperationsImportIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppPortfolioOperationsImportIndexRouteImport
+      parentRoute: typeof AppPortfolioRoute
     }
   }
 }
 
+interface AppPortfolioRouteChildren {
+  AppPortfolioIndexRoute: typeof AppPortfolioIndexRoute
+  AppPortfolioCreatePortfolioIndexRoute: typeof AppPortfolioCreatePortfolioIndexRoute
+  AppPortfolioOperationsImportIndexRoute: typeof AppPortfolioOperationsImportIndexRoute
+  AppPortfolioWalletStructureIndexRoute: typeof AppPortfolioWalletStructureIndexRoute
+}
+
+const AppPortfolioRouteChildren: AppPortfolioRouteChildren = {
+  AppPortfolioIndexRoute: AppPortfolioIndexRoute,
+  AppPortfolioCreatePortfolioIndexRoute: AppPortfolioCreatePortfolioIndexRoute,
+  AppPortfolioOperationsImportIndexRoute:
+    AppPortfolioOperationsImportIndexRoute,
+  AppPortfolioWalletStructureIndexRoute: AppPortfolioWalletStructureIndexRoute,
+}
+
+const AppPortfolioRouteWithChildren = AppPortfolioRoute._addFileChildren(
+  AppPortfolioRouteChildren,
+)
+
+interface AppRouteChildren {
+  AppPortfolioRoute: typeof AppPortfolioRouteWithChildren
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppPortfolioRoute: AppPortfolioRouteWithChildren,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  CreatePortfolioIndexRoute: CreatePortfolioIndexRoute,
-  OperationsImportIndexRoute: OperationsImportIndexRoute,
-  WalletStructureIndexRoute: WalletStructureIndexRoute,
+  AppRoute: AppRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

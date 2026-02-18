@@ -72,11 +72,11 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        PortfolioRequestDTO: {
+        PortfolioListRequestDTO: {
             name: string;
             currency: string;
         };
-        PortfolioResponseDTO: {
+        PortfolioListResponseDTO: {
             /** Format: int64 */
             id: number;
             name: string;
@@ -115,6 +115,17 @@ export interface components {
             portfolioId: number;
             positions: Array<components["schemas"]["HoldingPositionDTO"]>;
         };
+        ErrorResponse: {
+            path?: string;
+            /** Format: int32 */
+            status?: number;
+            errors?: Array<components["schemas"]["ErrorDTO"]>;
+        };
+        ErrorDTO: {
+            /** @enum {string} */
+            type?: "SOMETHING_WENT_WRONG";
+            message?: string;
+        };
     };
     responses: never;
     parameters: never;
@@ -133,7 +144,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PortfolioRequestDTO"];
+                "application/json": components["schemas"]["PortfolioListRequestDTO"];
             };
         };
         responses: {
@@ -143,7 +154,34 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PortfolioResponseDTO"];
+                    "application/json": components["schemas"]["PortfolioListResponseDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -172,6 +210,33 @@ export interface operations {
                     "application/json": components["schemas"]["OperationImportResponseDTO"];
                 };
             };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
         };
     };
     getPortfolioList: {
@@ -189,7 +254,34 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Array<components["schemas"]["PortfolioResponseDTO"]>;
+                    "application/json": Array<components["schemas"]["PortfolioListResponseDTO"]>;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };
@@ -212,6 +304,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PortfolioHoldingsDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
                 };
             };
         };

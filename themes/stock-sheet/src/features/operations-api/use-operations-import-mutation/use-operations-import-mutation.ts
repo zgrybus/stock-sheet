@@ -9,39 +9,39 @@ export const useOperationsImportMutation = () => {
     "/api/operations/import/{portfolioId}",
   );
 
-  const mutate = (
-    variables: Parameters<(typeof mutation)["mutate"]>[0],
-    options?: Parameters<(typeof mutation)["mutate"]>[1],
+  const mutateAsync = async (
+    variables: Parameters<(typeof mutation)["mutateAsync"]>[0],
   ) => {
-    mutation.mutate(variables, {
-      onSuccess: (data, _variables, result, context) => {
-        const portfolioId = _variables.params.path.portfolioId;
-        const { added, duplicated } = data;
+    try {
+      const data = await mutation.mutateAsync(variables);
 
-        const queryKey = $apiStockSheet.queryOptions(
-          "get",
-          "/api/operations/holdings/{portfolioId}",
-          { params: { path: { portfolioId } } },
-        ).queryKey;
+      const portfolioId = variables.params.path.portfolioId;
+      const { added, duplicated } = data;
 
-        queryClient.invalidateQueries({
-          queryKey,
-        });
+      const queryKey = $apiStockSheet.queryOptions(
+        "get",
+        "/api/operations/holdings/{portfolioId}",
+        { params: { path: { portfolioId } } },
+      ).queryKey;
 
-        const addedText = `Nowe pozycje: ${added.length}`;
-        const duplicatedText =
-          duplicated.length > 0
-            ? ` | Pominięte duplikaty: ${duplicated.length}`
-            : "";
+      queryClient.invalidateQueries({
+        queryKey,
+      });
 
-        toast.success("Import zakończony", {
-          description: `${addedText}${duplicatedText}`,
-        });
+      const addedText = `Nowe pozycje: ${added.length}`;
+      const duplicatedText =
+        duplicated.length > 0
+          ? ` | Pominięte duplikaty: ${duplicated.length}`
+          : "";
 
-        options?.onSuccess?.(data, _variables, result, context);
-      },
-    });
+      toast.success("Import zakończony", {
+        description: `${addedText}${duplicatedText}`,
+      });
+    } catch (_e) {
+      // TODO: add error handling
+      toast.error("Wystąpił błąd podczas importu operacji. Spróbuj ponownie.");
+    }
   };
 
-  return { ...mutation, mutate };
+  return { ...mutation, mutateAsync };
 };

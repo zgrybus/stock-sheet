@@ -20,53 +20,51 @@ const STEPS: Array<StepItem> = [
   { title: "Wysyłka", icon: Send },
 ];
 
-export const Route = createFileRoute("/operations/import/")({
+export const Route = createFileRoute("/_app/_portfolio/operations/import/")({
   component: Index,
 });
 
 function Index() {
+  // TODO: create api to retrieve single portfolio
   const portfolioId = 1001;
   const currency = "USD";
   const [currentStep, setCurrentStep] = useState<0 | 1 | 2>(0);
-  const { mutate: onOperationsImportMutate, isPending } =
-    useOperationsImportMutation();
+  const { mutateAsync } = useOperationsImportMutation();
 
   const form = useForm({
     defaultValues: {
+      // TODO add schema
       cashOperationHistoryJson: null as CashOperationHistory | null,
     },
-    onSubmit: ({ value, formApi }) => {
+    onSubmit: async ({ value, formApi }) => {
       if (!value.cashOperationHistoryJson) {
         return;
       }
-      const { positions } = value.cashOperationHistoryJson;
+      try {
+        const { positions } = value.cashOperationHistoryJson;
 
-      const operations = positions.map((position) => ({
-        externalId: position.id,
-        stockSymbol: position.stockSymbol,
-        type: position.type,
-        volume: position.volume,
-        openDate: parseDate(
-          position.openDate,
-          "dd/MM/yyyy HH:mm:ss",
-          new Date(),
-        ).toISOString(),
-        pricePerVolume: position.pricePerVolume,
-        totalPrice: position.totalPrice,
-      }));
+        const operations = positions.map((position) => ({
+          externalId: position.id,
+          stockSymbol: position.stockSymbol,
+          type: position.type,
+          volume: position.volume,
+          openDate: parseDate(
+            position.openDate,
+            "dd/MM/yyyy HH:mm:ss",
+            new Date(),
+          ).toISOString(),
+          pricePerVolume: position.pricePerVolume,
+          totalPrice: position.totalPrice,
+        }));
 
-      onOperationsImportMutate(
-        {
+        await mutateAsync({
           params: { path: { portfolioId } },
           body: { operations },
-        },
-        {
-          onSuccess: () => {
-            formApi.reset();
-            setCurrentStep(0);
-          },
-        },
-      );
+        });
+
+        formApi.reset();
+        setCurrentStep(0);
+      } catch (_e) {}
     },
   });
 
@@ -163,10 +161,15 @@ function Index() {
           </div>
         ))
         .with(2, () => (
-          <ConsentAndSubmitOperations
-            isPending={isPending}
-            setCurrentStep={setCurrentStep}
-            totalPosition={cashOperationHistory?.positions.length || 0}
+          <form.Subscribe
+            selector={(state) => [state.isSubmitting]}
+            children={([isSubmitting]) => (
+              <ConsentAndSubmitOperations
+                isPending={isSubmitting}
+                setCurrentStep={setCurrentStep}
+                totalPosition={cashOperationHistory?.positions.length || 0}
+              />
+            )}
           />
         ))
         .exhaustive(() => null)}

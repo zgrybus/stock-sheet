@@ -74,6 +74,7 @@ export const ConsentAndSubmitOperations = ({
           </div>
           <div className={`flex items-start space-x-3 rounded-md border`}>
             <Label htmlFor="terms" className={`cursor-pointer items-start`}>
+              {/* TODO: validate this checkbox */}
               <Checkbox
                 id="terms"
                 className={`

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot, Slottable } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
 
@@ -56,7 +56,7 @@ const buttonVariants = cva(
           has-[>svg]:px-3
         `,
         sm: `
-          h-8 gap-1.5 rounded-md px-3
+          h-8 rounded-md px-3
           has-[>svg]:px-2.5
         `,
         lg: `
@@ -90,35 +90,25 @@ function Button({
     asChild?: boolean;
     loading?: boolean;
   }) {
-  if (asChild) {
-    return (
-      <Slot
-        data-slot="button"
-        className={cn(buttonVariants({ variant, size, className }))}
-        {...props}
-      >
-        {children}
-      </Slot>
-    );
-  }
+  const Comp = asChild ? Slot : "button";
 
   return (
-    <button
+    <Comp
       data-slot="button"
-      disabled={loading || disabled}
       type={type}
+      disabled={disabled || loading}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     >
       {loading && <Spinner size={size} className="absolute" />}
-      <span
-        className={cn("flex items-center gap-2", {
-          invisible: loading,
-        })}
-      >
-        {children}
-      </span>
-    </button>
+      <Slottable>
+        {loading ? (
+          <span className="invisible inline-flex gap-2">{children}</span>
+        ) : (
+          children
+        )}
+      </Slottable>
+    </Comp>
   );
 }
 

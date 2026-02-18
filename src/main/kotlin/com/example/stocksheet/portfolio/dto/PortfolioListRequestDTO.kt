@@ -4,7 +4,7 @@ import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import com.example.stocksheet.portfolio.validation.ValidCurrency
 import jakarta.validation.constraints.NotBlank
 
-data class PortfolioRequestDTO(
+data class PortfolioListRequestDTO(
     @field:NotBlank(message = "Name cannot be empty")
     val name: String? = null,
     @field:NotBlank(message = "Currency cannot be empty")

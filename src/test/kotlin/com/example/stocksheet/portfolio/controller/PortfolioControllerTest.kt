@@ -1,7 +1,7 @@
 package com.example.stocksheet.portfolio.controller
 
 import com.example.stocksheet.BaseIntegrationTest
-import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
+import com.example.stocksheet.portfolio.dto.PortfolioListResponseDTO
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import io.kotest.matchers.collections.shouldContainExactly
@@ -47,9 +47,9 @@ class PortfolioControllerTest : BaseIntegrationTest() {
                         }.andReturn()
                         .response
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioResponseDTO::class.java)
+                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioListResponseDTO::class.java)
 
-                returnedPortfolio.shouldBe(PortfolioResponseDTO(id = returnedPortfolio.id, name = body.name, currency = body.currency))
+                returnedPortfolio.shouldBe(PortfolioListResponseDTO(id = returnedPortfolio.id, name = body.name, currency = body.currency))
             }
         }
 
@@ -57,12 +57,12 @@ class PortfolioControllerTest : BaseIntegrationTest() {
             it("returns list of the portfolio") {
                 val response = mockMvc.get("/api/portfolio/list").andReturn().response
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, Array<PortfolioResponseDTO>::class.java)
+                val returnedPortfolio = objectMapper.readValue(response.contentAsString, Array<PortfolioListResponseDTO>::class.java)
 
                 returnedPortfolio.shouldHaveSize(2)
                 returnedPortfolio.shouldContainExactly(
-                    PortfolioResponseDTO(id = portfolioUSD.id!!, name = portfolioUSD.name, currency = portfolioUSD.currency),
-                    PortfolioResponseDTO(id = portfolioPLN.id!!, name = portfolioPLN.name, currency = portfolioPLN.currency),
+                    PortfolioListResponseDTO(id = portfolioUSD.id!!, name = portfolioUSD.name, currency = portfolioUSD.currency),
+                    PortfolioListResponseDTO(id = portfolioPLN.id!!, name = portfolioPLN.name, currency = portfolioPLN.currency),
                 )
             }
 
@@ -71,7 +71,7 @@ class PortfolioControllerTest : BaseIntegrationTest() {
 
                 val response = mockMvc.get("/api/portfolio/list").andReturn().response
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, Array<PortfolioResponseDTO>::class.java)
+                val returnedPortfolio = objectMapper.readValue(response.contentAsString, Array<PortfolioListResponseDTO>::class.java)
 
                 returnedPortfolio.shouldHaveSize(0)
             }

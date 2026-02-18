@@ -7,11 +7,12 @@ import { WalletStructureBarChart } from "@/features/wallet-structure/wallet-stru
 import { $apiStockSheet } from "@/apis/stock-sheet/client";
 import { useMemo } from "react";
 
-export const Route = createFileRoute("/wallet/structure/")({
+export const Route = createFileRoute("/_app/_portfolio/wallet/structure/")({
   component: Index,
 });
 
 function Index() {
+  // TODO: create api to retrieve single portfolio
   const portfolioId = 1;
   const {
     data: holdings,
@@ -21,6 +22,7 @@ function Index() {
     params: { path: { portfolioId } },
   });
 
+  // TODO: get currency from single portfolio api
   const currency = "USD";
   const stocks = useMemo(() => {
     if (!holdings?.positions) {
@@ -32,10 +34,12 @@ function Index() {
   }, [holdings]);
 
   if (isPending) {
+    // TODO: add skeleton(?)
     return <div>Pobieranie..</div>;
   }
 
   if (isError) {
+    // TODO: add error handling
     return <div>Coś poszło nie tak..</div>;
   }
 
