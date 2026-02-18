@@ -1,8 +1,8 @@
 package com.example.stocksheet.portfolio.service
 
 import com.example.stocksheet.Loggable
-import com.example.stocksheet.portfolio.dto.PortfolioRequestDTO
-import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
+import com.example.stocksheet.portfolio.dto.PortfolioListRequestDTO
+import com.example.stocksheet.portfolio.dto.PortfolioListResponseDTO
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -12,7 +12,7 @@ class PortfolioService(
     val portfolioRepository: PortfolioRepository,
 ) : Loggable {
     @Transactional
-    fun createPortfolio(dto: PortfolioRequestDTO): PortfolioResponseDTO {
+    fun createPortfolio(dto: PortfolioListRequestDTO): PortfolioListResponseDTO {
         logger.info { "Creating portfolio - ${dto.name} - for ${dto.currency} currency" }
 
         // TODO
@@ -21,14 +21,14 @@ class PortfolioService(
         return portfolioRepository
             .save(dto.toEntity())
             .let {
-                PortfolioResponseDTO(name = it.name, currency = it.currency, id = it.id!!)
+                PortfolioListResponseDTO(name = it.name, currency = it.currency, id = it.id!!)
             }.also {
                 logger.info { "Created portfolio ${it.id}" }
             }
     }
 
     @Transactional(readOnly = true)
-    fun getPortfolioList(): List<PortfolioResponseDTO> {
+    fun getPortfolioList(): List<PortfolioListResponseDTO> {
         logger.info { "Attempt to get portfolio list" }
 
         return portfolioRepository
@@ -37,7 +37,7 @@ class PortfolioService(
                 logger.info { "Retrieved ${it.size} portfolio items" }
             }.let {
                 it.map { portfolio ->
-                    PortfolioResponseDTO(name = portfolio.name, currency = portfolio.currency, id = portfolio.id!!)
+                    PortfolioListResponseDTO(name = portfolio.name, currency = portfolio.currency, id = portfolio.id!!)
                 }
             }
     }

@@ -19,7 +19,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PortfolioRequestDTO"
+                "$ref": "#/components/schemas/PortfolioListRequestDTO"
               }
             }
           },
@@ -31,7 +31,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PortfolioResponseDTO"
+                  "$ref": "#/components/schemas/PortfolioListResponseDTO"
                 }
               }
             }
@@ -150,7 +150,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/PortfolioResponseDTO"
+                    "$ref": "#/components/schemas/PortfolioListResponseDTO"
                   }
                 }
               }
@@ -251,7 +251,7 @@
   },
   "components": {
     "schemas": {
-      "PortfolioRequestDTO": {
+      "PortfolioListRequestDTO": {
         "type": "object",
         "properties": {
           "name": {
@@ -265,7 +265,7 @@
         },
         "required": ["currency", "name"]
       },
-      "PortfolioResponseDTO": {
+      "PortfolioListResponseDTO": {
         "type": "object",
         "properties": {
           "id": {

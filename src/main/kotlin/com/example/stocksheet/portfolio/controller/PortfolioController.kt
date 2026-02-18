@@ -1,7 +1,7 @@
 package com.example.stocksheet.portfolio.controller
 
-import com.example.stocksheet.portfolio.dto.PortfolioRequestDTO
-import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
+import com.example.stocksheet.portfolio.dto.PortfolioListRequestDTO
+import com.example.stocksheet.portfolio.dto.PortfolioListResponseDTO
 import com.example.stocksheet.portfolio.service.PortfolioService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,12 +19,12 @@ class PortfolioController(
         produces = ["application/json"],
     )
     fun createPortfolio(
-        @RequestBody body: PortfolioRequestDTO,
-    ): PortfolioResponseDTO = portfolioService.createPortfolio(body)
+        @RequestBody body: PortfolioListRequestDTO,
+    ): PortfolioListResponseDTO = portfolioService.createPortfolio(body)
 
     @GetMapping(
         value = ["/list"],
         produces = ["application/json"],
     )
-    fun getPortfolioList(): List<PortfolioResponseDTO> = portfolioService.getPortfolioList()
+    fun getPortfolioList(): List<PortfolioListResponseDTO> = portfolioService.getPortfolioList()
 }
