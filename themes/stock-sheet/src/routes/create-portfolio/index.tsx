@@ -35,7 +35,7 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate } = $apiStockSheet.useMutation("post", "/api/portfolio");
+  const { mutateAsync } = $apiStockSheet.useMutation("post", "/api/portfolio");
 
   const form = useForm({
     defaultValues: {
@@ -45,30 +45,27 @@ function RouteComponent() {
     validators: {
       onSubmit: portfolioSchema,
     },
-    onSubmit: ({ value }) => {
-      mutate(
-        { body: value },
-        {
-          onSuccess: (data) => {
-            const portfolioListQueryKey = $apiStockSheet.queryOptions(
-              "get",
-              "/api/portfolio/list",
-            ).queryKey;
-            queryClient.invalidateQueries({
-              queryKey: portfolioListQueryKey,
-            });
+    onSubmit: async ({ value }) => {
+      try {
+        const data = await mutateAsync({ body: value });
 
-            toast.success(`Portfel "${value.name}" został utworzony`);
-            navigate({
-              to: "/",
-              search: (prev) => ({ ...prev, portfolioId: data.id }),
-            });
-          },
-          onError: () => {
-            toast.success("Błąd podczas tworzenia portfela. Spróbuj ponownie.");
-          },
-        },
-      );
+        const portfolioListQueryKey = $apiStockSheet.queryOptions(
+          "get",
+          "/api/portfolio/list",
+        ).queryKey;
+        queryClient.invalidateQueries({
+          queryKey: portfolioListQueryKey,
+        });
+
+        toast.success(`Portfel "${value.name}" został utworzony`);
+        navigate({
+          to: "/",
+          search: (prev) => ({ ...prev, portfolioId: data.id }),
+        });
+      } catch (_e) {
+        // TODO: add error handling
+        toast.error("Błąd podczas tworzenia portfela. Spróbuj ponownie.");
+      }
     },
   });
 

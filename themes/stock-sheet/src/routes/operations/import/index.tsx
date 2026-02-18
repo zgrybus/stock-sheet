@@ -13,6 +13,7 @@ import type { CashOperationHistory } from "@/features/xlsx-utils/types";
 import { match } from "ts-pattern";
 import { parse as parseDate } from "date-fns";
 import { useOperationsImportMutation } from "@/features/operations-api/use-operations-import-mutation/use-operations-import-mutation";
+import { toast } from "sonner";
 
 const STEPS: Array<StepItem> = [
   { title: "Wgranie pliku", icon: Upload },
@@ -28,45 +29,48 @@ function Index() {
   const portfolioId = 1001;
   const currency = "USD";
   const [currentStep, setCurrentStep] = useState<0 | 1 | 2>(0);
-  const { mutate: onOperationsImportMutate, isPending } =
-    useOperationsImportMutation();
+  const { mutateAsync } = useOperationsImportMutation();
 
   const form = useForm({
     defaultValues: {
+      // TODO add schema
       cashOperationHistoryJson: null as CashOperationHistory | null,
     },
-    onSubmit: ({ value, formApi }) => {
+    onSubmit: async ({ value, formApi }) => {
       if (!value.cashOperationHistoryJson) {
         return;
       }
-      const { positions } = value.cashOperationHistoryJson;
+      try {
+        const { positions } = value.cashOperationHistoryJson;
 
-      const operations = positions.map((position) => ({
-        externalId: position.id,
-        stockSymbol: position.stockSymbol,
-        type: position.type,
-        volume: position.volume,
-        openDate: parseDate(
-          position.openDate,
-          "dd/MM/yyyy HH:mm:ss",
-          new Date(),
-        ).toISOString(),
-        pricePerVolume: position.pricePerVolume,
-        totalPrice: position.totalPrice,
-      }));
+        const operations = positions.map((position) => ({
+          externalId: position.id,
+          stockSymbol: position.stockSymbol,
+          type: position.type,
+          volume: position.volume,
+          openDate: parseDate(
+            position.openDate,
+            "dd/MM/yyyy HH:mm:ss",
+            new Date(),
+          ).toISOString(),
+          pricePerVolume: position.pricePerVolume,
+          totalPrice: position.totalPrice,
+        }));
 
-      onOperationsImportMutate(
-        {
+        await mutateAsync({
           params: { path: { portfolioId } },
           body: { operations },
-        },
-        {
-          onSuccess: () => {
-            formApi.reset();
-            setCurrentStep(0);
-          },
-        },
-      );
+        });
+
+        formApi.reset();
+        setCurrentStep(0);
+        toast.success("Transakcje zostały pomyślnie dodane do portfela.");
+      } catch (_e) {
+        // TODO: add error handling
+        toast.error(
+          "Wystąpił błąd podczas importu operacji. Spróbuj ponownie.",
+        );
+      }
     },
   });
 
@@ -163,10 +167,15 @@ function Index() {
           </div>
         ))
         .with(2, () => (
-          <ConsentAndSubmitOperations
-            isPending={isPending}
-            setCurrentStep={setCurrentStep}
-            totalPosition={cashOperationHistory?.positions.length || 0}
+          <form.Subscribe
+            selector={(state) => [state.isSubmitting]}
+            children={([isSubmitting]) => (
+              <ConsentAndSubmitOperations
+                isPending={isSubmitting}
+                setCurrentStep={setCurrentStep}
+                totalPosition={cashOperationHistory?.positions.length || 0}
+              />
+            )}
           />
         ))
         .exhaustive(() => null)}
