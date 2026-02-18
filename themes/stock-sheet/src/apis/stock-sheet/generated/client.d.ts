@@ -4,216 +4,337 @@
  */
 
 export interface paths {
-    "/api/portfolio": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["createPortfolio"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  "/api/portfolio": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/operations/import/{portfolioId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["importOperations"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations["createPortfolio"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/operations/import/{portfolioId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/portfolio/list": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getPortfolioList"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post: operations["importOperations"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/portfolio/list": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/operations/holdings/{portfolioId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["getHoldings"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get: operations["getPortfolioList"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/api/operations/holdings/{portfolioId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    get: operations["getHoldings"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        PortfolioRequestDTO: {
-            name: string;
-            currency: string;
-        };
-        PortfolioResponseDTO: {
-            /** Format: int64 */
-            id: number;
-            name: string;
-            currency: string;
-        };
-        OperationRequestDTO: {
-            externalId: string;
-            stockSymbol: string;
-            /** @enum {string} */
-            type: "BUY" | "SELL";
-            volume: number;
-            /** Format: date-time */
-            openDate: string;
-            pricePerVolume: number;
-            totalPrice: number;
-        };
-        OperationsBatchRequestDTO: {
-            operations: Array<components["schemas"]["OperationRequestDTO"]>;
-        };
-        OperationImportResponseDTO: {
-            added: Array<components["schemas"]["OperationSummaryDTO"]>;
-            duplicated: Array<components["schemas"]["OperationSummaryDTO"]>;
-        };
-        OperationSummaryDTO: {
-            /** Format: int64 */
-            id?: number;
-            externalId?: string;
-        };
-        HoldingPositionDTO: {
-            stockSymbol: string;
-            totalVolume: number;
-            totalCost: number;
-        };
-        PortfolioHoldingsDTO: {
-            /** Format: int64 */
-            portfolioId: number;
-            positions: Array<components["schemas"]["HoldingPositionDTO"]>;
-        };
+  schemas: {
+    PortfolioRequestDTO: {
+      name: string;
+      currency: string;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    PortfolioResponseDTO: {
+      /** Format: int64 */
+      id: number;
+      name: string;
+      currency: string;
+    };
+    OperationRequestDTO: {
+      externalId: string;
+      stockSymbol: string;
+      /** @enum {string} */
+      type: "BUY" | "SELL";
+      volume: number;
+      /** Format: date-time */
+      openDate: string;
+      pricePerVolume: number;
+      totalPrice: number;
+    };
+    OperationsBatchRequestDTO: {
+      operations: Array<components["schemas"]["OperationRequestDTO"]>;
+    };
+    OperationImportResponseDTO: {
+      added: Array<components["schemas"]["OperationSummaryDTO"]>;
+      duplicated: Array<components["schemas"]["OperationSummaryDTO"]>;
+    };
+    OperationSummaryDTO: {
+      /** Format: int64 */
+      id?: number;
+      externalId?: string;
+    };
+    HoldingPositionDTO: {
+      stockSymbol: string;
+      totalVolume: number;
+      totalCost: number;
+    };
+    PortfolioHoldingsDTO: {
+      /** Format: int64 */
+      portfolioId: number;
+      positions: Array<components["schemas"]["HoldingPositionDTO"]>;
+    };
+    ErrorResponse: {
+      path?: string;
+      /** Format: int32 */
+      status?: number;
+      errors?: Array<components["schemas"]["ErrorDTO"]>;
+    };
+    ErrorDTO: {
+      /** @enum {string} */
+      type?: "SOMETHING_WENT_WRONG";
+      message?: string;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    createPortfolio: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PortfolioRequestDTO"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PortfolioResponseDTO"];
-                };
-            };
-        };
+  createPortfolio: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    importOperations: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                portfolioId: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OperationsBatchRequestDTO"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OperationImportResponseDTO"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PortfolioRequestDTO"];
+      };
     };
-    getPortfolioList: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": Array<components["schemas"]["PortfolioResponseDTO"]>;
-                };
-            };
+        content: {
+          "application/json": components["schemas"]["PortfolioResponseDTO"];
         };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
     };
-    getHoldings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                portfolioId: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PortfolioHoldingsDTO"];
-                };
-            };
-        };
+  };
+  importOperations: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        portfolioId: number;
+      };
+      cookie?: never;
     };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OperationsBatchRequestDTO"];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["OperationImportResponseDTO"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  getPortfolioList: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": Array<
+            components["schemas"]["PortfolioResponseDTO"]
+          >;
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
+  getHoldings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        portfolioId: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PortfolioHoldingsDTO"];
+        };
+      };
+      /** @description Bad Request */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+      /** @description Internal Server Error */
+      500: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorResponse"];
+        };
+      };
+    };
+  };
 }

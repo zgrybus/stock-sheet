@@ -1,4 +1,5 @@
 import { $apiStockSheet } from "@/apis/stock-sheet/client";
+import { mockErrorResponse } from "@/apis/stock-sheet/mocks/get-error-response.mock";
 import { $mswStockSheetApi } from "@/apis/stock-sheet/msw";
 import { mswServer } from "@/test/msw/msw-server";
 import { renderApp } from "@/test/test-utils";
@@ -78,7 +79,7 @@ describe("Route - /create-portfolio", () => {
     mswServer.use(
       $mswStockSheetApi.post("/api/portfolio", ({ response, request }) => {
         importOperationsMsw.push(request);
-        return response("5XX").text("Error happened");
+        return response(500).json(mockErrorResponse);
       }),
     );
     const user = userEvent.setup();
