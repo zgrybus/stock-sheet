@@ -53,11 +53,11 @@ function RouteComponent() {
           "get",
           "/api/portfolio/list",
         ).queryKey;
-        queryClient.invalidateQueries({
+        await queryClient.invalidateQueries({
           queryKey: portfolioListQueryKey,
         });
 
-        toast.success(`Portfel "${value.name}" został utworzony`);
+        toast.success(`Portfel "${data.name}" został utworzony`);
         navigate({
           to: "/",
           search: (prev) => ({ ...prev, portfolioId: data.id }),

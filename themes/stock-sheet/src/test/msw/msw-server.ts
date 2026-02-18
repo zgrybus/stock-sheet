@@ -10,4 +10,10 @@ export const mswServer = setupServer(
     "/api/operations/import/{portfolioId}",
     ({ response }) => response(200).json({ added: [], duplicated: [] }),
   ),
+  $mswStockSheetApi.get("/api/portfolio/list", ({ response }) =>
+    response(200).json([]),
+  ),
+  $mswStockSheetApi.post("/api/portfolio", ({ response }) =>
+    response(200).json({ id: 0, currency: "", name: "" }),
+  ),
 );
