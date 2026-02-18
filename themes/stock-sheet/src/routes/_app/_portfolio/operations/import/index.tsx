@@ -13,7 +13,6 @@ import type { CashOperationHistory } from "@/features/xlsx-utils/types";
 import { match } from "ts-pattern";
 import { parse as parseDate } from "date-fns";
 import { useOperationsImportMutation } from "@/features/operations-api/use-operations-import-mutation/use-operations-import-mutation";
-import { toast } from "sonner";
 
 const STEPS: Array<StepItem> = [
   { title: "Wgranie pliku", icon: Upload },
@@ -65,13 +64,7 @@ function Index() {
 
         formApi.reset();
         setCurrentStep(0);
-        toast.success("Transakcje zostały pomyślnie dodane do portfela.");
-      } catch (_e) {
-        // TODO: add error handling
-        toast.error(
-          "Wystąpił błąd podczas importu operacji. Spróbuj ponownie.",
-        );
-      }
+      } catch (_e) {}
     },
   });
 

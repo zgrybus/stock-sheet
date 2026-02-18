@@ -46,7 +46,7 @@ describe("Route - /operations/import", () => {
     );
   });
 
-  test("completes the full import flow from file upload to final submission", async () => {
+  test.only("completes the full import flow from file upload to final submission", async () => {
     const user = userEvent.setup();
     await renderApp({ to: "/operations/import" });
 

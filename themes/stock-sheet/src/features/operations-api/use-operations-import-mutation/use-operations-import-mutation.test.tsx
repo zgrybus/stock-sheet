@@ -1,4 +1,4 @@
-import { renderHook, screen, waitFor } from "@testing-library/react";
+import { renderHook, screen } from "@testing-library/react";
 import { useOperationsImportMutation } from "./use-operations-import-mutation";
 import { TestProviders } from "@/test/test-utils";
 import { QueryClient } from "@tanstack/react-query";
@@ -38,14 +38,12 @@ describe("useOperationsImportMutation", () => {
       wrapper: TestProviders,
     });
 
-    result.current.mutate({
+    await result.current.mutateAsync({
       params: { path: { portfolioId: 101 } },
       body: { operations: [] },
     });
 
-    await waitFor(() => {
-      expect(importRequestMsw).toHaveLength(1);
-    });
+    expect(importRequestMsw).toHaveLength(1);
     expect(importRequestMsw[0].url).toContain("/api/operations/import/101");
   });
 
@@ -54,7 +52,7 @@ describe("useOperationsImportMutation", () => {
       wrapper: TestProviders,
     });
 
-    result.current.mutate({
+    await result.current.mutateAsync({
       params: { path: { portfolioId: 101 } },
       body: { operations: [] },
     });
@@ -91,7 +89,7 @@ describe("useOperationsImportMutation", () => {
       wrapper: TestProviders,
     });
 
-    result.current.mutate({
+    await result.current.mutateAsync({
       params: { path: { portfolioId: 101 } },
       body: { operations: [] },
     });
@@ -115,12 +113,10 @@ describe("useOperationsImportMutation", () => {
       ),
     });
 
-    result.current.mutate({
+    await result.current.mutateAsync({
       params: { path: { portfolioId: 101 } },
       body: { operations: [] },
     });
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(queryClient.invalidateQueries).toHaveBeenCalledWith({
       queryKey: $apiStockSheet.queryOptions(
