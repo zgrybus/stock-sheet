@@ -1,6 +1,6 @@
 import type { components } from "../generated/client";
 
-export const mockPortfolioSummary: components["schemas"]["PortfolioHoldingsDTO"] =
+export const mockPortfolioHoldings: components["schemas"]["PortfolioHoldingsDTO"] =
   {
     portfolioId: 101,
     positions: [

@@ -1,5 +1,6 @@
 import type { components } from "../generated/client";
 
+// TODO: change PortfolioResponseDTO to PortfolioListResponseDTO
 export const mockPortfolioList: Array<
   components["schemas"]["PortfolioResponseDTO"]
 > = [

@@ -1,4 +1,4 @@
-import { mockPortfolioSummary } from "@/apis/stock-sheet/mocks/get-portfolio-summary.mock";
+import { mockPortfolioHoldings } from "@/apis/stock-sheet/mocks/get-portfolio-holdings.mock";
 import { $mswStockSheetApi } from "@/apis/stock-sheet/msw";
 import { mswServer } from "@/test/msw/msw-server";
 import { renderApp } from "@/test/test-utils";
@@ -10,7 +10,7 @@ describe("Route /wallet/structure/", () => {
       $mswStockSheetApi.get(
         "/api/operations/holdings/{portfolioId}",
         ({ response }) => {
-          return response(200).json(mockPortfolioSummary);
+          return response(200).json(mockPortfolioHoldings);
         },
       ),
     );
