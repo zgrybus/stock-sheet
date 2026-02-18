@@ -26,6 +26,7 @@ export const Route = createFileRoute("/operations/import/")({
 });
 
 function Index() {
+  // TODO: create api to retrieve single portfolio
   const portfolioId = 1001;
   const currency = "USD";
   const [currentStep, setCurrentStep] = useState<0 | 1 | 2>(0);
