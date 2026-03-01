@@ -36,6 +36,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/portfolio/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getPortfolio"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/portfolio/list": {
         parameters: {
             query?: never;
@@ -105,6 +121,12 @@ export interface components {
             id?: number;
             externalId?: string;
         };
+        PortfolioResponseDTO: {
+            /** Format: int64 */
+            id: number;
+            name: string;
+            currency: string;
+        };
         HoldingPositionDTO: {
             stockSymbol: string;
             totalVolume: number;
@@ -123,7 +145,7 @@ export interface components {
         };
         ErrorDTO: {
             /** @enum {string} */
-            type?: "SOMETHING_WENT_WRONG";
+            type?: "SOMETHING_WENT_WRONG" | "NOT_FOUND";
             message?: string;
         };
     };
@@ -208,6 +230,55 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OperationImportResponseDTO"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    getPortfolio: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortfolioResponseDTO"];
                 };
             };
             /** @description Bad Request */

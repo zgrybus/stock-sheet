@@ -138,6 +138,65 @@
         }
       }
     },
+    "/api/portfolio/{id}": {
+      "get": {
+        "tags": ["portfolio-controller"],
+        "operationId": "getPortfolio",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioResponseDTO"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/portfolio/list": {
       "get": {
         "tags": ["portfolio-controller"],
@@ -363,6 +422,22 @@
           }
         }
       },
+      "PortfolioResponseDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          }
+        },
+        "required": ["currency", "id", "name"]
+      },
       "HoldingPositionDTO": {
         "type": "object",
         "properties": {
@@ -415,7 +490,7 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["SOMETHING_WENT_WRONG"]
+            "enum": ["SOMETHING_WENT_WRONG", "NOT_FOUND"]
           },
           "message": {
             "type": "string"

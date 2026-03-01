@@ -13,6 +13,7 @@ import type { CashOperationHistory } from "@/features/xlsx-utils/types";
 import { match } from "ts-pattern";
 import { parse as parseDate } from "date-fns";
 import { useOperationsImportMutation } from "@/features/operations-api/use-operations-import-mutation/use-operations-import-mutation";
+import { $apiStockSheet } from "@/apis/stock-sheet/client";
 
 const STEPS: Array<StepItem> = [
   { title: "Wgranie pliku", icon: Upload },
@@ -25,9 +26,15 @@ export const Route = createFileRoute("/_app/_portfolio/operations/import/")({
 });
 
 function Index() {
-  // TODO: create api to retrieve single portfolio
-  const portfolioId = 1001;
-  const currency = "USD";
+  const portfolioSearchParamId = Route.useSearch({
+    select: (search) => search.portfolioId,
+  });
+  const { data: portfolio } = $apiStockSheet.useSuspenseQuery(
+    "get",
+    "/api/portfolio/{id}",
+    { params: { path: { id: portfolioSearchParamId as number } } },
+  );
+
   const [currentStep, setCurrentStep] = useState<0 | 1 | 2>(0);
   const { mutateAsync } = useOperationsImportMutation();
 
@@ -58,7 +65,7 @@ function Index() {
         }));
 
         await mutateAsync({
-          params: { path: { portfolioId } },
+          params: { path: { portfolioId: portfolio.id } },
           body: { operations },
         });
 
@@ -140,7 +147,7 @@ function Index() {
         .with(1, () => (
           <div>
             <WalletOperationsTable
-              currency={currency}
+              currency={portfolio.currency}
               operations={cashOperationHistory?.positions}
             />
             <div className="mt-10 flex justify-end gap-4">
