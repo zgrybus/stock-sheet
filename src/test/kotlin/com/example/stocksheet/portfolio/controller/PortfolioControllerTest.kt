@@ -1,13 +1,19 @@
 package com.example.stocksheet.portfolio.controller
 
 import com.example.stocksheet.BaseIntegrationTest
+import com.example.stocksheet.exceptions.dto.ErrorDTO
+import com.example.stocksheet.exceptions.dto.ErrorResponse
+import com.example.stocksheet.exceptions.dto.ErrorType
 import com.example.stocksheet.portfolio.dto.PortfolioListResponseDTO
+import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -57,10 +63,10 @@ class PortfolioControllerTest : BaseIntegrationTest() {
             it("returns list of the portfolio") {
                 val response = mockMvc.get("/api/portfolio/list").andReturn().response
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, Array<PortfolioListResponseDTO>::class.java)
+                val returnedPortfolios = objectMapper.readValue(response.contentAsString, Array<PortfolioListResponseDTO>::class.java)
 
-                returnedPortfolio.shouldHaveSize(2)
-                returnedPortfolio.shouldContainExactly(
+                returnedPortfolios.shouldHaveSize(2)
+                returnedPortfolios.shouldContainExactly(
                     PortfolioListResponseDTO(id = portfolioUSD.id!!, name = portfolioUSD.name, currency = portfolioUSD.currency),
                     PortfolioListResponseDTO(id = portfolioPLN.id!!, name = portfolioPLN.name, currency = portfolioPLN.currency),
                 )
@@ -71,9 +77,35 @@ class PortfolioControllerTest : BaseIntegrationTest() {
 
                 val response = mockMvc.get("/api/portfolio/list").andReturn().response
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, Array<PortfolioListResponseDTO>::class.java)
+                val returnedPortfolios = objectMapper.readValue(response.contentAsString, Array<PortfolioListResponseDTO>::class.java)
 
-                returnedPortfolio.shouldHaveSize(0)
+                returnedPortfolios.shouldHaveSize(0)
+            }
+        }
+
+        describe("GET /api/portfolio/{id}") {
+            it("returns portfolio by id") {
+                val response = mockMvc.get("/api/portfolio/${portfolioUSD.id}").andReturn().response
+
+                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioResponseDTO::class.java)
+
+                returnedPortfolio.shouldBeEqual(
+                    PortfolioResponseDTO(id = portfolioUSD.id!!, name = portfolioUSD.name, currency = portfolioUSD.currency),
+                )
+            }
+
+            it("returns error, when id does not exist") {
+                val response = mockMvc.get("/api/portfolio/0").andReturn().response
+
+                val returnedErrorDTO = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                returnedErrorDTO.shouldBeEqual(
+                    ErrorResponse(
+                        path = "uri=/api/portfolio/0",
+                        status = HttpStatus.NOT_FOUND.value(),
+                        errors = listOf(ErrorDTO(type = ErrorType.NOT_FOUND, message = "Could not find portfolio with id 0")),
+                    ),
+                )
             }
         }
     }

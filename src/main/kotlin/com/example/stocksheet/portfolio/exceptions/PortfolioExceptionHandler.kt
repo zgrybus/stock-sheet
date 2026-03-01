@@ -6,7 +6,6 @@ import com.example.stocksheet.exceptions.dto.ErrorResponse
 import com.example.stocksheet.exceptions.dto.ErrorType
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -18,12 +17,12 @@ import org.springframework.web.context.request.WebRequest
 class PortfolioExceptionHandler : Loggable {
     @ExceptionHandler(PortfolioNotFoundException::class)
     fun handlePortfolioNotFound(
-        ex: Exception,
+        ex: PortfolioNotFoundException,
         request: WebRequest,
     ): ResponseEntity<ErrorResponse> {
-        val message = ex.message ?: "Could not find portfolio with id $id"
+        val message = ex.message ?: "Could not find portfolio"
 
-        logger.error { message }
+        logger.error { "Resource not found at ${request.getDescription(false)}: $message" }
 
         val errorDTO = ErrorDTO(type = ErrorType.NOT_FOUND, message = message)
         val response = ErrorResponse(errors = listOf(errorDTO), status = HttpStatus.NOT_FOUND.value(), path = request.getDescription(false))
