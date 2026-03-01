@@ -2,6 +2,7 @@ package com.example.stocksheet.exceptions.dto
 
 enum class ErrorType {
     SOMETHING_WENT_WRONG,
+    NOT_FOUND,
 }
 
 data class ErrorDTO(

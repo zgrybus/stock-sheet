@@ -2,8 +2,10 @@ package com.example.stocksheet.portfolio.controller
 
 import com.example.stocksheet.portfolio.dto.PortfolioListRequestDTO
 import com.example.stocksheet.portfolio.dto.PortfolioListResponseDTO
+import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
 import com.example.stocksheet.portfolio.service.PortfolioService
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -27,4 +29,12 @@ class PortfolioController(
         produces = ["application/json"],
     )
     fun getPortfolioList(): List<PortfolioListResponseDTO> = portfolioService.getPortfolioList()
+
+    @GetMapping(
+        value = ["/{id}"],
+        produces = ["application/json"],
+    )
+    fun getPortfolio(
+        @PathVariable(value = "id") id: Long,
+    ): PortfolioResponseDTO = portfolioService.getPortfolio(id)
 }
