@@ -51,7 +51,7 @@ class PortfolioService(
         return portfolioRepository
             .findById(id)
             .orElseThrow { PortfolioNotFoundException("Could not find portfolio with id $id") }
-            .also { logger.info { "Retrieved ${it.id} portfolio items" } }
+            .also { logger.info { "Retrieved ${it.id} portfolio" } }
             .let {
                 PortfolioResponseDTO(name = it.name, currency = it.currency, id = it.id!!)
             }
