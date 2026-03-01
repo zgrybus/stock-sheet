@@ -11,8 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as AppPortfolioRouteImport } from './routes/_app/_portfolio'
+import { Route as AppCreatePortfolioIndexRouteImport } from './routes/_app/create-portfolio/index'
 import { Route as AppPortfolioIndexRouteImport } from './routes/_app/_portfolio/index'
-import { Route as AppPortfolioCreatePortfolioIndexRouteImport } from './routes/_app/_portfolio/create-portfolio/index'
 import { Route as AppPortfolioWalletStructureIndexRouteImport } from './routes/_app/_portfolio/wallet/structure/index'
 import { Route as AppPortfolioOperationsImportIndexRouteImport } from './routes/_app/_portfolio/operations/import/index'
 
@@ -24,17 +24,16 @@ const AppPortfolioRoute = AppPortfolioRouteImport.update({
   id: '/_portfolio',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCreatePortfolioIndexRoute = AppCreatePortfolioIndexRouteImport.update({
+  id: '/create-portfolio/',
+  path: '/create-portfolio/',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPortfolioIndexRoute = AppPortfolioIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppPortfolioRoute,
 } as any)
-const AppPortfolioCreatePortfolioIndexRoute =
-  AppPortfolioCreatePortfolioIndexRouteImport.update({
-    id: '/create-portfolio/',
-    path: '/create-portfolio/',
-    getParentRoute: () => AppPortfolioRoute,
-  } as any)
 const AppPortfolioWalletStructureIndexRoute =
   AppPortfolioWalletStructureIndexRouteImport.update({
     id: '/wallet/structure/',
@@ -50,13 +49,13 @@ const AppPortfolioOperationsImportIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof AppPortfolioIndexRoute
-  '/create-portfolio': typeof AppPortfolioCreatePortfolioIndexRoute
+  '/create-portfolio': typeof AppCreatePortfolioIndexRoute
   '/operations/import': typeof AppPortfolioOperationsImportIndexRoute
   '/wallet/structure': typeof AppPortfolioWalletStructureIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppPortfolioIndexRoute
-  '/create-portfolio': typeof AppPortfolioCreatePortfolioIndexRoute
+  '/create-portfolio': typeof AppCreatePortfolioIndexRoute
   '/operations/import': typeof AppPortfolioOperationsImportIndexRoute
   '/wallet/structure': typeof AppPortfolioWalletStructureIndexRoute
 }
@@ -65,7 +64,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/_app/_portfolio': typeof AppPortfolioRouteWithChildren
   '/_app/_portfolio/': typeof AppPortfolioIndexRoute
-  '/_app/_portfolio/create-portfolio/': typeof AppPortfolioCreatePortfolioIndexRoute
+  '/_app/create-portfolio/': typeof AppCreatePortfolioIndexRoute
   '/_app/_portfolio/operations/import/': typeof AppPortfolioOperationsImportIndexRoute
   '/_app/_portfolio/wallet/structure/': typeof AppPortfolioWalletStructureIndexRoute
 }
@@ -83,7 +82,7 @@ export interface FileRouteTypes {
     | '/_app'
     | '/_app/_portfolio'
     | '/_app/_portfolio/'
-    | '/_app/_portfolio/create-portfolio/'
+    | '/_app/create-portfolio/'
     | '/_app/_portfolio/operations/import/'
     | '/_app/_portfolio/wallet/structure/'
   fileRoutesById: FileRoutesById
@@ -108,18 +107,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPortfolioRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/create-portfolio/': {
+      id: '/_app/create-portfolio/'
+      path: '/create-portfolio'
+      fullPath: '/create-portfolio'
+      preLoaderRoute: typeof AppCreatePortfolioIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/_portfolio/': {
       id: '/_app/_portfolio/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppPortfolioIndexRouteImport
-      parentRoute: typeof AppPortfolioRoute
-    }
-    '/_app/_portfolio/create-portfolio/': {
-      id: '/_app/_portfolio/create-portfolio/'
-      path: '/create-portfolio'
-      fullPath: '/create-portfolio'
-      preLoaderRoute: typeof AppPortfolioCreatePortfolioIndexRouteImport
       parentRoute: typeof AppPortfolioRoute
     }
     '/_app/_portfolio/wallet/structure/': {
@@ -141,14 +140,12 @@ declare module '@tanstack/react-router' {
 
 interface AppPortfolioRouteChildren {
   AppPortfolioIndexRoute: typeof AppPortfolioIndexRoute
-  AppPortfolioCreatePortfolioIndexRoute: typeof AppPortfolioCreatePortfolioIndexRoute
   AppPortfolioOperationsImportIndexRoute: typeof AppPortfolioOperationsImportIndexRoute
   AppPortfolioWalletStructureIndexRoute: typeof AppPortfolioWalletStructureIndexRoute
 }
 
 const AppPortfolioRouteChildren: AppPortfolioRouteChildren = {
   AppPortfolioIndexRoute: AppPortfolioIndexRoute,
-  AppPortfolioCreatePortfolioIndexRoute: AppPortfolioCreatePortfolioIndexRoute,
   AppPortfolioOperationsImportIndexRoute:
     AppPortfolioOperationsImportIndexRoute,
   AppPortfolioWalletStructureIndexRoute: AppPortfolioWalletStructureIndexRoute,
@@ -160,10 +157,12 @@ const AppPortfolioRouteWithChildren = AppPortfolioRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppPortfolioRoute: typeof AppPortfolioRouteWithChildren
+  AppCreatePortfolioIndexRoute: typeof AppCreatePortfolioIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppPortfolioRoute: AppPortfolioRouteWithChildren,
+  AppCreatePortfolioIndexRoute: AppCreatePortfolioIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

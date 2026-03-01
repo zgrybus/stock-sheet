@@ -12,7 +12,12 @@ export const Sidebar = () => {
   return (
     <div className="flex h-full w-64 flex-col">
       <div className="px-6 pt-8 pb-6">
-        <Link to="/" aria-label="Przekieruj na stronę główną" className="block">
+        <Link
+          to="/"
+          aria-label="Przekieruj na stronę główną"
+          className="block"
+          search
+        >
           <img
             className="h-7 w-auto"
             srcSet={StockSheetLogo}
@@ -46,6 +51,7 @@ export const Sidebar = () => {
                 activeProps={{
                   className: "bg-accent text-accent-foreground font-semibold",
                 }}
+                search
               >
                 Struktura
               </Link>
@@ -59,6 +65,7 @@ export const Sidebar = () => {
                 activeProps={{
                   className: "bg-accent text-accent-foreground font-semibold",
                 }}
+                search
               >
                 Analiza Zysków
               </Link>
@@ -72,6 +79,7 @@ export const Sidebar = () => {
                 activeProps={{
                   className: "bg-accent text-accent-foreground font-semibold",
                 }}
+                search
               >
                 Dywidendy
               </Link>
@@ -105,6 +113,7 @@ export const Sidebar = () => {
                 activeProps={{
                   className: "bg-accent text-accent-foreground font-semibold",
                 }}
+                search
               >
                 Import operacji
               </Link>
@@ -118,6 +127,7 @@ export const Sidebar = () => {
                 activeProps={{
                   className: "bg-accent text-accent-foreground font-semibold",
                 }}
+                search
               >
                 Historia transakcji
               </Link>
@@ -131,6 +141,7 @@ export const Sidebar = () => {
                 activeProps={{
                   className: "bg-accent text-accent-foreground font-semibold",
                 }}
+                search
               >
                 Gotówka
               </Link>
