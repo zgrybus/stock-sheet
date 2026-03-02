@@ -5,15 +5,32 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 export const Route = createFileRoute("/_app/_portfolio")({
   component: PortfolioGuardComponent,
   loaderDeps: ({ search }) => ({ portfolioId: search.portfolioId }),
-  loader: async ({ context: { queryClient }, deps: { portfolioId } }) => {
-    if (!portfolioId) {
+  loader: async ({ context: { queryClient }, deps }) => {
+    const portfolioList = await queryClient.ensureQueryData(
+      $apiStockSheet.queryOptions("get", "/api/portfolio/list"),
+    );
+
+    if (portfolioList.length === 0) {
+      // TODO: redirect to welcome page
       throw redirect({ to: "/create-portfolio" });
+    }
+
+    const portfolioExists = portfolioList.some(
+      (p) => p.id === deps.portfolioId,
+    );
+
+    if (!deps.portfolioId || !portfolioExists) {
+      throw redirect({
+        to: ".",
+        search: (prev) => ({ ...prev, portfolioId: portfolioList[0].id }),
+        replace: true,
+      });
     }
 
     try {
       return await queryClient.ensureQueryData(
         $apiStockSheet.queryOptions("get", "/api/portfolio/{id}", {
-          params: { path: { id: portfolioId } },
+          params: { path: { id: deps.portfolioId } },
         }),
       );
     } catch (err: unknown) {

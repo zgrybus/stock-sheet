@@ -25,9 +25,14 @@ function Index() {
     data: holdings,
     isPending,
     isError,
-  } = $apiStockSheet.useQuery("get", "/api/operations/holdings/{portfolioId}", {
-    params: { path: { portfolioId: portfolio.id } },
-  });
+  } = $apiStockSheet.useQuery(
+    "get",
+    "/api/operations/holdings/{portfolioId}",
+    {
+      params: { path: { portfolioId: portfolio.id } },
+    },
+    { enabled: !!portfolio.id },
+  );
 
   const stocks = useMemo(() => {
     if (!holdings?.positions) {
@@ -73,6 +78,7 @@ function Index() {
         </p>
       </section>
       <WalletStructureTable stocks={stocks} currency={portfolio.currency} />
+      {/* TODO: Do not show charts, when there is no data  */}
       <section className="mt-10 rounded-md border bg-card p-6">
         <h3
           className={`
