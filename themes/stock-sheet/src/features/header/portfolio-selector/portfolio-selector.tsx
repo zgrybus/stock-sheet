@@ -151,7 +151,7 @@ export const PortfolioSelector = () => {
           `}
           onClick={() => setOpen(false)}
         >
-          <Link to="/create-portfolio">
+          <Link to="/create-portfolio" search>
             <PlusCircle className="mr-2 size-4" />
             Dodaj nowy portfel
           </Link>

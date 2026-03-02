@@ -12,18 +12,28 @@ export const Route = createFileRoute("/_app/_portfolio/wallet/structure/")({
 });
 
 function Index() {
-  // TODO: create api to retrieve single portfolio
-  const portfolioId = 1;
+  const portfolioSearchParamId = Route.useSearch({
+    select: (search) => search.portfolioId,
+  });
+  const { data: portfolio } = $apiStockSheet.useSuspenseQuery(
+    "get",
+    "/api/portfolio/{id}",
+    { params: { path: { id: portfolioSearchParamId as number } } },
+  );
+
   const {
     data: holdings,
     isPending,
     isError,
-  } = $apiStockSheet.useQuery("get", "/api/operations/holdings/{portfolioId}", {
-    params: { path: { portfolioId } },
-  });
+  } = $apiStockSheet.useQuery(
+    "get",
+    "/api/operations/holdings/{portfolioId}",
+    {
+      params: { path: { portfolioId: portfolio.id } },
+    },
+    { enabled: typeof portfolio.id === "number" },
+  );
 
-  // TODO: get currency from single portfolio api
-  const currency = "USD";
   const stocks = useMemo(() => {
     if (!holdings?.positions) {
       return [];
@@ -67,7 +77,8 @@ function Index() {
           Lista aktywnych instrumentów w portfelu.
         </p>
       </section>
-      <WalletStructureTable stocks={stocks} currency={currency} />
+      <WalletStructureTable stocks={stocks} currency={portfolio.currency} />
+      {/* TODO: Do not show charts, when there is no data  */}
       <section className="mt-10 rounded-md border bg-card p-6">
         <h3
           className={`
@@ -80,8 +91,14 @@ function Index() {
           Graficzne przedstawienie udziału poszczególnych instrumentów w
           całkowitej wartości Twoich inwestycji.
         </p>
-        <WalletStructurePieChart stocks={stocks} currency={currency} />
-        <WalletStructureBarChart stocks={stocks} currency={currency} />
+        <WalletStructurePieChart
+          stocks={stocks}
+          currency={portfolio.currency}
+        />
+        <WalletStructureBarChart
+          stocks={stocks}
+          currency={portfolio.currency}
+        />
       </section>
     </div>
   );

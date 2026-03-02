@@ -1,5 +1,6 @@
 import { mockPortfolioHoldings } from "@/apis/stock-sheet/mocks/get-portfolio-holdings.mock";
 import { $mswStockSheetApi } from "@/apis/stock-sheet/msw";
+import { checkPortfolioGuard } from "@/test/guard-test-utils/check-portfolio-guard";
 import { mswServer } from "@/test/msw/msw-server";
 import { renderApp } from "@/test/test-utils";
 import { screen, within } from "@testing-library/react";
@@ -43,4 +44,6 @@ describe("Route /wallet/structure/", () => {
     expect(thirdRowCells[1]).toHaveTextContent("10");
     expect(thirdRowCells[2]).toHaveTextContent("50");
   });
+
+  checkPortfolioGuard({ to: "/wallet/structure" });
 });

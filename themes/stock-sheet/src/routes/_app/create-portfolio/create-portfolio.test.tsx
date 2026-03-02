@@ -1,5 +1,6 @@
 import { $apiStockSheet } from "@/apis/stock-sheet/client";
 import { mockErrorResponse } from "@/apis/stock-sheet/mocks/get-error-response.mock";
+import { mockPortfolioList } from "@/apis/stock-sheet/mocks/get-portfolio-list.mock";
 import { $mswStockSheetApi } from "@/apis/stock-sheet/msw";
 import { mswServer } from "@/test/msw/msw-server";
 import { renderApp } from "@/test/test-utils";
@@ -7,6 +8,7 @@ import type { MswRequest } from "@/test/types";
 import { QueryClient } from "@tanstack/react-query";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { produce } from "immer";
 
 describe("Route - /create-portfolio", () => {
   let importOperationsMsw: Array<MswRequest> = [];
@@ -19,7 +21,7 @@ describe("Route - /create-portfolio", () => {
         importOperationsMsw.push(request);
         return response(200).json({
           id: 1002,
-          name: "Portfolio name 1",
+          name: "New Portfolio for Create Portfolio Test",
           currency: "USD",
         });
       }),
@@ -50,6 +52,20 @@ describe("Route - /create-portfolio", () => {
       "Test porftolio",
     );
 
+    mswServer.use(
+      $mswStockSheetApi.get("/api/portfolio/list", ({ response }) =>
+        response(200).json(
+          produce(mockPortfolioList, (draft) => {
+            draft.push({
+              id: 1002,
+              name: "New Portfolio for Create Portfolio Test",
+              currency: "GBP",
+            });
+          }),
+        ),
+      ),
+    );
+
     await user.click(screen.getByRole("button", { name: "Utwórz portfel" }));
 
     expect(
@@ -57,7 +73,7 @@ describe("Route - /create-portfolio", () => {
         name: (_, element) => {
           return (
             element.textContent ===
-            `Portfel "Portfolio name 1" został utworzony`
+            `Portfel "New Portfolio for Create Portfolio Test" został utworzony`
           );
         },
       }),

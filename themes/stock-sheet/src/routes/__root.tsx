@@ -13,6 +13,7 @@ const portfolioSearchParam = z.object({
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   validateSearch: portfolioSearchParam,
   component: RootComponent,
+  // TODO: add error component with reset
 });
 
 function RootComponent() {

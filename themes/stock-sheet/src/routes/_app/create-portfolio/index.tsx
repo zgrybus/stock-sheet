@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import { $apiStockSheet } from "@/apis/stock-sheet/client";
 import { useQueryClient } from "@tanstack/react-query";
 
-export const Route = createFileRoute("/_app/_portfolio/create-portfolio/")({
+export const Route = createFileRoute("/_app/create-portfolio/")({
   component: RouteComponent,
 });
 
@@ -78,6 +78,7 @@ function RouteComponent() {
           transition-colors
           hover:text-foreground
         `}
+        search
       >
         <ArrowLeft className="size-4" />
         Powrót do pulpitu
@@ -169,7 +170,9 @@ function RouteComponent() {
           </CardContent>
           <CardFooter className="mt-6 justify-end gap-3">
             <Button variant="ghost" size="lg" asChild>
-              <Link to="/">Anuluj</Link>
+              <Link to="/" search>
+                Anuluj
+              </Link>
             </Button>
 
             <form.Subscribe
