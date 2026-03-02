@@ -85,9 +85,9 @@ describe("PortfolioSelector", () => {
       to: "/",
     });
 
-    expect(router.history.location.href).toBe("/");
+    expect(router.history.location.href).toBe("/?portfolioId=101");
 
-    await user.click(screen.getByRole("button", { name: "Wybierz portfel" }));
+    await user.click(screen.getByRole("button", { name: "Portfolio item 1" }));
 
     const popoverContent = within(
       screen.getByRole("dialog", { name: "Wybór portfela" }),
@@ -95,6 +95,8 @@ describe("PortfolioSelector", () => {
     await user.click(
       popoverContent.getByRole("link", { name: "Dodaj nowy portfel" }),
     );
-    expect(router.history.location.href).toBe("/create-portfolio");
+    expect(router.history.location.href).toBe(
+      "/create-portfolio?portfolioId=101",
+    );
   });
 });

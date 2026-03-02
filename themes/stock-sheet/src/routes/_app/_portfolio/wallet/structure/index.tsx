@@ -31,7 +31,7 @@ function Index() {
     {
       params: { path: { portfolioId: portfolio.id } },
     },
-    { enabled: !!portfolio.id },
+    { enabled: typeof portfolio.id === "number" },
   );
 
   const stocks = useMemo(() => {
