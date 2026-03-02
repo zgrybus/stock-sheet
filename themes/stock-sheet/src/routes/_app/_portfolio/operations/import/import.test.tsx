@@ -1,5 +1,6 @@
 import { $mswStockSheetApi } from "@/apis/stock-sheet/msw";
 import { mockCashOperationHistory } from "@/features/xlsx-utils/use-xlsx-parser/xlsx-parser-data.mock";
+import { checkPortfolioGuard } from "@/test/guard-test-utils/check-portfolio-guard";
 import { mswServer } from "@/test/msw/msw-server";
 import { renderApp } from "@/test/test-utils";
 import type { MswRequest } from "@/test/types";
@@ -276,4 +277,6 @@ describe("Route - /operations/import", () => {
       screen.queryByTestId("submit-operations-position-number"),
     ).not.toBeInTheDocument();
   });
+
+  checkPortfolioGuard({ to: "/wallet/structure" });
 });
