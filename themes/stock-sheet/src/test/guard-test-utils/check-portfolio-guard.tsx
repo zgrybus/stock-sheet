@@ -14,7 +14,7 @@ export function checkPortfolioGuard<
   TOptions,
   TRouter extends RegisteredRouter = RegisteredRouter,
 >(targetPage: ValidateNavigateOptions<TRouter, TOptions>) {
-  describe.only("Portfolio Guard Logic", () => {
+  describe("Portfolio Guard Logic", () => {
     it("redirects to /create-portfolio when the portfolio list is empty", async () => {
       mswServer.use(
         $mswStockSheetApi.get("/api/portfolio/list", ({ response }) =>
