@@ -3,7 +3,6 @@ package com.example.stocksheet.portfolio.controller
 import com.example.stocksheet.BaseIntegrationTest
 import com.example.stocksheet.exceptions.dto.ErrorDTO
 import com.example.stocksheet.exceptions.dto.ErrorResponse
-import com.example.stocksheet.exceptions.dto.ErrorType
 import com.example.stocksheet.portfolio.dto.PortfolioRequestDTO
 import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
@@ -78,7 +77,10 @@ class PortfolioControllerTest : BaseIntegrationTest() {
                     ErrorResponse(
                         path = "uri=/api/portfolio",
                         status = HttpStatus.BAD_REQUEST.value(),
-                        errors = listOf(ErrorDTO(type = ErrorType.BAD_REQUEST, message = "Portfolio with ${body.name} already exists")),
+                        errors =
+                            listOf(
+                                ErrorDTO(type = HttpStatus.BAD_REQUEST.name, message = "Portfolio with ${body.name} already exists"),
+                            ),
                     ),
                 )
             }
@@ -128,7 +130,7 @@ class PortfolioControllerTest : BaseIntegrationTest() {
                     ErrorResponse(
                         path = "uri=/api/portfolio/0",
                         status = HttpStatus.NOT_FOUND.value(),
-                        errors = listOf(ErrorDTO(type = ErrorType.NOT_FOUND, message = "Could not find portfolio with id 0")),
+                        errors = listOf(ErrorDTO(type = HttpStatus.NOT_FOUND.name, message = "Could not find portfolio with id 0")),
                     ),
                 )
             }
@@ -152,7 +154,7 @@ class PortfolioControllerTest : BaseIntegrationTest() {
                     ErrorResponse(
                         path = "uri=/api/portfolio/0",
                         status = HttpStatus.NOT_FOUND.value(),
-                        errors = listOf(ErrorDTO(type = ErrorType.NOT_FOUND, message = "Could not find portfolio with id 0")),
+                        errors = listOf(ErrorDTO(type = HttpStatus.NOT_FOUND.name, message = "Could not find portfolio with id 0")),
                     ),
                 )
             }

@@ -3,7 +3,6 @@ package com.example.stocksheet.exceptions
 import com.example.stocksheet.Loggable
 import com.example.stocksheet.exceptions.dto.ErrorDTO
 import com.example.stocksheet.exceptions.dto.ErrorResponse
-import com.example.stocksheet.exceptions.dto.ErrorType
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
@@ -22,7 +21,7 @@ class GlobalExceptionHandler : Loggable {
     ): ResponseEntity<ErrorResponse> {
         logger.error { "An exception occurred: $ex" }
 
-        val errorDTO = ErrorDTO(type = ErrorType.SOMETHING_WENT_WRONG, message = "An exception occurred")
+        val errorDTO = ErrorDTO(type = HttpStatus.INTERNAL_SERVER_ERROR.name, message = "An exception occurred")
 
         val errorResponse =
             ErrorResponse(

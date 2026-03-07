@@ -3,7 +3,6 @@ package com.example.stocksheet.portfolio.exceptions
 import com.example.stocksheet.Loggable
 import com.example.stocksheet.exceptions.dto.ErrorDTO
 import com.example.stocksheet.exceptions.dto.ErrorResponse
-import com.example.stocksheet.exceptions.dto.ErrorType
 import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.http.HttpStatus
@@ -24,7 +23,7 @@ class PortfolioExceptionHandler : Loggable {
 
         logger.info { "Resource not found at ${request.getDescription(false)}: $message" }
 
-        val errorDTO = ErrorDTO(type = ErrorType.NOT_FOUND, message = message)
+        val errorDTO = ErrorDTO(type = HttpStatus.NOT_FOUND.name, message = message)
         val response = ErrorResponse(errors = listOf(errorDTO), status = HttpStatus.NOT_FOUND.value(), path = request.getDescription(false))
 
         return ResponseEntity(response, HttpStatus.NOT_FOUND)
@@ -39,7 +38,7 @@ class PortfolioExceptionHandler : Loggable {
 
         logger.info { "Portfolio name duplicated at: ${request.getDescription(false)}: $message" }
 
-        val errorDTO = ErrorDTO(type = ErrorType.BAD_REQUEST, message = message)
+        val errorDTO = ErrorDTO(type = HttpStatus.BAD_REQUEST.name, message = message)
         val response =
             ErrorResponse(errors = listOf(errorDTO), status = HttpStatus.BAD_REQUEST.value(), path = request.getDescription(false))
 
