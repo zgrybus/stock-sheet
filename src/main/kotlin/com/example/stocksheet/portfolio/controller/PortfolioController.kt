@@ -1,7 +1,6 @@
 package com.example.stocksheet.portfolio.controller
 
-import com.example.stocksheet.portfolio.dto.PortfolioListRequestDTO
-import com.example.stocksheet.portfolio.dto.PortfolioListResponseDTO
+import com.example.stocksheet.portfolio.dto.PortfolioRequestDTO
 import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
 import com.example.stocksheet.portfolio.service.PortfolioService
 import org.springframework.http.HttpStatus
@@ -24,14 +23,14 @@ class PortfolioController(
         produces = ["application/json"],
     )
     fun createPortfolio(
-        @RequestBody body: PortfolioListRequestDTO,
-    ): PortfolioListResponseDTO = portfolioService.createPortfolio(body)
+        @RequestBody body: PortfolioRequestDTO,
+    ): PortfolioResponseDTO = portfolioService.createPortfolio(body)
 
     @GetMapping(
         value = ["/list"],
         produces = ["application/json"],
     )
-    fun getPortfolioList(): List<PortfolioListResponseDTO> = portfolioService.getPortfolioList()
+    fun getPortfolioList(): List<PortfolioResponseDTO> = portfolioService.getPortfolioList()
 
     @GetMapping(
         value = ["/{id}"],

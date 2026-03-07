@@ -1,12 +1,7 @@
 package com.example.stocksheet.exceptions.dto
 
-enum class ErrorType {
-    SOMETHING_WENT_WRONG,
-    NOT_FOUND,
-}
-
 data class ErrorDTO(
-    val type: ErrorType,
+    val type: String,
     val message: String,
 )
 

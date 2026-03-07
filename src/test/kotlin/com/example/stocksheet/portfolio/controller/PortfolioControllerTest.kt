@@ -3,8 +3,7 @@ package com.example.stocksheet.portfolio.controller
 import com.example.stocksheet.BaseIntegrationTest
 import com.example.stocksheet.exceptions.dto.ErrorDTO
 import com.example.stocksheet.exceptions.dto.ErrorResponse
-import com.example.stocksheet.exceptions.dto.ErrorType
-import com.example.stocksheet.portfolio.dto.PortfolioListResponseDTO
+import com.example.stocksheet.portfolio.dto.PortfolioRequestDTO
 import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
@@ -46,7 +45,7 @@ class PortfolioControllerTest : BaseIntegrationTest() {
 
         describe("POST /api/portfolio") {
             it("adds new portfolio") {
-                val body = PortfolioEntity(name = "portfolio_name_3", currency = "EUR")
+                val body = PortfolioRequestDTO(name = "portfolio_name_3", currency = "EUR")
 
                 val response =
                     mockMvc
@@ -56,9 +55,34 @@ class PortfolioControllerTest : BaseIntegrationTest() {
                         }.andReturn()
                         .response
 
-                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioListResponseDTO::class.java)
+                val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioResponseDTO::class.java)
 
-                returnedPortfolio.shouldBe(PortfolioListResponseDTO(id = returnedPortfolio.id, name = body.name, currency = body.currency))
+                returnedPortfolio.shouldBe(PortfolioResponseDTO(id = returnedPortfolio.id, name = body.name!!, currency = body.currency!!))
+            }
+
+            it("returns error, when portfolio name already exists") {
+                val body = PortfolioEntity(name = portfolioUSD.name, currency = "EUR")
+
+                val response =
+                    mockMvc
+                        .post("/api/portfolio") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(body)
+                        }.andReturn()
+                        .response
+
+                val returnedError = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                returnedError.shouldBe(
+                    ErrorResponse(
+                        path = "uri=/api/portfolio",
+                        status = HttpStatus.BAD_REQUEST.value(),
+                        errors =
+                            listOf(
+                                ErrorDTO(type = HttpStatus.BAD_REQUEST.name, message = "Portfolio with ${body.name} already exists"),
+                            ),
+                    ),
+                )
             }
         }
 
@@ -66,12 +90,12 @@ class PortfolioControllerTest : BaseIntegrationTest() {
             it("returns list of the portfolio") {
                 val response = mockMvc.get("/api/portfolio/list").andReturn().response
 
-                val returnedPortfolios = objectMapper.readValue(response.contentAsString, Array<PortfolioListResponseDTO>::class.java)
+                val returnedPortfolios = objectMapper.readValue(response.contentAsString, Array<PortfolioResponseDTO>::class.java)
 
                 returnedPortfolios.shouldHaveSize(2)
                 returnedPortfolios.shouldContainExactly(
-                    PortfolioListResponseDTO(id = portfolioUSD.id!!, name = portfolioUSD.name, currency = portfolioUSD.currency),
-                    PortfolioListResponseDTO(id = portfolioPLN.id!!, name = portfolioPLN.name, currency = portfolioPLN.currency),
+                    PortfolioResponseDTO(id = portfolioUSD.id!!, name = portfolioUSD.name, currency = portfolioUSD.currency),
+                    PortfolioResponseDTO(id = portfolioPLN.id!!, name = portfolioPLN.name, currency = portfolioPLN.currency),
                 )
             }
 
@@ -80,7 +104,7 @@ class PortfolioControllerTest : BaseIntegrationTest() {
 
                 val response = mockMvc.get("/api/portfolio/list").andReturn().response
 
-                val returnedPortfolios = objectMapper.readValue(response.contentAsString, Array<PortfolioListResponseDTO>::class.java)
+                val returnedPortfolios = objectMapper.readValue(response.contentAsString, Array<PortfolioResponseDTO>::class.java)
 
                 returnedPortfolios.shouldHaveSize(0)
             }
@@ -106,7 +130,7 @@ class PortfolioControllerTest : BaseIntegrationTest() {
                     ErrorResponse(
                         path = "uri=/api/portfolio/0",
                         status = HttpStatus.NOT_FOUND.value(),
-                        errors = listOf(ErrorDTO(type = ErrorType.NOT_FOUND, message = "Could not find portfolio with id 0")),
+                        errors = listOf(ErrorDTO(type = HttpStatus.NOT_FOUND.name, message = "Could not find portfolio with id 0")),
                     ),
                 )
             }
@@ -130,7 +154,7 @@ class PortfolioControllerTest : BaseIntegrationTest() {
                     ErrorResponse(
                         path = "uri=/api/portfolio/0",
                         status = HttpStatus.NOT_FOUND.value(),
-                        errors = listOf(ErrorDTO(type = ErrorType.NOT_FOUND, message = "Could not find portfolio with id 0")),
+                        errors = listOf(ErrorDTO(type = HttpStatus.NOT_FOUND.name, message = "Could not find portfolio with id 0")),
                     ),
                 )
             }

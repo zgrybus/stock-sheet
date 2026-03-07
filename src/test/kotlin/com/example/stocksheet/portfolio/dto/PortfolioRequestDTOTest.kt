@@ -8,11 +8,11 @@ import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 
-class PortfolioListRequestDTOTest : DescribeSpec() {
+class PortfolioRequestDTOTest : DescribeSpec() {
     init {
         val validator: Validator = Validation.buildDefaultValidatorFactory().validator
 
-        fun getPortfolioRequestDTO(): PortfolioListRequestDTO = PortfolioListRequestDTO(name = "portfolio_name_1", currency = "USD")
+        fun getPortfolioRequestDTO(): PortfolioRequestDTO = PortfolioRequestDTO(name = "portfolio_name_1", currency = "USD")
 
         describe("PortfolioRequestDTO") {
             it("does not return any error") {

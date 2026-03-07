@@ -1,9 +1,9 @@
 package com.example.stocksheet.portfolio.service
 
 import com.example.stocksheet.Loggable
-import com.example.stocksheet.portfolio.dto.PortfolioListRequestDTO
-import com.example.stocksheet.portfolio.dto.PortfolioListResponseDTO
+import com.example.stocksheet.portfolio.dto.PortfolioRequestDTO
 import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
+import com.example.stocksheet.portfolio.exceptions.PortfolioNameDuplicatedException
 import com.example.stocksheet.portfolio.exceptions.PortfolioNotFoundException
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -15,21 +15,22 @@ class PortfolioService(
     val portfolioRepository: PortfolioRepository,
 ) : Loggable {
     @Transactional
-    fun createPortfolio(dto: PortfolioListRequestDTO): PortfolioListResponseDTO {
+    fun createPortfolio(dto: PortfolioRequestDTO): PortfolioResponseDTO {
         logger.info { "Creating portfolio - ${dto.name} - for ${dto.currency} currency" }
 
-        // TODO
-        // VALIDATE, WHETHER NAME IS DUPLICATED
+        if (portfolioRepository.existsByName(requireNotNull(dto.name))) {
+            throw PortfolioNameDuplicatedException("Portfolio with ${dto.name} already exists")
+        }
 
         val portfolio = portfolioRepository.save(dto.toEntity())
 
         logger.info { "Created portfolio ${portfolio.id}" }
 
-        return PortfolioListResponseDTO(name = portfolio.name, currency = portfolio.currency, id = portfolio.id!!)
+        return PortfolioResponseDTO(name = portfolio.name, currency = portfolio.currency, id = portfolio.id!!)
     }
 
     @Transactional(readOnly = true)
-    fun getPortfolioList(): List<PortfolioListResponseDTO> {
+    fun getPortfolioList(): List<PortfolioResponseDTO> {
         logger.info { "Attempt to get portfolio list" }
 
         val portfolios = portfolioRepository.findAll()
@@ -37,7 +38,7 @@ class PortfolioService(
         logger.info { "Retrieved ${portfolios.size} portfolio items" }
 
         return portfolios.map { portfolio ->
-            PortfolioListResponseDTO(
+            PortfolioResponseDTO(
                 id = portfolio.id!!,
                 name = portfolio.name,
                 currency = portfolio.currency,
