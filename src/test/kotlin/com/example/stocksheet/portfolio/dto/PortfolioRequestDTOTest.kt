@@ -8,7 +8,7 @@ import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation
 import jakarta.validation.Validator
 
-class PortfolioListRequestDTOTest : DescribeSpec() {
+class PortfolioRequestDTOTest : DescribeSpec() {
     init {
         val validator: Validator = Validation.buildDefaultValidatorFactory().validator
 
