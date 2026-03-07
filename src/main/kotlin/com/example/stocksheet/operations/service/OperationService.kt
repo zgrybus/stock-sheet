@@ -7,6 +7,7 @@ import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,34 +22,36 @@ class OperationService(
     @Transactional(readOnly = true)
     fun getHoldings(portfolioId: Long): PortfolioHoldingsDTO {
         logger.info { "Generating portfolio summary for portfolio: $portfolioId" }
-
         // TODO
         // VALIDATE PORTFOLIO ID and add test
-        return operationRepository
-            .findAllByPortfolioId(portfolioId)
-            .let { operations ->
-                val items =
-                    operations
-                        .groupingBy {
-                            it.stockSymbol
-                        }.fold(
-                            {
-                                key,
-                                _,
-                                ->
-                                HoldingPositionDTO(key, BigDecimal.ZERO, BigDecimal.ZERO)
-                            },
-                            { _, acc, element ->
-                                acc.copy(
-                                    totalVolume = acc.totalVolume.add(element.volume),
-                                    totalCost = acc.totalCost.add(element.totalPrice),
-                                )
-                            },
-                        ).values
-                        .toList()
+        val operations = operationRepository.findAllByPortfolioId(portfolioId)
 
-                PortfolioHoldingsDTO(portfolioId, items)
-            }.also { logger.info { "Portfolio summary generated for $portfolioId" } }
+        logger.info { "Portfolio summary generated for $portfolioId" }
+
+        val items =
+            operations
+                .groupingBy { it.stockSymbol }
+                .fold(
+                    {
+                        key,
+                        _,
+                        ->
+                        HoldingPositionDTO(key, BigDecimal.ZERO, BigDecimal.ZERO)
+                    },
+                    { _, acc, element ->
+                        acc.copy(
+                            totalVolume = acc.totalVolume.add(element.volume),
+                            totalCost = acc.totalCost.add(element.totalPrice),
+                        )
+                    },
+                ).values
+                .toList()
+
+        val response = PortfolioHoldingsDTO(portfolioId, items)
+
+        logger.info { "Portfolio summary generated for $portfolioId" }
+
+        return response
     }
 
     @Transactional()
@@ -61,9 +64,8 @@ class OperationService(
         // TODO
         // VALIDATE PORTFOLIO ID and add test
         val portfolio =
-            portfolioRepository.findById(portfolioId).orElseThrow {
-                ResponseStatusException(HttpStatus.NOT_FOUND, "Portfolio not found with id: $portfolioId")
-            }
+            portfolioRepository.findByIdOrNull(portfolioId)
+                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Portfolio not found with id: $portfolioId")
 
         val requestedExternalIds = batch.operations?.mapNotNull { it.externalId } ?: emptyList()
         val existingEntities = operationRepository.findAllByExternalIdIn(requestedExternalIds)

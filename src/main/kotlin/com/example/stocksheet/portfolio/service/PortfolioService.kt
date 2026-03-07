@@ -6,6 +6,7 @@ import com.example.stocksheet.portfolio.dto.PortfolioListResponseDTO
 import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
 import com.example.stocksheet.portfolio.exceptions.PortfolioNotFoundException
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -20,40 +21,49 @@ class PortfolioService(
         // TODO
         // VALIDATE, WHETHER NAME IS DUPLICATED
 
-        return portfolioRepository
-            .save(dto.toEntity())
-            .let {
-                PortfolioListResponseDTO(name = it.name, currency = it.currency, id = it.id!!)
-            }.also {
-                logger.info { "Created portfolio ${it.id}" }
-            }
+        val portfolio = portfolioRepository.save(dto.toEntity())
+
+        logger.info { "Created portfolio ${portfolio.id}" }
+
+        return PortfolioListResponseDTO(name = portfolio.name, currency = portfolio.currency, id = portfolio.id!!)
     }
 
     @Transactional(readOnly = true)
     fun getPortfolioList(): List<PortfolioListResponseDTO> {
         logger.info { "Attempt to get portfolio list" }
 
-        return portfolioRepository
-            .findAll()
-            .also {
-                logger.info { "Retrieved ${it.size} portfolio items" }
-            }.let {
-                it.map { portfolio ->
-                    PortfolioListResponseDTO(name = portfolio.name, currency = portfolio.currency, id = portfolio.id!!)
-                }
-            }
+        val portfolios = portfolioRepository.findAll()
+
+        logger.info { "Retrieved ${portfolios.size} portfolio items" }
+
+        return portfolios.map { portfolio ->
+            PortfolioListResponseDTO(
+                id = portfolio.id!!,
+                name = portfolio.name,
+                currency = portfolio.currency,
+            )
+        }
     }
 
     @Transactional(readOnly = true)
     fun getPortfolio(id: Long): PortfolioResponseDTO {
         logger.info { "Attempt to get portfolio with id $id" }
 
-        return portfolioRepository
-            .findById(id)
-            .orElseThrow { PortfolioNotFoundException("Could not find portfolio with id $id") }
-            .also { logger.info { "Retrieved ${it.id} portfolio" } }
-            .let {
-                PortfolioResponseDTO(name = it.name, currency = it.currency, id = it.id!!)
-            }
+        val portfolio = portfolioRepository.findByIdOrNull(id) ?: throw PortfolioNotFoundException("Could not find portfolio with id $id")
+
+        logger.info { "Retrieved ${portfolio.id} portfolio" }
+
+        return PortfolioResponseDTO(name = portfolio.name, currency = portfolio.currency, id = portfolio.id!!)
+    }
+
+    @Transactional()
+    fun deletePortfolio(id: Long) {
+        logger.info { "Attempt to delete portfolio with id $id" }
+
+        val portfolio = portfolioRepository.findByIdOrNull(id) ?: throw PortfolioNotFoundException("Could not find portfolio with id $id")
+
+        portfolioRepository.delete(portfolio)
+
+        logger.info { "Deleted $id portfolio" }
     }
 }
