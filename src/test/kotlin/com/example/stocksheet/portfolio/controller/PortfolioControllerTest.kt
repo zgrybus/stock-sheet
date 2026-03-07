@@ -8,6 +8,8 @@ import com.example.stocksheet.portfolio.dto.PortfolioListResponseDTO
 import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
+import io.kotest.matchers.booleans.shouldBeFalse
+import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.equals.shouldBeEqual
@@ -15,6 +17,7 @@ import io.kotest.matchers.shouldBe
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
@@ -96,6 +99,30 @@ class PortfolioControllerTest : BaseIntegrationTest() {
 
             it("returns error, when id does not exist") {
                 val response = mockMvc.get("/api/portfolio/0").andReturn().response
+
+                val returnedErrorDTO = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                returnedErrorDTO.shouldBeEqual(
+                    ErrorResponse(
+                        path = "uri=/api/portfolio/0",
+                        status = HttpStatus.NOT_FOUND.value(),
+                        errors = listOf(ErrorDTO(type = ErrorType.NOT_FOUND, message = "Could not find portfolio with id 0")),
+                    ),
+                )
+            }
+        }
+
+        describe("DELETE /api/portfolio/{id}") {
+            it("removes portfolio from the database") {
+                portfolioRepository.existsById(portfolioUSD.id!!).shouldBeTrue()
+
+                mockMvc.delete("/api/portfolio/${portfolioUSD.id}").andReturn().response
+
+                portfolioRepository.existsById(portfolioUSD.id!!).shouldBeFalse()
+            }
+
+            it("returns error, when id does not exist") {
+                val response = mockMvc.delete("/api/portfolio/0").andReturn().response
 
                 val returnedErrorDTO = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
 
