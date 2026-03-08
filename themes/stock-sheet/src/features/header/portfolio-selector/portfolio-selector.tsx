@@ -14,6 +14,7 @@ import {
   ChevronDown,
   AlertCircle,
   Inbox,
+  X,
 } from "lucide-react";
 import { useState } from "react";
 import { match, P } from "ts-pattern";
@@ -109,33 +110,68 @@ export const PortfolioSelector = () => {
               portfolios.map((portfolio) => {
                 const isActive = portfolio.id === selectedPortfolioId;
                 return (
-                  <Button
-                    asChild
+                  <div
                     key={portfolio.id}
-                    variant="ghost"
-                    className="w-full justify-between px-2 font-normal"
-                    onClick={() => setOpen(false)}
+                    data-testid="portfolio-item"
+                    className={`group relative flex w-full items-center`}
                   >
-                    <Link
-                      to="."
-                      search={(prev) => ({
-                        ...prev,
-                        portfolioId: portfolio.id,
-                      })}
+                    <Button
+                      asChild
+                      variant="ghost"
+                      className="w-full justify-start pr-8 pl-2 font-normal"
+                      onClick={() => setOpen(false)}
                     >
-                      <div className="flex items-center">
-                        <Wallet
-                          className={cn(
-                            "mr-2 size-4 opacity-30",
-                            isActive && "text-primary opacity-100",
-                          )}
-                        />
-                        <span className={cn(isActive && "text-primary")}>
-                          {portfolio.name}
-                        </span>
-                      </div>
-                    </Link>
-                  </Button>
+                      <Link
+                        to="."
+                        search={(prev) => ({
+                          ...prev,
+                          portfolioId: portfolio.id,
+                        })}
+                      >
+                        <div
+                          className={`flex w-full items-center overflow-hidden`}
+                        >
+                          <Wallet
+                            className={cn(
+                              "mr-2 size-4 shrink-0 opacity-30",
+                              isActive && "text-primary opacity-100",
+                            )}
+                          />
+                          <span
+                            className={cn(
+                              "truncate",
+                              isActive && "text-primary",
+                            )}
+                          >
+                            {portfolio.name}
+                          </span>
+                        </div>
+                      </Link>
+                    </Button>
+                    <Button
+                      size={"icon-xs"}
+                      variant={"destructive"}
+                      className={`
+                        pointer-events-none absolute top-1/2 right-2
+                        -translate-y-1/2 opacity-0 transition-opacity
+                        group-hover:pointer-events-auto group-hover:opacity-100
+                        focus-visible:pointer-events-auto
+                        focus-visible:opacity-100
+                      `}
+                      title={`Usuń portfolio ${portfolio.name}`}
+                      asChild
+                    >
+                      <Link
+                        to="."
+                        search={(prev) => ({
+                          ...prev,
+                          deletePortfolioId: portfolio.id,
+                        })}
+                      >
+                        <X />
+                      </Link>
+                    </Button>
+                  </div>
                 );
               }),
             )

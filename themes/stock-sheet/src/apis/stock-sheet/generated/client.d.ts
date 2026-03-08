@@ -46,7 +46,7 @@ export interface paths {
         get: operations["getPortfolio"];
         put?: never;
         post?: never;
-        delete?: never;
+        delete: operations["deletePortfolio"];
         options?: never;
         head?: never;
         patch?: never;
@@ -88,11 +88,11 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        PortfolioListRequestDTO: {
+        PortfolioRequestDTO: {
             name: string;
             currency: string;
         };
-        PortfolioListResponseDTO: {
+        PortfolioResponseDTO: {
             /** Format: int64 */
             id: number;
             name: string;
@@ -121,12 +121,6 @@ export interface components {
             id?: number;
             externalId?: string;
         };
-        PortfolioResponseDTO: {
-            /** Format: int64 */
-            id: number;
-            name: string;
-            currency: string;
-        };
         HoldingPositionDTO: {
             stockSymbol: string;
             totalVolume: number;
@@ -144,8 +138,7 @@ export interface components {
             errors?: Array<components["schemas"]["ErrorDTO"]>;
         };
         ErrorDTO: {
-            /** @enum {string} */
-            type?: "SOMETHING_WENT_WRONG" | "NOT_FOUND";
+            type?: string;
             message?: string;
         };
     };
@@ -166,7 +159,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PortfolioListRequestDTO"];
+                "application/json": components["schemas"]["PortfolioRequestDTO"];
             };
         };
         responses: {
@@ -176,7 +169,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PortfolioListResponseDTO"];
+                    "application/json": components["schemas"]["PortfolioResponseDTO"];
                 };
             };
             /** @description Bad Request */
@@ -310,6 +303,53 @@ export interface operations {
             };
         };
     };
+    deletePortfolio: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No Content */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
     getPortfolioList: {
         parameters: {
             query?: never;
@@ -325,7 +365,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": Array<components["schemas"]["PortfolioListResponseDTO"]>;
+                    "application/json": Array<components["schemas"]["PortfolioResponseDTO"]>;
                 };
             };
             /** @description Bad Request */

@@ -1,7 +1,7 @@
 import type { components } from "../generated/client";
 
 export const mockPortfolioList: Array<
-  components["schemas"]["PortfolioListResponseDTO"]
+  components["schemas"]["PortfolioResponseDTO"]
 > = [
   { id: 101, currency: "PLN", name: "Portfolio item 1" },
   { id: 102, currency: "EUR", name: "Portfolio item 2" },

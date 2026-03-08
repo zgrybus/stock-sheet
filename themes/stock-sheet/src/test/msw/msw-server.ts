@@ -21,4 +21,7 @@ export const mswServer = setupServer(
   $mswStockSheetApi.get("/api/portfolio/{id}", ({ response }) =>
     response(200).json(mockPortfolio),
   ),
+  $mswStockSheetApi.delete("/api/portfolio/{id}", ({ response }) =>
+    response(204).empty(),
+  ),
 );
