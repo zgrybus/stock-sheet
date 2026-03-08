@@ -31,7 +31,7 @@ export const DeletePortfolioDialogContentLazy = ({
 
   const onDelete = async () => {
     try {
-      await mutateAsync({ params: { path: { id: 12321321321 } } });
+      await mutateAsync({ params: { path: { id: portfolioId } } });
       await queryClient.invalidateQueries({
         queryKey: $apiStockSheet.queryOptions("get", "/api/portfolio/list")
           .queryKey,
