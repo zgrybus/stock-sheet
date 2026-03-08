@@ -247,6 +247,34 @@ class OperationControllerTest : BaseIntegrationTest() {
                     ),
                 )
             }
+
+            it("gets an error, when provided portfolio id does not exist") {
+                val body = getOperationsBatchRequestDTO()
+
+                val response =
+                    mockMvc
+                        .post("/api/operations/import/0") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(body)
+                        }.andReturn()
+                        .response
+
+                val returnedErrorResponse = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                returnedErrorResponse.shouldBe(
+                    ErrorResponse(
+                        path = "uri=/api/operations/import/0",
+                        status = HttpStatus.NOT_FOUND.value(),
+                        errors =
+                            listOf(
+                                ErrorDTO(
+                                    type = PortfolioErrorType.PORTFOLIO_NOT_FOUND.name,
+                                    message = "Could not find portfolio with id 0",
+                                ),
+                            ),
+                    ),
+                )
+            }
         }
     }
 }

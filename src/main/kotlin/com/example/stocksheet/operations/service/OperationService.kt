@@ -9,10 +9,8 @@ import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.exceptions.PortfolioNotFoundException
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 import java.math.BigDecimal
 
 @Service
@@ -63,11 +61,9 @@ class OperationService(
     ): OperationImportResponseDTO {
         logger.info { "Processing batch import for portfolioId - $portfolioId" }
 
-        // TODO
-        // VALIDATE PORTFOLIO ID and add test
         val portfolio =
             portfolioRepository.findByIdOrNull(portfolioId)
-                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Portfolio not found with id: $portfolioId")
+                ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
 
         val requestedExternalIds = batch.operations?.mapNotNull { it.externalId } ?: emptyList()
         val existingEntities = operationRepository.findAllByExternalIdIn(requestedExternalIds)
