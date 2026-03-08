@@ -67,7 +67,7 @@ describe("DeletePortfolioDialog", () => {
       screen.getByRole("dialog", { name: "Usuń portfolio" }),
     );
 
-    await user.click(dialog.getByRole("button", { name: "Anuluj" }));
+    await user.click(await dialog.findByRole("button", { name: "Anuluj" }));
 
     expect(
       screen.queryByRole("dialog", { name: "Usuń portfolio" }),
