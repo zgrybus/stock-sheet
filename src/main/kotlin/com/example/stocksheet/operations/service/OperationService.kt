@@ -5,13 +5,13 @@ import com.example.stocksheet.operations.dto.HoldingPositionDTO
 import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
+import com.example.stocksheet.operations.exceptions.OperationsBatchEmptyException
 import com.example.stocksheet.operations.repository.OperationRepository
+import com.example.stocksheet.portfolio.exceptions.PortfolioNotFoundException
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.server.ResponseStatusException
 import java.math.BigDecimal
 
 @Service
@@ -22,11 +22,12 @@ class OperationService(
     @Transactional(readOnly = true)
     fun getHoldings(portfolioId: Long): PortfolioHoldingsDTO {
         logger.info { "Generating portfolio summary for portfolio: $portfolioId" }
-        // TODO
-        // VALIDATE PORTFOLIO ID and add test
-        val operations = operationRepository.findAllByPortfolioId(portfolioId)
 
-        logger.info { "Portfolio summary generated for $portfolioId" }
+        if (!portfolioRepository.existsById(portfolioId)) {
+            throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
+        }
+
+        val operations = operationRepository.findAllByPortfolioId(portfolioId)
 
         val items =
             operations
@@ -61,22 +62,21 @@ class OperationService(
     ): OperationImportResponseDTO {
         logger.info { "Processing batch import for portfolioId - $portfolioId" }
 
-        // TODO
-        // VALIDATE PORTFOLIO ID and add test
+        val operations = requireNotNull(batch.operations)
+
         val portfolio =
             portfolioRepository.findByIdOrNull(portfolioId)
-                ?: throw ResponseStatusException(HttpStatus.NOT_FOUND, "Portfolio not found with id: $portfolioId")
+                ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
 
-        val requestedExternalIds = batch.operations?.mapNotNull { it.externalId } ?: emptyList()
+        val requestedExternalIds = operations.mapNotNull { it.externalId }
         val existingEntities = operationRepository.findAllByExternalIdIn(requestedExternalIds)
         val existingIdsMap = existingEntities.associateBy { it.externalId }
 
-        val (duplicatedOperations, newOperations) =
-            (batch.operations ?: emptyList()).partition {
-                existingIdsMap.containsKey(
-                    it.externalId,
-                )
-            }
+        val (duplicatedOperations, newOperations) = operations.partition { existingIdsMap.containsKey(it.externalId) }
+
+        if (newOperations.isEmpty()) {
+            throw OperationsBatchEmptyException("Could not find new operations")
+        }
 
         val savedOperations = operationRepository.saveAll(newOperations.map { it.toEntity(portfolio) })
 

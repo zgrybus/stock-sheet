@@ -23,7 +23,7 @@ class PortfolioExceptionHandler : Loggable {
 
         logger.info { "Resource not found at ${request.getDescription(false)}: $message" }
 
-        val errorDTO = ErrorDTO(type = HttpStatus.NOT_FOUND.name, message = message)
+        val errorDTO = ErrorDTO(type = PortfolioErrorType.PORTFOLIO_NOT_FOUND.name, message = message)
         val response = ErrorResponse(errors = listOf(errorDTO), status = HttpStatus.NOT_FOUND.value(), path = request.getDescription(false))
 
         return ResponseEntity(response, HttpStatus.NOT_FOUND)
@@ -38,7 +38,7 @@ class PortfolioExceptionHandler : Loggable {
 
         logger.info { "Portfolio name duplicated at: ${request.getDescription(false)}: $message" }
 
-        val errorDTO = ErrorDTO(type = HttpStatus.BAD_REQUEST.name, message = message)
+        val errorDTO = ErrorDTO(type = PortfolioErrorType.PORTFOLIO_NAME_DUPLICATED.name, message = message)
         val response =
             ErrorResponse(errors = listOf(errorDTO), status = HttpStatus.BAD_REQUEST.value(), path = request.getDescription(false))
 

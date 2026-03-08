@@ -1,6 +1,8 @@
 package com.example.stocksheet.operations.controller
 
 import com.example.stocksheet.BaseIntegrationTest
+import com.example.stocksheet.exceptions.dto.ErrorDTO
+import com.example.stocksheet.exceptions.dto.ErrorResponse
 import com.example.stocksheet.operations.dto.HoldingPositionDTO
 import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationRequestDTO
@@ -8,13 +10,16 @@ import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
+import com.example.stocksheet.operations.exceptions.OperationsErrorType
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
+import com.example.stocksheet.portfolio.exceptions.PortfolioErrorType
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -108,6 +113,26 @@ class OperationControllerTest : BaseIntegrationTest() {
                 returnedHoldings.portfolioId.shouldBe(portfolioPLN.id)
                 returnedHoldings.positions.shouldBeEmpty()
             }
+
+            it("gets an error, when provided portfolio id does not exist") {
+                val response = mockMvc.get("/api/operations/holdings/0").andReturn().response
+
+                val returnedErrorResponse = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                returnedErrorResponse.shouldBe(
+                    ErrorResponse(
+                        path = "uri=/api/operations/holdings/0",
+                        status = HttpStatus.NOT_FOUND.value(),
+                        errors =
+                            listOf(
+                                ErrorDTO(
+                                    type = PortfolioErrorType.PORTFOLIO_NOT_FOUND.name,
+                                    message = "Could not find portfolio with id 0",
+                                ),
+                            ),
+                    ),
+                )
+            }
         }
 
         describe("POST /api/operations/import/{portfolioId}") {
@@ -158,39 +183,6 @@ class OperationControllerTest : BaseIntegrationTest() {
                 )
             }
 
-            it("does not import any operations when all are duplicates") {
-                val batch = getOperationsBatchRequestDTO()
-                val body =
-                    batch.copy(
-                        operations =
-                            batch.operations!!.toMutableList().apply {
-                                this[1] = this[1].copy(externalId = "external-id-2")
-                            },
-                    )
-
-                val response =
-                    mockMvc
-                        .post("/api/operations/import/${portfolioUSD.id}") {
-                            contentType = MediaType.APPLICATION_JSON
-                            content = objectMapper.writeValueAsString(body)
-                        }.andReturn()
-                        .response
-
-                val returnedResponse = objectMapper.readValue(response.contentAsString, OperationImportResponseDTO::class.java)
-
-                returnedResponse.shouldBe(
-                    OperationImportResponseDTO(
-                        added =
-                            listOf(),
-                        duplicated =
-                            listOf(
-                                OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.duplicated[0].id, "external-id-1"),
-                                OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.duplicated[1].id, "external-id-2"),
-                            ),
-                    ),
-                )
-            }
-
             it("imports all operations when no duplicates are present") {
                 val batch = getOperationsBatchRequestDTO()
                 val body =
@@ -220,6 +212,66 @@ class OperationControllerTest : BaseIntegrationTest() {
                             ),
                         duplicated =
                             listOf(),
+                    ),
+                )
+            }
+
+            it("gets an error, when all of the operations are duplicates") {
+                val batch = getOperationsBatchRequestDTO()
+                val body =
+                    batch.copy(
+                        operations =
+                            batch.operations!!.toMutableList().apply {
+                                this[1] = this[1].copy(externalId = "external-id-2")
+                            },
+                    )
+
+                val response =
+                    mockMvc
+                        .post("/api/operations/import/${portfolioUSD.id}") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(body)
+                        }.andReturn()
+                        .response
+
+                val returnedErrorResponse = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                returnedErrorResponse.shouldBe(
+                    ErrorResponse(
+                        path = "uri=/api/operations/import/${portfolioUSD.id}",
+                        status = HttpStatus.BAD_REQUEST.value(),
+                        errors =
+                            listOf(
+                                ErrorDTO(message = "Could not find new operations", type = OperationsErrorType.BATCH_EMPTY_OPERATIONS.name),
+                            ),
+                    ),
+                )
+            }
+
+            it("gets an error, when provided portfolio id does not exist") {
+                val body = getOperationsBatchRequestDTO()
+
+                val response =
+                    mockMvc
+                        .post("/api/operations/import/0") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(body)
+                        }.andReturn()
+                        .response
+
+                val returnedErrorResponse = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                returnedErrorResponse.shouldBe(
+                    ErrorResponse(
+                        path = "uri=/api/operations/import/0",
+                        status = HttpStatus.NOT_FOUND.value(),
+                        errors =
+                            listOf(
+                                ErrorDTO(
+                                    type = PortfolioErrorType.PORTFOLIO_NOT_FOUND.name,
+                                    message = "Could not find portfolio with id 0",
+                                ),
+                            ),
                     ),
                 )
             }

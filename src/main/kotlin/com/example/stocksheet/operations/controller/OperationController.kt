@@ -4,6 +4,7 @@ import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.service.OperationService
+import jakarta.validation.Valid
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -32,7 +33,7 @@ class OperationController(
         produces = ["application/json"],
     )
     fun importOperations(
-        @RequestBody body: OperationsBatchRequestDTO,
+        @Valid @RequestBody body: OperationsBatchRequestDTO,
         @PathVariable portfolioId: Long,
     ): OperationImportResponseDTO = operationService.importOperations(body, portfolioId)
 }

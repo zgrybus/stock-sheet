@@ -81,6 +81,10 @@ class OperationServiceTest : DescribeSpec() {
                 },
             )
 
+        beforeEach {
+            every { portfolioRepositoryMock.existsById(portfolio.id!!) } returns true
+        }
+
         afterEach {
             clearAllMocks()
         }

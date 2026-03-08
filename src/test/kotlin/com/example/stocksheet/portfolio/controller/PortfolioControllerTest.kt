@@ -6,6 +6,7 @@ import com.example.stocksheet.exceptions.dto.ErrorResponse
 import com.example.stocksheet.portfolio.dto.PortfolioRequestDTO
 import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
+import com.example.stocksheet.portfolio.exceptions.PortfolioErrorType
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -79,7 +80,10 @@ class PortfolioControllerTest : BaseIntegrationTest() {
                         status = HttpStatus.BAD_REQUEST.value(),
                         errors =
                             listOf(
-                                ErrorDTO(type = HttpStatus.BAD_REQUEST.name, message = "Portfolio with ${body.name} already exists"),
+                                ErrorDTO(
+                                    type = PortfolioErrorType.PORTFOLIO_NAME_DUPLICATED.name,
+                                    message = "Portfolio with ${body.name} already exists",
+                                ),
                             ),
                     ),
                 )
@@ -130,7 +134,13 @@ class PortfolioControllerTest : BaseIntegrationTest() {
                     ErrorResponse(
                         path = "uri=/api/portfolio/0",
                         status = HttpStatus.NOT_FOUND.value(),
-                        errors = listOf(ErrorDTO(type = HttpStatus.NOT_FOUND.name, message = "Could not find portfolio with id 0")),
+                        errors =
+                            listOf(
+                                ErrorDTO(
+                                    type = PortfolioErrorType.PORTFOLIO_NOT_FOUND.name,
+                                    message = "Could not find portfolio with id 0",
+                                ),
+                            ),
                     ),
                 )
             }
@@ -154,7 +164,13 @@ class PortfolioControllerTest : BaseIntegrationTest() {
                     ErrorResponse(
                         path = "uri=/api/portfolio/0",
                         status = HttpStatus.NOT_FOUND.value(),
-                        errors = listOf(ErrorDTO(type = HttpStatus.NOT_FOUND.name, message = "Could not find portfolio with id 0")),
+                        errors =
+                            listOf(
+                                ErrorDTO(
+                                    type = PortfolioErrorType.PORTFOLIO_NOT_FOUND.name,
+                                    message = "Could not find portfolio with id 0",
+                                ),
+                            ),
                     ),
                 )
             }
