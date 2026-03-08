@@ -1,12 +1,8 @@
 import { $apiStockSheet } from "@/apis/stock-sheet/client";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
-import { isErrorDTO } from "@/features/error-response-utils/error-response-utils/error-response-utils";
-import { PortfolioErrorType } from "@/features/error-response-utils/types";
-import { useQueryClient } from "@tanstack/react-query";
+import { useDeletePortfolioMutation } from "@/features/portfolio-api/use-delete-portfolio-mutation/use-delete-portfolio-mutation";
 import { useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
-import { match, P } from "ts-pattern";
 
 type DeletePortfolioDialogContentLazyProps = {
   portfolioId: number;
@@ -16,7 +12,6 @@ export const DeletePortfolioDialogContentLazy = ({
   portfolioId,
 }: DeletePortfolioDialogContentLazyProps) => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const { data: portfolio } = $apiStockSheet.useSuspenseQuery(
     "get",
@@ -24,52 +19,20 @@ export const DeletePortfolioDialogContentLazy = ({
     { params: { path: { id: portfolioId } } },
   );
 
-  const { mutateAsync, isPending } = $apiStockSheet.useMutation(
-    "delete",
-    "/api/portfolio/{id}",
-  );
+  const { mutateAsync, isPending } = useDeletePortfolioMutation();
 
   const onDelete = async () => {
-    try {
-      await mutateAsync({ params: { path: { id: portfolioId } } });
-      await queryClient.invalidateQueries({
-        queryKey: $apiStockSheet.queryOptions("get", "/api/portfolio/list")
-          .queryKey,
-      });
+    await mutateAsync(portfolioId, portfolio.name);
 
-      navigate({
-        to: ".",
-        search: (prev) => {
-          if (prev.portfolioId === portfolioId) {
-            return {
-              ...prev,
-              portfolioId: undefined,
-              deletePortfolioId: undefined,
-            };
-          }
-          return { ...prev, deletePortfolioId: undefined };
-        },
-      });
-      toast.success(
-        `Portfolio "${portfolio.name}" zostało pomyślnie usunięte.`,
-      );
-    } catch (e) {
-      match(e)
-        .with(
-          P.when(isErrorDTO),
-          ({ errors = [] }) =>
-            errors.some(
-              ({ type }) => type === PortfolioErrorType.PORTFOLIO_NOT_FOUND,
-            ),
-          () =>
-            toast.error(
-              "Nie możemy znaleźć tego portfolio. Prawdopodobnie zostało już wcześniej usunięte.",
-            ),
-        )
-        .otherwise(() => {
-          toast.error(`Nie udało się usunąć portfolio "${portfolio.name}".`);
-        });
-    }
+    navigate({
+      to: ".",
+      search: (prev) => ({
+        ...prev,
+        deletePortfolioId: undefined,
+        portfolioId:
+          prev.portfolioId === portfolioId ? undefined : prev.portfolioId,
+      }),
+    });
   };
 
   const onCancel = () => {
