@@ -40,12 +40,11 @@ describe("PortfolioSelector", () => {
       screen.getByRole("dialog", { name: "Wybór portfela" }),
     );
 
-    const portfolios = popoverContent.getAllByRole("link");
-    expect(portfolios).toHaveLength(4);
+    const portfolios = popoverContent.getAllByTestId("portfolio-item");
+    expect(portfolios).toHaveLength(3);
     expect(portfolios[0]).toHaveTextContent("Portfolio item 1");
     expect(portfolios[1]).toHaveTextContent("Portfolio item 2");
     expect(portfolios[2]).toHaveTextContent("Portfolio item 3");
-    expect(portfolios[3]).toHaveTextContent("Dodaj nowy portfel");
   });
 
   test("clicking on portfolio item, changes portfolioId in the url", async () => {
@@ -77,6 +76,39 @@ describe("PortfolioSelector", () => {
     expect(
       screen.getByRole("button", { name: "Portfolio item 3" }),
     ).toBeVisible();
+  });
+
+  test("opens delete portfolio modal", async () => {
+    const user = userEvent.setup();
+    const { router } = await renderComponentWithRouterAndProviders(
+      <PortfolioSelector />,
+      {
+        to: "/",
+        search: {
+          portfolioId: 123123123,
+        },
+      },
+    );
+
+    expect(router.history.location.href).toBe("/?portfolioId=123123123");
+
+    await user.click(screen.getByRole("button", { name: "Wybierz portfel" }));
+
+    const popoverContent = within(
+      screen.getByRole("dialog", { name: "Wybór portfela" }),
+    );
+
+    const portfolios = popoverContent.getAllByTestId("portfolio-item");
+
+    await user.click(
+      within(portfolios[1]).getByRole("link", {
+        name: "Usuń portfolio Portfolio item 2",
+      }),
+    );
+
+    expect(router.history.location.href).toBe(
+      "/?portfolioId=123123123&deletePortfolioId=102",
+    );
   });
 
   test("redirects to the /create-portfolio page", async () => {

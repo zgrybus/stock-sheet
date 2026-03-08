@@ -112,6 +112,7 @@ export const PortfolioSelector = () => {
                 return (
                   <div
                     key={portfolio.id}
+                    data-testid="portfolio-item"
                     className={`group relative flex w-full items-center`}
                   >
                     <Button
@@ -157,6 +158,7 @@ export const PortfolioSelector = () => {
                         focus-visible:pointer-events-auto
                         focus-visible:opacity-100
                       `}
+                      title={`Usuń portfolio ${portfolio.name}`}
                       asChild
                     >
                       <Link

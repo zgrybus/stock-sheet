@@ -10,7 +10,7 @@ import { mockErrorResponse } from "@/apis/stock-sheet/mocks/get-error-response.m
 import { produce } from "immer";
 import { PortfolioErrorType } from "@/features/error-response-utils/types";
 
-describe("useOperationsImportMutation", () => {
+describe("useDeletePortfolioMutation", () => {
   let deleteRequestMsw: Array<MswRequest> = [];
 
   const portfolioId = 123123;
