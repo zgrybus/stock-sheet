@@ -10,6 +10,7 @@ import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
+import com.example.stocksheet.operations.exceptions.OperationsErrorType
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import com.example.stocksheet.portfolio.exceptions.PortfolioErrorType
@@ -182,39 +183,6 @@ class OperationControllerTest : BaseIntegrationTest() {
                 )
             }
 
-            it("does not import any operations when all are duplicates") {
-                val batch = getOperationsBatchRequestDTO()
-                val body =
-                    batch.copy(
-                        operations =
-                            batch.operations!!.toMutableList().apply {
-                                this[1] = this[1].copy(externalId = "external-id-2")
-                            },
-                    )
-
-                val response =
-                    mockMvc
-                        .post("/api/operations/import/${portfolioUSD.id}") {
-                            contentType = MediaType.APPLICATION_JSON
-                            content = objectMapper.writeValueAsString(body)
-                        }.andReturn()
-                        .response
-
-                val returnedResponse = objectMapper.readValue(response.contentAsString, OperationImportResponseDTO::class.java)
-
-                returnedResponse.shouldBe(
-                    OperationImportResponseDTO(
-                        added =
-                            listOf(),
-                        duplicated =
-                            listOf(
-                                OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.duplicated[0].id, "external-id-1"),
-                                OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.duplicated[1].id, "external-id-2"),
-                            ),
-                    ),
-                )
-            }
-
             it("imports all operations when no duplicates are present") {
                 val batch = getOperationsBatchRequestDTO()
                 val body =
@@ -244,6 +212,38 @@ class OperationControllerTest : BaseIntegrationTest() {
                             ),
                         duplicated =
                             listOf(),
+                    ),
+                )
+            }
+
+            it("gets an error, when all of the operations are duplicates") {
+                val batch = getOperationsBatchRequestDTO()
+                val body =
+                    batch.copy(
+                        operations =
+                            batch.operations!!.toMutableList().apply {
+                                this[1] = this[1].copy(externalId = "external-id-2")
+                            },
+                    )
+
+                val response =
+                    mockMvc
+                        .post("/api/operations/import/${portfolioUSD.id}") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(body)
+                        }.andReturn()
+                        .response
+
+                val returnedErrorResponse = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                returnedErrorResponse.shouldBe(
+                    ErrorResponse(
+                        path = "uri=/api/operations/import/${portfolioUSD.id}",
+                        status = HttpStatus.BAD_REQUEST.value(),
+                        errors =
+                            listOf(
+                                ErrorDTO(message = "Could not find new operations", type = OperationsErrorType.BATCH_EMPTY_OPERATIONS.name),
+                            ),
                     ),
                 )
             }

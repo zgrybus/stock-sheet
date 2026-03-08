@@ -3,7 +3,9 @@ package com.example.stocksheet.portfolio.controller
 import com.example.stocksheet.portfolio.dto.PortfolioRequestDTO
 import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
 import com.example.stocksheet.portfolio.service.PortfolioService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/portfolio")
+@Validated
 class PortfolioController(
     val portfolioService: PortfolioService,
 ) {
@@ -23,7 +26,7 @@ class PortfolioController(
         produces = ["application/json"],
     )
     fun createPortfolio(
-        @RequestBody body: PortfolioRequestDTO,
+        @Valid @RequestBody body: PortfolioRequestDTO,
     ): PortfolioResponseDTO = portfolioService.createPortfolio(body)
 
     @GetMapping(

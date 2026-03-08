@@ -5,6 +5,7 @@ import com.example.stocksheet.operations.dto.HoldingPositionDTO
 import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
+import com.example.stocksheet.operations.exceptions.OperationsBatchEmptyException
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.exceptions.PortfolioNotFoundException
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
@@ -61,20 +62,21 @@ class OperationService(
     ): OperationImportResponseDTO {
         logger.info { "Processing batch import for portfolioId - $portfolioId" }
 
+        val operations = requireNotNull(batch.operations)
+
         val portfolio =
             portfolioRepository.findByIdOrNull(portfolioId)
                 ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
 
-        val requestedExternalIds = batch.operations?.mapNotNull { it.externalId } ?: emptyList()
+        val requestedExternalIds = operations.mapNotNull { it.externalId }
         val existingEntities = operationRepository.findAllByExternalIdIn(requestedExternalIds)
         val existingIdsMap = existingEntities.associateBy { it.externalId }
 
-        val (duplicatedOperations, newOperations) =
-            (batch.operations ?: emptyList()).partition {
-                existingIdsMap.containsKey(
-                    it.externalId,
-                )
-            }
+        val (duplicatedOperations, newOperations) = operations.partition { existingIdsMap.containsKey(it.externalId) }
+
+        if (newOperations.isEmpty()) {
+            throw OperationsBatchEmptyException("Could not find new operations")
+        }
 
         val savedOperations = operationRepository.saveAll(newOperations.map { it.toEntity(portfolio) })
 
