@@ -6,6 +6,7 @@ import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.repository.OperationRepository
+import com.example.stocksheet.portfolio.exceptions.PortfolioNotFoundException
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
@@ -22,11 +23,12 @@ class OperationService(
     @Transactional(readOnly = true)
     fun getHoldings(portfolioId: Long): PortfolioHoldingsDTO {
         logger.info { "Generating portfolio summary for portfolio: $portfolioId" }
-        // TODO
-        // VALIDATE PORTFOLIO ID and add test
-        val operations = operationRepository.findAllByPortfolioId(portfolioId)
 
-        logger.info { "Portfolio summary generated for $portfolioId" }
+        if (!portfolioRepository.existsById(portfolioId)) {
+            throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
+        }
+
+        val operations = operationRepository.findAllByPortfolioId(portfolioId)
 
         val items =
             operations

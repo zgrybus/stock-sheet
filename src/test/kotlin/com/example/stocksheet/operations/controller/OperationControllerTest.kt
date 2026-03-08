@@ -1,6 +1,8 @@
 package com.example.stocksheet.operations.controller
 
 import com.example.stocksheet.BaseIntegrationTest
+import com.example.stocksheet.exceptions.dto.ErrorDTO
+import com.example.stocksheet.exceptions.dto.ErrorResponse
 import com.example.stocksheet.operations.dto.HoldingPositionDTO
 import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationRequestDTO
@@ -10,11 +12,13 @@ import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
+import com.example.stocksheet.portfolio.exceptions.PortfolioErrorType
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
@@ -107,6 +111,26 @@ class OperationControllerTest : BaseIntegrationTest() {
 
                 returnedHoldings.portfolioId.shouldBe(portfolioPLN.id)
                 returnedHoldings.positions.shouldBeEmpty()
+            }
+
+            it("gets an error, when provided portfolio id does not exist") {
+                val response = mockMvc.get("/api/operations/holdings/0").andReturn().response
+
+                val returnedErrorResponse = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
+
+                returnedErrorResponse.shouldBe(
+                    ErrorResponse(
+                        path = "uri=/api/operations/holdings/0",
+                        status = HttpStatus.NOT_FOUND.value(),
+                        errors =
+                            listOf(
+                                ErrorDTO(
+                                    type = PortfolioErrorType.PORTFOLIO_NOT_FOUND.name,
+                                    message = "Could not find portfolio with id 0",
+                                ),
+                            ),
+                    ),
+                )
             }
         }
 
