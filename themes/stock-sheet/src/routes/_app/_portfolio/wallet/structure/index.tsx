@@ -54,7 +54,7 @@ function Index() {
   }
 
   return (
-    <div className="container mx-auto max-w-5xl">
+    <div className="container mx-auto max-w-6xl">
       <h2 className="mb-2 text-3xl font-bold tracking-tight">
         Struktura portfela
       </h2>

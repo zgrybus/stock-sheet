@@ -14,6 +14,7 @@ import { Route as AppPortfolioRouteImport } from './routes/_app/_portfolio'
 import { Route as AppCreatePortfolioIndexRouteImport } from './routes/_app/create-portfolio/index'
 import { Route as AppPortfolioIndexRouteImport } from './routes/_app/_portfolio/index'
 import { Route as AppPortfolioWalletStructureIndexRouteImport } from './routes/_app/_portfolio/wallet/structure/index'
+import { Route as AppPortfolioWalletDashboardIndexRouteImport } from './routes/_app/_portfolio/wallet/dashboard/index'
 import { Route as AppPortfolioOperationsImportIndexRouteImport } from './routes/_app/_portfolio/operations/import/index'
 
 const AppRoute = AppRouteImport.update({
@@ -40,6 +41,12 @@ const AppPortfolioWalletStructureIndexRoute =
     path: '/wallet/structure/',
     getParentRoute: () => AppPortfolioRoute,
   } as any)
+const AppPortfolioWalletDashboardIndexRoute =
+  AppPortfolioWalletDashboardIndexRouteImport.update({
+    id: '/wallet/dashboard/',
+    path: '/wallet/dashboard/',
+    getParentRoute: () => AppPortfolioRoute,
+  } as any)
 const AppPortfolioOperationsImportIndexRoute =
   AppPortfolioOperationsImportIndexRouteImport.update({
     id: '/operations/import/',
@@ -51,12 +58,14 @@ export interface FileRoutesByFullPath {
   '/': typeof AppPortfolioIndexRoute
   '/create-portfolio': typeof AppCreatePortfolioIndexRoute
   '/operations/import': typeof AppPortfolioOperationsImportIndexRoute
+  '/wallet/dashboard': typeof AppPortfolioWalletDashboardIndexRoute
   '/wallet/structure': typeof AppPortfolioWalletStructureIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AppPortfolioIndexRoute
   '/create-portfolio': typeof AppCreatePortfolioIndexRoute
   '/operations/import': typeof AppPortfolioOperationsImportIndexRoute
+  '/wallet/dashboard': typeof AppPortfolioWalletDashboardIndexRoute
   '/wallet/structure': typeof AppPortfolioWalletStructureIndexRoute
 }
 export interface FileRoutesById {
@@ -66,6 +75,7 @@ export interface FileRoutesById {
   '/_app/_portfolio/': typeof AppPortfolioIndexRoute
   '/_app/create-portfolio/': typeof AppCreatePortfolioIndexRoute
   '/_app/_portfolio/operations/import/': typeof AppPortfolioOperationsImportIndexRoute
+  '/_app/_portfolio/wallet/dashboard/': typeof AppPortfolioWalletDashboardIndexRoute
   '/_app/_portfolio/wallet/structure/': typeof AppPortfolioWalletStructureIndexRoute
 }
 export interface FileRouteTypes {
@@ -74,9 +84,15 @@ export interface FileRouteTypes {
     | '/'
     | '/create-portfolio'
     | '/operations/import'
+    | '/wallet/dashboard'
     | '/wallet/structure'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/create-portfolio' | '/operations/import' | '/wallet/structure'
+  to:
+    | '/'
+    | '/create-portfolio'
+    | '/operations/import'
+    | '/wallet/dashboard'
+    | '/wallet/structure'
   id:
     | '__root__'
     | '/_app'
@@ -84,6 +100,7 @@ export interface FileRouteTypes {
     | '/_app/_portfolio/'
     | '/_app/create-portfolio/'
     | '/_app/_portfolio/operations/import/'
+    | '/_app/_portfolio/wallet/dashboard/'
     | '/_app/_portfolio/wallet/structure/'
   fileRoutesById: FileRoutesById
 }
@@ -128,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPortfolioWalletStructureIndexRouteImport
       parentRoute: typeof AppPortfolioRoute
     }
+    '/_app/_portfolio/wallet/dashboard/': {
+      id: '/_app/_portfolio/wallet/dashboard/'
+      path: '/wallet/dashboard'
+      fullPath: '/wallet/dashboard'
+      preLoaderRoute: typeof AppPortfolioWalletDashboardIndexRouteImport
+      parentRoute: typeof AppPortfolioRoute
+    }
     '/_app/_portfolio/operations/import/': {
       id: '/_app/_portfolio/operations/import/'
       path: '/operations/import'
@@ -141,6 +165,7 @@ declare module '@tanstack/react-router' {
 interface AppPortfolioRouteChildren {
   AppPortfolioIndexRoute: typeof AppPortfolioIndexRoute
   AppPortfolioOperationsImportIndexRoute: typeof AppPortfolioOperationsImportIndexRoute
+  AppPortfolioWalletDashboardIndexRoute: typeof AppPortfolioWalletDashboardIndexRoute
   AppPortfolioWalletStructureIndexRoute: typeof AppPortfolioWalletStructureIndexRoute
 }
 
@@ -148,6 +173,7 @@ const AppPortfolioRouteChildren: AppPortfolioRouteChildren = {
   AppPortfolioIndexRoute: AppPortfolioIndexRoute,
   AppPortfolioOperationsImportIndexRoute:
     AppPortfolioOperationsImportIndexRoute,
+  AppPortfolioWalletDashboardIndexRoute: AppPortfolioWalletDashboardIndexRoute,
   AppPortfolioWalletStructureIndexRoute: AppPortfolioWalletStructureIndexRoute,
 }
 

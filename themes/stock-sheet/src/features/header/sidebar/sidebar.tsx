@@ -42,6 +42,20 @@ export const Sidebar = () => {
             </AccordionTrigger>
             <AccordionContent className="ml-5">
               <Link
+                to="/wallet/dashboard"
+                className={`
+                  block rounded-md px-3 py-2 text-sm text-muted-foreground
+                  transition-colors
+                  hover:bg-muted/50 hover:text-foreground
+                `}
+                activeProps={{
+                  className: "bg-accent text-accent-foreground font-semibold",
+                }}
+                search
+              >
+                Pulpit
+              </Link>
+              <Link
                 to="/wallet/structure"
                 className={`
                   block rounded-md px-3 py-2 text-sm text-muted-foreground
@@ -54,34 +68,6 @@ export const Sidebar = () => {
                 search
               >
                 Struktura
-              </Link>
-              <Link
-                to="/"
-                className={`
-                  block rounded-md px-3 py-2 text-sm text-muted-foreground
-                  transition-colors
-                  hover:bg-muted/50 hover:text-foreground
-                `}
-                activeProps={{
-                  className: "bg-accent text-accent-foreground font-semibold",
-                }}
-                search
-              >
-                Analiza Zysków
-              </Link>
-              <Link
-                to="/"
-                className={`
-                  block rounded-md px-3 py-2 text-sm text-muted-foreground
-                  transition-colors
-                  hover:bg-muted/50 hover:text-foreground
-                `}
-                activeProps={{
-                  className: "bg-accent text-accent-foreground font-semibold",
-                }}
-                search
-              >
-                Dywidendy
               </Link>
             </AccordionContent>
           </AccordionItem>
@@ -116,34 +102,6 @@ export const Sidebar = () => {
                 search
               >
                 Import operacji
-              </Link>
-              <Link
-                to="/"
-                className={`
-                  block rounded-md px-3 py-2 text-sm text-muted-foreground
-                  transition-colors
-                  hover:bg-muted/50 hover:text-foreground
-                `}
-                activeProps={{
-                  className: "bg-accent text-accent-foreground font-semibold",
-                }}
-                search
-              >
-                Historia transakcji
-              </Link>
-              <Link
-                to="/"
-                className={`
-                  block rounded-md px-3 py-2 text-sm text-muted-foreground
-                  transition-colors
-                  hover:bg-muted/50 hover:text-foreground
-                `}
-                activeProps={{
-                  className: "bg-accent text-accent-foreground font-semibold",
-                }}
-                search
-              >
-                Gotówka
               </Link>
             </AccordionContent>
           </AccordionItem>
