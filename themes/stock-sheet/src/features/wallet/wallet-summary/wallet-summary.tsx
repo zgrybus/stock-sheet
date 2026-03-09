@@ -18,11 +18,13 @@ const percentFormatter = numberFormatUtil({
   maximumFractionDigits: 0,
 });
 
-export const WalletSummary = () => {
+type WalletSummaryProps = {
+  currency: string;
+};
+
+export const WalletSummary = ({ currency }: WalletSummaryProps) => {
   const capitalRatio =
     (summaryData.investedCapital / summaryData.totalValue) * 100;
-
-  const currency = "USD";
 
   return (
     <div className="mt-6 flex flex-col gap-4">
