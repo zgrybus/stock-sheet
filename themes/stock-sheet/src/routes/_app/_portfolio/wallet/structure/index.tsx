@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { WalletStructureTable } from "@/features/wallet-structure/wallet-structure-table/wallet-structure-table";
-import { WalletStructurePieChart } from "@/features/wallet-structure/wallet-structure-pie-chart/wallet-structure-pie-chart";
-import { WalletStructureBarChart } from "@/features/wallet-structure/wallet-structure-bar-chart/wallet-structure-bar-chart";
+import { WalletStructureTable } from "@/features/wallet/wallet-structure-table/wallet-structure-table";
+import { WalletStructurePieChart } from "@/features/wallet/wallet-structure-pie-chart/wallet-structure-pie-chart";
+import { WalletStructureBarChart } from "@/features/wallet/wallet-structure-bar-chart/wallet-structure-bar-chart";
 import { $apiStockSheet } from "@/apis/stock-sheet/client";
 import { useMemo } from "react";
 
