@@ -14,8 +14,7 @@ export const useDeletePortfolioMutation = () => {
     try {
       await mutation.mutateAsync({ params: { path: { id: portfolioId } } });
       await queryClient.invalidateQueries({
-        queryKey: $apiStockSheet.queryOptions("get", "/api/portfolio/list")
-          .queryKey,
+        queryKey: $apiStockSheet.queryOptions("get", "/api/portfolio").queryKey,
       });
 
       toast.success(`Portfolio "${portfolioName}" zostało pomyślnie usunięte.`);

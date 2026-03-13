@@ -5,14 +5,14 @@ import { setupServer } from "msw/node";
 
 export const mswServer = setupServer(
   $mswStockSheetApi.get(
-    "/api/operations/holdings/{portfolioId}",
+    "/api/operations/{portfolioId}/holdings",
     ({ response }) => response(200).json({ portfolioId: 100, positions: [] }),
   ),
   $mswStockSheetApi.post(
-    "/api/operations/import/{portfolioId}",
+    "/api/operations/{portfolioId}/operations/import",
     ({ response }) => response(200).json({ added: [], duplicated: [] }),
   ),
-  $mswStockSheetApi.get("/api/portfolio/list", ({ response }) =>
+  $mswStockSheetApi.get("/api/portfolio", ({ response }) =>
     response(200).json(mockPortfolioList),
   ),
   $mswStockSheetApi.post("/api/portfolio", ({ response }) =>

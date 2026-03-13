@@ -90,9 +90,9 @@ class OperationControllerTest : BaseIntegrationTest() {
             portfolioRepository.deleteAllInBatch()
         }
 
-        describe("GET /api/operations/holdings/{portfolioId}") {
+        describe("GET /api/operations/{portfolioId}/holdings") {
             it("gets holdings for provided portfolio id") {
-                val response = mockMvc.get("/api/operations/holdings/${portfolioUSD.id}").andReturn().response
+                val response = mockMvc.get("/api/operations/${portfolioUSD.id}/holdings").andReturn().response
 
                 val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
 
@@ -106,7 +106,7 @@ class OperationControllerTest : BaseIntegrationTest() {
             }
 
             it("gets empty holdings, when operations does not exist for provided portfolio id") {
-                val response = mockMvc.get("/api/operations/holdings/${portfolioPLN.id}").andReturn().response
+                val response = mockMvc.get("/api/operations/${portfolioPLN.id}/holdings").andReturn().response
 
                 val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
 
@@ -115,13 +115,13 @@ class OperationControllerTest : BaseIntegrationTest() {
             }
 
             it("gets an error, when provided portfolio id does not exist") {
-                val response = mockMvc.get("/api/operations/holdings/0").andReturn().response
+                val response = mockMvc.get("/api/operations/0/holdings").andReturn().response
 
                 val returnedErrorResponse = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
 
                 returnedErrorResponse.shouldBe(
                     ErrorResponse(
-                        path = "uri=/api/operations/holdings/0",
+                        path = "uri=/api/operations/0/holdings",
                         status = HttpStatus.NOT_FOUND.value(),
                         errors =
                             listOf(
@@ -135,7 +135,7 @@ class OperationControllerTest : BaseIntegrationTest() {
             }
         }
 
-        describe("POST /api/operations/import/{portfolioId}") {
+        describe("POST /api/operations/:portfolioId/operations/import") {
             fun getOperationRequestDTO(): OperationRequestDTO =
                 OperationRequestDTO(
                     externalId = "external-id-1",
@@ -164,7 +164,7 @@ class OperationControllerTest : BaseIntegrationTest() {
 
                 val response =
                     mockMvc
-                        .post("/api/operations/import/${portfolioUSD.id}") {
+                        .post("/api/operations/${portfolioUSD.id}/operations/import") {
                             contentType = MediaType.APPLICATION_JSON
                             content = objectMapper.writeValueAsString(body)
                         }.andReturn()
@@ -195,7 +195,7 @@ class OperationControllerTest : BaseIntegrationTest() {
 
                 val response =
                     mockMvc
-                        .post("/api/operations/import/${portfolioUSD.id}") {
+                        .post("/api/operations/${portfolioUSD.id}/operations/import") {
                             contentType = MediaType.APPLICATION_JSON
                             content = objectMapper.writeValueAsString(body)
                         }.andReturn()
@@ -228,7 +228,7 @@ class OperationControllerTest : BaseIntegrationTest() {
 
                 val response =
                     mockMvc
-                        .post("/api/operations/import/${portfolioUSD.id}") {
+                        .post("/api/operations/${portfolioUSD.id}/operations/import") {
                             contentType = MediaType.APPLICATION_JSON
                             content = objectMapper.writeValueAsString(body)
                         }.andReturn()
@@ -238,7 +238,7 @@ class OperationControllerTest : BaseIntegrationTest() {
 
                 returnedErrorResponse.shouldBe(
                     ErrorResponse(
-                        path = "uri=/api/operations/import/${portfolioUSD.id}",
+                        path = "uri=/api/operations/${portfolioUSD.id}/operations/import",
                         status = HttpStatus.BAD_REQUEST.value(),
                         errors =
                             listOf(
@@ -253,7 +253,7 @@ class OperationControllerTest : BaseIntegrationTest() {
 
                 val response =
                     mockMvc
-                        .post("/api/operations/import/0") {
+                        .post("/api/operations/0/operations/import") {
                             contentType = MediaType.APPLICATION_JSON
                             content = objectMapper.writeValueAsString(body)
                         }.andReturn()
@@ -263,7 +263,7 @@ class OperationControllerTest : BaseIntegrationTest() {
 
                 returnedErrorResponse.shouldBe(
                     ErrorResponse(
-                        path = "uri=/api/operations/import/0",
+                        path = "uri=/api/operations/0/operations/import",
                         status = HttpStatus.NOT_FOUND.value(),
                         errors =
                             listOf(

@@ -12,7 +12,7 @@ import { mockPortfolioList } from "@/apis/stock-sheet/mocks/get-portfolio-list.m
 describe("PortfolioSelector", () => {
   beforeEach(() => {
     mswServer.use(
-      $mswStockSheetApi.get("/api/portfolio/list", ({ response }) =>
+      $mswStockSheetApi.get("/api/portfolio", ({ response }) =>
         response(200).json(mockPortfolioList),
       ),
     );

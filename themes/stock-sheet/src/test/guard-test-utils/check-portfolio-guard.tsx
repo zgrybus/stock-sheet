@@ -17,7 +17,7 @@ export function checkPortfolioGuard<
   describe("Portfolio Guard Logic", () => {
     it("redirects to /create-portfolio when the portfolio list is empty", async () => {
       mswServer.use(
-        $mswStockSheetApi.get("/api/portfolio/list", ({ response }) =>
+        $mswStockSheetApi.get("/api/portfolio", ({ response }) =>
           response(200).json([]),
         ),
       );
@@ -29,7 +29,7 @@ export function checkPortfolioGuard<
 
     it("auto-selects the first portfolio from the list if no portfolioId is provided", async () => {
       mswServer.use(
-        $mswStockSheetApi.get("/api/portfolio/list", ({ response }) =>
+        $mswStockSheetApi.get("/api/portfolio", ({ response }) =>
           response(200).json(mockPortfolioList),
         ),
       );
@@ -43,7 +43,7 @@ export function checkPortfolioGuard<
 
     it("should redirect to the first portfolio if the provided portfolioId does not exist in the list", async () => {
       mswServer.use(
-        $mswStockSheetApi.get("/api/portfolio/list", ({ response }) =>
+        $mswStockSheetApi.get("/api/portfolio", ({ response }) =>
           response(200).json(mockPortfolioList),
         ),
       );
@@ -59,7 +59,7 @@ export function checkPortfolioGuard<
 
     it("should redirect to /create-portfolio if fetching details returns 404", async () => {
       mswServer.use(
-        $mswStockSheetApi.get("/api/portfolio/list", ({ response }) =>
+        $mswStockSheetApi.get("/api/portfolio", ({ response }) =>
           response(200).json(mockPortfolioList),
         ),
         $mswStockSheetApi.get("/api/portfolio/{id}", ({ response }) =>
@@ -78,7 +78,7 @@ export function checkPortfolioGuard<
 
     it("stays on the route and render content when a valid portfolioId is provided", async () => {
       mswServer.use(
-        $mswStockSheetApi.get("/api/portfolio/list", ({ response }) =>
+        $mswStockSheetApi.get("/api/portfolio", ({ response }) =>
           response(200).json(mockPortfolioList),
         ),
         $mswStockSheetApi.get("/api/portfolio/{id}", ({ response }) =>

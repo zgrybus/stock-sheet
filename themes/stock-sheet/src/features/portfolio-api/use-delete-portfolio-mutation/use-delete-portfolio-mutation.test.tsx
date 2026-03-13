@@ -133,8 +133,7 @@ describe("useDeletePortfolioMutation", () => {
     await result.current.mutateAsync(portfolioId, portfolioName);
 
     expect(queryClient.invalidateQueries).toHaveBeenCalledWith({
-      queryKey: $apiStockSheet.queryOptions("get", "/api/portfolio/list")
-        .queryKey,
+      queryKey: $apiStockSheet.queryOptions("get", "/api/portfolio").queryKey,
     });
   });
 });

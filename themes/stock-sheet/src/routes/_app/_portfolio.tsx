@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_app/_portfolio")({
   loaderDeps: ({ search }) => ({ portfolioId: search.portfolioId }),
   loader: async ({ context: { queryClient }, deps }) => {
     const portfolioList = await queryClient.ensureQueryData(
-      $apiStockSheet.queryOptions("get", "/api/portfolio/list"),
+      $apiStockSheet.queryOptions("get", "/api/portfolio"),
     );
 
     if (portfolioList.length === 0) {

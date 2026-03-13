@@ -15,7 +15,7 @@ describe("useOperationsImportMutation", () => {
 
     mswServer.use(
       $mswStockSheetApi.post(
-        "/api/operations/import/{portfolioId}",
+        "/api/operations/{portfolioId}/operations/import",
         ({ response, request }) => {
           importRequestMsw.push(request);
           return response(200).json({
@@ -44,7 +44,9 @@ describe("useOperationsImportMutation", () => {
     });
 
     expect(importRequestMsw).toHaveLength(1);
-    expect(importRequestMsw[0].url).toContain("/api/operations/import/101");
+    expect(importRequestMsw[0].url).toContain(
+      "/api/operations/101/operations/import",
+    );
   });
 
   test("shows success toast with both added and duplicated counts", async () => {
@@ -72,7 +74,7 @@ describe("useOperationsImportMutation", () => {
   test("shows success toast without duplicates part when none exist", async () => {
     mswServer.use(
       $mswStockSheetApi.post(
-        "/api/operations/import/{portfolioId}",
+        "/api/operations/{portfolioId}/operations/import",
         ({ response, request }) => {
           importRequestMsw.push(request);
           return response(200).json({
@@ -121,7 +123,7 @@ describe("useOperationsImportMutation", () => {
     expect(queryClient.invalidateQueries).toHaveBeenCalledWith({
       queryKey: $apiStockSheet.queryOptions(
         "get",
-        "/api/operations/holdings/{portfolioId}",
+        "/api/operations/{portfolioId}/holdings",
         { params: { path: { portfolioId: 101 } } },
       ).queryKey,
     });
