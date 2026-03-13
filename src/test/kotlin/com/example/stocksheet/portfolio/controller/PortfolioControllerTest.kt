@@ -90,9 +90,9 @@ class PortfolioControllerTest : BaseIntegrationTest() {
             }
         }
 
-        describe("GET /api/portfolio/list") {
+        describe("GET /api/portfolio") {
             it("returns list of the portfolio") {
-                val response = mockMvc.get("/api/portfolio/list").andReturn().response
+                val response = mockMvc.get("/api/portfolio").andReturn().response
 
                 val returnedPortfolios = objectMapper.readValue(response.contentAsString, Array<PortfolioResponseDTO>::class.java)
 
@@ -106,7 +106,7 @@ class PortfolioControllerTest : BaseIntegrationTest() {
             it("returns empty list, when there are no portfolios") {
                 portfolioRepository.deleteAllInBatch()
 
-                val response = mockMvc.get("/api/portfolio/list").andReturn().response
+                val response = mockMvc.get("/api/portfolio").andReturn().response
 
                 val returnedPortfolios = objectMapper.readValue(response.contentAsString, Array<PortfolioResponseDTO>::class.java)
 

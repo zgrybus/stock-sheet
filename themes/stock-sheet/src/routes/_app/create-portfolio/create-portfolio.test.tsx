@@ -53,7 +53,7 @@ describe("Route - /create-portfolio", () => {
     );
 
     mswServer.use(
-      $mswStockSheetApi.get("/api/portfolio/list", ({ response }) =>
+      $mswStockSheetApi.get("/api/portfolio", ({ response }) =>
         response(200).json(
           produce(mockPortfolioList, (draft) => {
             draft.push({
@@ -86,8 +86,7 @@ describe("Route - /create-portfolio", () => {
     });
     expect(router.history.location.href).toBe("/?portfolioId=1002");
     expect(queryClient.invalidateQueries).toHaveBeenCalledWith({
-      queryKey: $apiStockSheet.queryOptions("get", "/api/portfolio/list")
-        .queryKey,
+      queryKey: $apiStockSheet.queryOptions("get", "/api/portfolio").queryKey,
     });
   });
 

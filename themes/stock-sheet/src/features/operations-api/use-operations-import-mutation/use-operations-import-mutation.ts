@@ -6,7 +6,7 @@ export const useOperationsImportMutation = () => {
   const queryClient = useQueryClient();
   const mutation = $apiStockSheet.useMutation(
     "post",
-    "/api/operations/import/{portfolioId}",
+    "/api/operations/{portfolioId}/operations/import",
   );
 
   const mutateAsync = async (
@@ -20,7 +20,7 @@ export const useOperationsImportMutation = () => {
 
       const queryKey = $apiStockSheet.queryOptions(
         "get",
-        "/api/operations/holdings/{portfolioId}",
+        "/api/operations/{portfolioId}/holdings",
         { params: { path: { portfolioId } } },
       ).queryKey;
 

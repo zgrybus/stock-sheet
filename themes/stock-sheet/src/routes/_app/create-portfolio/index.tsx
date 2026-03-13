@@ -51,7 +51,7 @@ function RouteComponent() {
 
         const portfolioListQueryKey = $apiStockSheet.queryOptions(
           "get",
-          "/api/portfolio/list",
+          "/api/portfolio",
         ).queryKey;
         await queryClient.invalidateQueries({
           queryKey: portfolioListQueryKey,

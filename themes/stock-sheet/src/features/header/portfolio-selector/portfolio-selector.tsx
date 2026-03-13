@@ -27,7 +27,7 @@ export const PortfolioSelector = () => {
 
   const [isOpen, setOpen] = useState(false);
 
-  const portfolioQuery = $apiStockSheet.useQuery("get", "/api/portfolio/list");
+  const portfolioQuery = $apiStockSheet.useQuery("get", "/api/portfolio");
   const { data = [] } = portfolioQuery;
 
   const selectedPortfolio = data.find(

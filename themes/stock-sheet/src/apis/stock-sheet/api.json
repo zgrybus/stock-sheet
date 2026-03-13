@@ -6,6 +6,49 @@
   ],
   "paths": {
     "/api/portfolio": {
+      "get": {
+        "tags": ["portfolio-controller"],
+        "operationId": "getAllPortfolios",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortfolioResponseDTO"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": ["portfolio-controller"],
         "operationId": "createPortfolio",
@@ -55,7 +98,7 @@
         }
       }
     },
-    "/api/operations/import/{portfolioId}": {
+    "/api/operations/{portfolioId}/operations/import": {
       "post": {
         "tags": ["operation-controller"],
         "operationId": "importOperations",
@@ -204,52 +247,7 @@
         }
       }
     },
-    "/api/portfolio/list": {
-      "get": {
-        "tags": ["portfolio-controller"],
-        "operationId": "getPortfolioList",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/PortfolioResponseDTO"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/operations/holdings/{portfolioId}": {
+    "/api/operations/{portfolioId}/holdings": {
       "get": {
         "tags": ["operation-controller"],
         "operationId": "getHoldings",

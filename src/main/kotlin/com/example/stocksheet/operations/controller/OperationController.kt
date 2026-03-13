@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/operations")
+@RequestMapping("/api/operations/{portfolioId}")
 @Validated
 class OperationController(
     private val operationService: OperationService,
 ) {
     @GetMapping(
-        value = ["/holdings/{portfolioId}"],
+        value = ["/holdings"],
         produces = ["application/json"],
     )
     fun getHoldings(
@@ -28,7 +28,7 @@ class OperationController(
     ): PortfolioHoldingsDTO = operationService.getHoldings(portfolioId)
 
     @PostMapping(
-        value = ["/import/{portfolioId}"],
+        value = ["/operations/import"],
         consumes = ["application/json"],
         produces = ["application/json"],
     )

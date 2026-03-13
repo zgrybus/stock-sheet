@@ -31,7 +31,7 @@ describe("Route - /operations/import", () => {
 
     mswServer.use(
       $mswStockSheetApi.post(
-        "/api/operations/import/{portfolioId}",
+        "/api/operations/{portfolioId}/operations/import",
         ({ response, request }) => {
           importRequestMsw.push(request);
           return response(200).json({

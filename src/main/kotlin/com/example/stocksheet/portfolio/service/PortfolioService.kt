@@ -30,7 +30,7 @@ class PortfolioService(
     }
 
     @Transactional(readOnly = true)
-    fun getPortfolioList(): List<PortfolioResponseDTO> {
+    fun getAllPortfolios(): List<PortfolioResponseDTO> {
         logger.info { "Attempt to get portfolio list" }
 
         val portfolios = portfolioRepository.findAll()

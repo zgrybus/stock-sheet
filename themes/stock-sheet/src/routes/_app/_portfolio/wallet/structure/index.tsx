@@ -27,7 +27,7 @@ function Index() {
     isError,
   } = $apiStockSheet.useQuery(
     "get",
-    "/api/operations/holdings/{portfolioId}",
+    "/api/operations/{portfolioId}/holdings",
     {
       params: { path: { portfolioId: portfolio.id } },
     },

@@ -30,10 +30,9 @@ class PortfolioController(
     ): PortfolioResponseDTO = portfolioService.createPortfolio(body)
 
     @GetMapping(
-        value = ["/list"],
         produces = ["application/json"],
     )
-    fun getPortfolioList(): List<PortfolioResponseDTO> = portfolioService.getPortfolioList()
+    fun getAllPortfolios(): List<PortfolioResponseDTO> = portfolioService.getAllPortfolios()
 
     @GetMapping(
         value = ["/{id}"],
