@@ -13,7 +13,7 @@ class AnalyticsController(
     private val analyticsService: AnalyticsService,
 ) {
     @GetMapping(value = ["/summary"], produces = ["application/json"])
-    fun getPortfolioSummary(
+    fun generatePortfolioSummary(
         @PathVariable("portfolioId") portfolioId: Long,
-    ): PortfolioSummaryDTO = analyticsService.getPortfolioSummary(portfolioId)
+    ): PortfolioSummaryDTO = analyticsService.generatePortfolioSummary(portfolioId)
 }

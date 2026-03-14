@@ -1,8 +1,10 @@
 package com.example.stocksheet.analytics.dto
 
+import java.math.BigDecimal
+
 data class PortfolioSummaryDTO(
-    val totalValue: Long,
-    val totalIncome: Long,
-    val investedCapital: Long,
+    val totalValue: BigDecimal,
+    val totalIncome: BigDecimal,
+    val investedCapital: BigDecimal,
     val todayIncome: Long,
 )
