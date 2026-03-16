@@ -296,6 +296,54 @@
           }
         }
       }
+    },
+    "/api/analytics/{portfolioId}/summary": {
+      "get": {
+        "tags": ["analytics-controller"],
+        "operationId": "generatePortfolioSummary",
+        "parameters": [
+          {
+            "name": "portfolioId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int64" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PortfolioSummaryDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -389,6 +437,21 @@
           }
         },
         "required": ["portfolioId", "positions"]
+      },
+      "PortfolioSummaryDTO": {
+        "type": "object",
+        "properties": {
+          "totalValue": { "type": "number" },
+          "totalIncome": { "type": "number" },
+          "investedCapital": { "type": "number" },
+          "todayIncome": { "type": "integer", "format": "int64" }
+        },
+        "required": [
+          "investedCapital",
+          "todayIncome",
+          "totalIncome",
+          "totalValue"
+        ]
       },
       "ErrorResponse": {
         "properties": {

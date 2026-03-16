@@ -1,30 +1,41 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Wallet, PiggyBank, TrendingUp, Activity } from "lucide-react";
+import {
+  Wallet,
+  PiggyBank,
+  TrendingUp,
+  Activity,
+  TrendingDown,
+} from "lucide-react";
 import { numberFormatUtil } from "@/features/number-utils/number-format-util/number-format-util";
-
-const summaryData = {
-  currency: "USD",
-  totalValue: 6328.9,
-  investedCapital: 5508.4,
-  totalProfit: 820.5,
-  totalProfitPercent: 14.92,
-  dailyProfit: 12.3,
-  dailyProfitPercent: 0.19,
-};
+import { cn } from "@/lib/utils";
 
 const percentFormatter = numberFormatUtil({
   style: "percent",
-  maximumFractionDigits: 0,
+  maximumFractionDigits: 2,
 });
 
 type WalletSummaryProps = {
   currency: string;
+  totalValue: number;
+  totalIncome: number;
+  investedCapital: number;
+  todayIncome: number;
 };
 
-export const WalletSummary = ({ currency }: WalletSummaryProps) => {
-  const capitalRatio =
-    (summaryData.investedCapital / summaryData.totalValue) * 100;
+export const WalletSummary = ({
+  currency,
+  todayIncome,
+  totalIncome,
+  totalValue,
+  investedCapital,
+}: WalletSummaryProps) => {
+  const capitalRatio = Math.min((investedCapital / totalValue) * 100, 100);
+  const profitRatio = 100 - capitalRatio;
+
+  const totalProfitPercent = (totalIncome / investedCapital) * 100;
+  const yesterdayValue = totalValue - todayIncome;
+  const todayIncomePercent = (todayIncome / yesterdayValue) * 100;
 
   return (
     <div className="mt-6 flex flex-col gap-4">
@@ -44,7 +55,7 @@ export const WalletSummary = ({ currency }: WalletSummaryProps) => {
               {numberFormatUtil({
                 style: "currency",
                 currency,
-              }).format(summaryData.totalValue)}
+              }).format(totalValue)}
             </p>
             <div
               className={`
@@ -52,22 +63,27 @@ export const WalletSummary = ({ currency }: WalletSummaryProps) => {
               `}
             >
               <div
-                className="h-full rounded-full bg-slate-500"
+                className={`
+                  h-full rounded-full bg-primary transition-all duration-500
+                `}
                 style={{ width: `${capitalRatio}%` }}
               />
             </div>
-            <div
-              className={`flex justify-between text-xs text-muted-foreground`}
-            >
-              <span>
+            <div className="flex justify-between text-xs">
+              <span className="text-primary">
                 Kapitał: {percentFormatter.format(capitalRatio / 100)}
               </span>
-              <span className="text-emerald-500">
-                Zysk: {percentFormatter.format((100 - capitalRatio) / 100)}
+              <span
+                className={cn({
+                  "text-emerald-500": totalValue > investedCapital,
+                })}
+              >
+                Zysk: {percentFormatter.format(profitRatio / 100)}
               </span>
             </div>
           </CardContent>
         </Card>
+
         <Card className="flex-1">
           <CardHeader className="flex items-center justify-between">
             <CardTitle>Zainwestowany kapitał</CardTitle>
@@ -78,7 +94,7 @@ export const WalletSummary = ({ currency }: WalletSummaryProps) => {
               {numberFormatUtil({
                 style: "currency",
                 currency,
-              }).format(summaryData.investedCapital)}
+              }).format(investedCapital)}
             </p>
             <p className="text-sm text-muted-foreground">
               Suma wpłaconych przez Ciebie środków.
@@ -86,6 +102,7 @@ export const WalletSummary = ({ currency }: WalletSummaryProps) => {
           </CardContent>
         </Card>
       </div>
+
       <div
         className={`
           flex flex-col gap-4
@@ -95,50 +112,70 @@ export const WalletSummary = ({ currency }: WalletSummaryProps) => {
         <Card className="flex-1">
           <CardHeader className="flex items-center justify-between">
             <CardTitle>Zysk całkowity</CardTitle>
-            <TrendingUp className="size-4 text-emerald-500" />
+            {totalIncome >= 0 ? (
+              <TrendingUp className="size-4 text-emerald-500" />
+            ) : (
+              <TrendingDown className="size-4 text-red-500" />
+            )}
           </CardHeader>
           <CardContent>
-            <p className="mb-4 text-3xl font-bold text-emerald-500">
-              +
+            <p
+              className={cn("mb-4 text-3xl font-bold", {
+                "text-emerald-500": totalIncome >= 0,
+                "text-red-500": totalIncome < 0,
+              })}
+            >
               {numberFormatUtil({
                 style: "currency",
                 currency,
-              }).format(summaryData.totalProfit)}
+              }).format(totalIncome)}
             </p>
             <p className="flex items-center text-sm text-muted-foreground">
               <Badge
-                variant="outline"
-                className={`
-                  mr-2 border-emerald-500/30 bg-emerald-500/10 text-emerald-500
-                `}
+                variant={totalProfitPercent >= 0 ? "outline" : "destructive"}
+                className={cn("mr-2", {
+                  "border-emerald-500/30 bg-emerald-500/10 text-emerald-500":
+                    totalProfitPercent >= 0,
+                })}
               >
-                +{summaryData.totalProfitPercent}%
+                {percentFormatter.format(totalProfitPercent / 100)}
               </Badge>
               od początku
             </p>
           </CardContent>
         </Card>
+
         <Card className="flex-1">
           <CardHeader className="flex items-center justify-between">
             <CardTitle>Zysk dzienny</CardTitle>
-            <Activity className="size-4 text-emerald-500" />
+            <Activity
+              className={cn("size-4", {
+                "text-emerald-500": todayIncome >= 0,
+                "text-red-500": todayIncome < 0,
+              })}
+            />
           </CardHeader>
           <CardContent>
-            <p className="mb-4 text-3xl font-bold text-emerald-500">
-              +
+            <p
+              className={cn("mb-4 text-3xl font-bold", {
+                "text-emerald-500": todayIncome >= 0,
+                "text-red-500": todayIncome < 0,
+              })}
+            >
               {numberFormatUtil({
                 style: "currency",
                 currency,
-              }).format(summaryData.dailyProfit)}
+              }).format(todayIncome)}
             </p>
             <p className="flex items-center text-sm text-muted-foreground">
               <Badge
-                variant="outline"
-                className={`
-                  mr-2 border-emerald-500/30 bg-emerald-500/10 text-emerald-500
-                `}
+                variant={todayIncomePercent >= 0 ? "outline" : "destructive"}
+                className={cn("mr-2", {
+                  "border-emerald-500/30 bg-emerald-500/10 text-emerald-500":
+                    todayIncomePercent >= 0,
+                })}
               >
-                +{summaryData.dailyProfitPercent}%
+                {percentFormatter.format(todayIncomePercent / 100)}
               </Badge>
               dzisiaj
             </p>

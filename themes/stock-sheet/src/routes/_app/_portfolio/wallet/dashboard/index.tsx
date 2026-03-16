@@ -16,6 +16,19 @@ function Index() {
     "/api/portfolio/{id}",
     { params: { path: { id: portfolioSearchParamId as number } } },
   );
+  const { data, isPending, error } = $apiStockSheet.useQuery(
+    "get",
+    "/api/analytics/{portfolioId}/summary",
+    { params: { path: { portfolioId: portfolio.id } } },
+  );
+
+  if (isPending) {
+    return <div>Loading</div>;
+  }
+
+  if (error) {
+    return <div>Error..</div>;
+  }
 
   return (
     <main className="container mx-auto max-w-6xl">
@@ -36,7 +49,11 @@ function Index() {
           .
         </p>
       </div>
-      <WalletSummary currency={portfolio.currency} />
+      <WalletSummary
+        currency={portfolio.currency}
+        {...data}
+        investedCapital={data.totalValue - 1000}
+      />
     </main>
   );
 }
