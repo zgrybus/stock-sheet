@@ -14,9 +14,7 @@ export const WalletSummarySkeleton = () => {
         `}
       >
         <Card className="flex-1">
-          <CardHeader
-            className={`flex flex-row items-center justify-between pb-2`}
-          >
+          <CardHeader className={`flex flex-row items-center justify-between`}>
             <Skeleton className="h-5 w-35" />
             <Skeleton className="size-4 rounded-full" />
           </CardHeader>
@@ -24,22 +22,20 @@ export const WalletSummarySkeleton = () => {
             <Skeleton className="mb-4 h-9 w-50" />
             <Skeleton className="mb-2 h-2 w-full rounded-full" />
             <div className="flex justify-between">
-              <Skeleton className="h-3 w-[80px]" />
-              <Skeleton className="h-3 w-[80px]" />
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-3 w-20" />
             </div>
           </CardContent>
         </Card>
 
         <Card className="flex-1">
-          <CardHeader
-            className={`flex flex-row items-center justify-between pb-2`}
-          >
-            <Skeleton className="h-5 w-[160px]" />
+          <CardHeader className={`flex flex-row items-center justify-between`}>
+            <Skeleton className="h-5 w-62.5" />
             <Skeleton className="size-4 rounded-full" />
           </CardHeader>
           <CardContent>
-            <Skeleton className="mb-4 h-9 w-[200px]" />
-            <Skeleton className="h-4 w-[250px]" />
+            <Skeleton className="mb-4 h-9 w-50" />
+            <Skeleton className="h-4 w-62.5" />
           </CardContent>
         </Card>
       </div>
@@ -51,28 +47,24 @@ export const WalletSummarySkeleton = () => {
         `}
       >
         <Card className="flex-1">
-          <CardHeader
-            className={`flex flex-row items-center justify-between pb-2`}
-          >
-            <Skeleton className="h-5 w-[120px]" />
+          <CardHeader className={`flex flex-row items-center justify-between`}>
+            <Skeleton className="h-5 w-30" />
             <Skeleton className="size-4 rounded-full" />
           </CardHeader>
           <CardContent>
-            <Skeleton className="mb-4 h-9 w-[180px]" />
-            <Skeleton className="h-5 w-[140px]" />
+            <Skeleton className="mb-4 h-9 w-45" />
+            <Skeleton className="h-5 w-35" />
           </CardContent>
         </Card>
 
         <Card className="flex-1">
-          <CardHeader
-            className={`flex flex-row items-center justify-between pb-2`}
-          >
-            <Skeleton className="h-5 w-[120px]" />
+          <CardHeader className={`flex flex-row items-center justify-between`}>
+            <Skeleton className="h-5 w-30" />
             <Skeleton className="size-4 rounded-full" />
           </CardHeader>
           <CardContent>
-            <Skeleton className="mb-4 h-9 w-[180px]" />
-            <Skeleton className="h-5 w-[140px]" />
+            <Skeleton className="mb-4 h-9 w-45" />
+            <Skeleton className="h-5 w-35" />
           </CardContent>
         </Card>
       </div>
