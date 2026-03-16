@@ -21,7 +21,7 @@ class OperationService(
 ) : Loggable {
     @Transactional(readOnly = true)
     fun getHoldings(portfolioId: Long): PortfolioHoldingsDTO {
-        logger.info { "Generating portfolio summary for portfolio: $portfolioId" }
+        logger.info { "Generating portfolio holdings for portfolio: $portfolioId" }
 
         if (!portfolioRepository.existsById(portfolioId)) {
             throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
@@ -50,7 +50,7 @@ class OperationService(
 
         val response = PortfolioHoldingsDTO(portfolioId, items)
 
-        logger.info { "Portfolio summary generated for $portfolioId" }
+        logger.info { "Portfolio holdings generated for $portfolioId" }
 
         return response
     }
@@ -68,6 +68,7 @@ class OperationService(
             portfolioRepository.findByIdOrNull(portfolioId)
                 ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
 
+        // TODO: move logic to sql - if possible
         val requestedExternalIds = operations.mapNotNull { it.externalId }
         val existingEntities = operationRepository.findAllByExternalIdIn(requestedExternalIds)
         val existingIdsMap = existingEntities.associateBy { it.externalId }
