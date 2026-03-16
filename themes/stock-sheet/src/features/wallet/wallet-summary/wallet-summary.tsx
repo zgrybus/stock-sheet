@@ -50,7 +50,7 @@ export const WalletSummary = ({
             <CardTitle>Wartość portfela</CardTitle>
             <Wallet className="size-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent data-testid="total-wallet-value">
             <p className="mb-4 text-3xl font-bold text-amber-400">
               {numberFormatUtil({
                 style: "currency",
@@ -89,7 +89,7 @@ export const WalletSummary = ({
             <CardTitle>Zainwestowany kapitał</CardTitle>
             <PiggyBank className="size-4 text-muted-foreground" />
           </CardHeader>
-          <CardContent>
+          <CardContent data-testid="total-wallet-invested-capital">
             <p className="mb-4 text-3xl font-bold text-blue-400">
               {numberFormatUtil({
                 style: "currency",
@@ -118,7 +118,7 @@ export const WalletSummary = ({
               <TrendingDown className="size-4 text-red-500" />
             )}
           </CardHeader>
-          <CardContent>
+          <CardContent data-testid="total-wallet-income">
             <p
               className={cn("mb-4 text-3xl font-bold", {
                 "text-emerald-500": totalIncome >= 0,
@@ -155,7 +155,7 @@ export const WalletSummary = ({
               })}
             />
           </CardHeader>
-          <CardContent>
+          <CardContent data-testid="today-wallet-income">
             <p
               className={cn("mb-4 text-3xl font-bold", {
                 "text-emerald-500": todayIncome >= 0,
