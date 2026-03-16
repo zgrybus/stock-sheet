@@ -20,6 +20,7 @@ class AnalyticsService(
 
         portfolioRepository.findByIdOrNull(portfolioId) ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
 
+        // TODO: move logic to sql
         val response =
             operationRepository
                 .findAllByPortfolioId(portfolioId)
@@ -32,7 +33,7 @@ class AnalyticsService(
                             todayIncome = 0,
                         ),
                     operation = { acc, element ->
-                        // TODO calculate proper totalValue, totalIncome nad todayIncome
+                        // TODO: calculate proper totalValue, totalIncome nad todayIncome
                         acc.copy(
                             totalValue = acc.totalValue.add(element.totalPrice),
                             investedCapital = acc.investedCapital.add(element.totalPrice),

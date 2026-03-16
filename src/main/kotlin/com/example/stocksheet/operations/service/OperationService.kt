@@ -68,6 +68,7 @@ class OperationService(
             portfolioRepository.findByIdOrNull(portfolioId)
                 ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
 
+        // TODO: move logic to sql - if possible
         val requestedExternalIds = operations.mapNotNull { it.externalId }
         val existingEntities = operationRepository.findAllByExternalIdIn(requestedExternalIds)
         val existingIdsMap = existingEntities.associateBy { it.externalId }
