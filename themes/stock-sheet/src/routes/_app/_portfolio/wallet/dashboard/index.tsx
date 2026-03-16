@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { WalletSummary } from "@/features/wallet/wallet-summary/wallet-summary";
 import { Badge } from "@/components/ui/badge";
 import { $apiStockSheet } from "@/apis/stock-sheet/client";
+import { match } from "ts-pattern";
+import { WalletSummarySkeleton } from "@/features/wallet/wallet-summary-skeleton/wallet-summary-skeleton";
 
 export const Route = createFileRoute("/_app/_portfolio/wallet/dashboard/")({
   component: Index,
@@ -15,6 +17,11 @@ function Index() {
     "get",
     "/api/portfolio/{id}",
     { params: { path: { id: portfolioSearchParamId as number } } },
+  );
+  const analyticsSummaryQuery = $apiStockSheet.useQuery(
+    "get",
+    "/api/analytics/{portfolioId}/summary",
+    { params: { path: { portfolioId: portfolio.id } } },
   );
 
   return (
@@ -36,7 +43,14 @@ function Index() {
           .
         </p>
       </div>
-      <WalletSummary currency={portfolio.currency} />
+      {match(analyticsSummaryQuery)
+        .with({ status: "pending" }, () => <WalletSummarySkeleton />)
+        // TODO: add ApiFetchError
+        .with({ status: "error" }, () => <div>Error..</div>)
+        .with({ status: "success" }, ({ data }) => (
+          <WalletSummary currency={portfolio.currency} {...data} />
+        ))
+        .exhaustive()}
     </main>
   );
 }
