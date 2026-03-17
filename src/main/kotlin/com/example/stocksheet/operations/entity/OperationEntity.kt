@@ -1,6 +1,7 @@
 package com.example.stocksheet.operations.entity
 
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
+import com.example.stocksheet.stocks.entity.StockEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -25,8 +26,9 @@ class OperationEntity(
     var id: Long? = null,
     @Column(nullable = false)
     var externalId: String,
-    @Column(nullable = false)
-    var stockSymbol: String,
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "stock_id", nullable = false, updatable = false)
+    val stock: StockEntity,
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     var type: OperationType,

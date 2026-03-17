@@ -1,6 +1,7 @@
 package com.example.stocksheet.operations.service
 
 import com.example.stocksheet.Loggable
+import com.example.stocksheet.integration.finnhub.service.FinnhubService
 import com.example.stocksheet.operations.dto.HoldingPositionDTO
 import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
@@ -9,6 +10,7 @@ import com.example.stocksheet.operations.exceptions.OperationsBatchEmptyExceptio
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.exceptions.PortfolioNotFoundException
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
+import com.example.stocksheet.stocks.repository.StockRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +20,8 @@ import java.math.BigDecimal
 class OperationService(
     private val operationRepository: OperationRepository,
     private val portfolioRepository: PortfolioRepository,
+    private val stockRepository: StockRepository,
+    private val finnhubService: FinnhubService,
 ) : Loggable {
     @Transactional(readOnly = true)
     fun getHoldings(portfolioId: Long): PortfolioHoldingsDTO {
@@ -31,7 +35,8 @@ class OperationService(
 
         val items =
             operations
-                .groupingBy { it.stockSymbol }
+                // TODO: fix and move it to the repository
+                .groupingBy { it.stock.symbol }
                 .fold(
                     {
                         key,
@@ -79,7 +84,20 @@ class OperationService(
             throw OperationsBatchEmptyException("Could not find new operations")
         }
 
-        val savedOperations = operationRepository.saveAll(newOperations.map { it.toEntity(portfolio) })
+        val savedOperations =
+            operationRepository.saveAll(
+                newOperations.map { operation ->
+                    val stockSymbol = requireNotNull(operation.stockSymbol)
+                    val stock =
+                        stockRepository.findBySymbol(stockSymbol) ?: finnhubService.getCompanyProfile2(stockSymbol).let {
+                            if (it == null) {
+                                throw IllegalArgumentException("No stock found for symbol $stockSymbol")
+                            }
+                            stockRepository.save(it.toStockEntity(stockSymbol))
+                        }
+                    operation.toEntity(portfolio, stock)
+                },
+            )
 
         logger.info { "Import finished. Added: ${savedOperations.size}, Duplicated: ${duplicatedOperations.size}" }
 
