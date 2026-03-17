@@ -19,7 +19,7 @@ spring-boot-starter-validation = { group = "org.springframework.boot", name = "s
 
 flyway-database-postgresql = { group = "org.flywaydb", name = "flyway-database-postgresql" }
 postgresql = { group = "org.postgresql", name = "postgresql" }
-open-api = {group= "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "openApi"}
+open-api = { group= "org.springdoc", name = "springdoc-openapi-starter-webmvc-ui", version.ref = "openApi" }
 
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 jackson-module-kotlin = { group = "com.fasterxml.jackson.module", name = "jackson-module-kotlin" }

@@ -1,4 +1,4 @@
-package com.example.stocksheet.config
+package com.example.stocksheet.integration.openapi.config
 
 import com.example.stocksheet.exceptions.dto.ErrorResponse
 import io.swagger.v3.core.converter.ModelConverters
