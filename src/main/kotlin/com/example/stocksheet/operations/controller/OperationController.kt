@@ -1,8 +1,8 @@
 package com.example.stocksheet.operations.controller
 
-import com.example.stocksheet.operations.dto.OperationImportResponseDTO
-import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
-import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
+import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
+import com.example.stocksheet.operations.dto.OperationsImportResponseDTO
+import com.example.stocksheet.operations.dto.PortfolioHoldingsResponseDTO
 import com.example.stocksheet.operations.service.OperationService
 import jakarta.validation.Valid
 import org.springframework.validation.annotation.Validated
@@ -25,7 +25,7 @@ class OperationController(
     )
     fun getHoldings(
         @PathVariable portfolioId: Long,
-    ): PortfolioHoldingsDTO = operationService.getHoldings(portfolioId)
+    ): PortfolioHoldingsResponseDTO = operationService.getHoldings(portfolioId)
 
     @PostMapping(
         value = ["/operations/import"],
@@ -33,7 +33,7 @@ class OperationController(
         produces = ["application/json"],
     )
     fun importOperations(
-        @Valid @RequestBody body: OperationsBatchRequestDTO,
+        @Valid @RequestBody body: OperationsImportRequestDTO,
         @PathVariable portfolioId: Long,
-    ): OperationImportResponseDTO = operationService.importOperations(body, portfolioId)
+    ): OperationsImportResponseDTO = operationService.importOperations(body, portfolioId)
 }

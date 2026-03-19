@@ -52,4 +52,5 @@ class OperationEntity(
 enum class OperationType {
     BUY,
     SELL,
+    UNKNOWN,
 }

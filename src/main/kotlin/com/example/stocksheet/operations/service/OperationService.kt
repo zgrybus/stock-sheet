@@ -1,11 +1,11 @@
 package com.example.stocksheet.operations.service
 
 import com.example.stocksheet.Loggable
-import com.example.stocksheet.operations.dto.HoldingPositionDTO
-import com.example.stocksheet.operations.dto.OperationImportResponseDTO
-import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
-import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
+import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
+import com.example.stocksheet.operations.dto.OperationsImportResponseDTO
+import com.example.stocksheet.operations.dto.PortfolioHoldingsResponseDTO
 import com.example.stocksheet.operations.exceptions.OperationsBatchEmptyException
+import com.example.stocksheet.operations.mappers.OperationsMapper
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.exceptions.PortfolioNotFoundException
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
@@ -18,9 +18,10 @@ import java.math.BigDecimal
 class OperationService(
     private val operationRepository: OperationRepository,
     private val portfolioRepository: PortfolioRepository,
+    private val operationsMapper: OperationsMapper,
 ) : Loggable {
     @Transactional(readOnly = true)
-    fun getHoldings(portfolioId: Long): PortfolioHoldingsDTO {
+    fun getHoldings(portfolioId: Long): PortfolioHoldingsResponseDTO {
         logger.info { "Generating portfolio holdings for portfolio: $portfolioId" }
 
         if (!portfolioRepository.existsById(portfolioId)) {
@@ -37,7 +38,7 @@ class OperationService(
                         key,
                         _,
                         ->
-                        HoldingPositionDTO(key, BigDecimal.ZERO, BigDecimal.ZERO)
+                        PortfolioHoldingsResponseDTO.PositionDTO(key, BigDecimal.ZERO, BigDecimal.ZERO)
                     },
                     { _, acc, element ->
                         acc.copy(
@@ -48,7 +49,7 @@ class OperationService(
                 ).values
                 .toList()
 
-        val response = PortfolioHoldingsDTO(portfolioId, items)
+        val response = PortfolioHoldingsResponseDTO(portfolioId, items)
 
         logger.info { "Portfolio holdings generated for $portfolioId" }
 
@@ -57,19 +58,19 @@ class OperationService(
 
     @Transactional()
     fun importOperations(
-        batch: OperationsBatchRequestDTO,
+        batch: OperationsImportRequestDTO,
         portfolioId: Long,
-    ): OperationImportResponseDTO {
+    ): OperationsImportResponseDTO {
         logger.info { "Processing batch import for portfolioId - $portfolioId" }
 
-        val operations = requireNotNull(batch.operations)
+        val operations = batch.operations
 
         val portfolio =
             portfolioRepository.findByIdOrNull(portfolioId)
                 ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
 
         // TODO: move logic to sql - if possible
-        val requestedExternalIds = operations.mapNotNull { it.externalId }
+        val requestedExternalIds = operations.map { it.externalId }
         val existingEntities = operationRepository.findAllByExternalIdIn(requestedExternalIds)
         val existingIdsMap = existingEntities.associateBy { it.externalId }
 
@@ -79,22 +80,22 @@ class OperationService(
             throw OperationsBatchEmptyException("Could not find new operations")
         }
 
-        val savedOperations = operationRepository.saveAll(newOperations.map { it.toEntity(portfolio) })
+        val savedOperations = operationRepository.saveAll(newOperations.map { operationsMapper.toEntity(it, portfolio) })
 
         logger.info { "Import finished. Added: ${savedOperations.size}, Duplicated: ${duplicatedOperations.size}" }
 
-        return OperationImportResponseDTO(
+        return OperationsImportResponseDTO(
             added =
                 savedOperations.map {
-                    OperationImportResponseDTO.OperationSummaryDTO(
-                        id = it.id,
+                    OperationsImportResponseDTO.OperationSummaryDTO(
+                        id = it.id!!,
                         externalId = it.externalId,
                     )
                 },
             duplicated =
                 duplicatedOperations.map { operation ->
                     val idFromDb = existingIdsMap[operation.externalId]?.id
-                    OperationImportResponseDTO.OperationSummaryDTO(id = idFromDb, externalId = operation.externalId)
+                    OperationsImportResponseDTO.OperationSummaryDTO(id = idFromDb!!, externalId = operation.externalId)
                 },
         )
     }
