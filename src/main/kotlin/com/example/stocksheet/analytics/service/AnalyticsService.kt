@@ -1,7 +1,7 @@
 package com.example.stocksheet.analytics.service
 
 import com.example.stocksheet.Loggable
-import com.example.stocksheet.analytics.dto.PortfolioSummaryDTO
+import com.example.stocksheet.analytics.dto.PortfolioSummaryResponseDTO
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.exceptions.PortfolioNotFoundException
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
@@ -15,7 +15,7 @@ class AnalyticsService(
     private val portfolioRepository: PortfolioRepository,
 ) : Loggable {
     @Transactional(readOnly = true)
-    fun generatePortfolioSummary(portfolioId: Long): PortfolioSummaryDTO {
+    fun generatePortfolioSummary(portfolioId: Long): PortfolioSummaryResponseDTO {
         logger.info { "Attempt to generate portfolio summary" }
 
         portfolioRepository.findByIdOrNull(portfolioId) ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
@@ -26,7 +26,7 @@ class AnalyticsService(
                 .findAllByPortfolioId(portfolioId)
                 .fold(
                     initial =
-                        PortfolioSummaryDTO(
+                        PortfolioSummaryResponseDTO(
                             totalValue = 0.toBigDecimal(),
                             totalIncome = 0.toBigDecimal(),
                             investedCapital = 0.toBigDecimal(),
