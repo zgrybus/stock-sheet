@@ -1,7 +1,7 @@
 package com.example.stocksheet.analytics.controller
 
 import com.example.stocksheet.BaseIntegrationTest
-import com.example.stocksheet.analytics.dto.PortfolioSummaryDTO
+import com.example.stocksheet.analytics.dto.PortfolioSummaryResponseDTO
 import com.example.stocksheet.exceptions.dto.ErrorDTO
 import com.example.stocksheet.exceptions.dto.ErrorResponse
 import com.example.stocksheet.operations.entity.OperationEntity
@@ -88,20 +88,20 @@ class AnalyticsControllerTest : BaseIntegrationTest() {
             it("gets summary with calculated values for existing portfolio") {
                 val response = mockMvc.get("/api/analytics/${portfolioUSD.id}/summary").andReturn().response
 
-                val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryDTO::class.java)
+                val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    PortfolioSummaryDTO(3925.toBigDecimal(), 0.toBigDecimal(), 3925.toBigDecimal(), 0),
+                    PortfolioSummaryResponseDTO(3925.toBigDecimal(), 0.toBigDecimal(), 3925.toBigDecimal(), 0),
                 )
             }
 
             it("gets zeroed summary when portfolio has no operations") {
                 val response = mockMvc.get("/api/analytics/${portfolioPLN.id}/summary").andReturn().response
 
-                val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryDTO::class.java)
+                val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    PortfolioSummaryDTO(0.toBigDecimal(), 0.toBigDecimal(), 0.toBigDecimal(), 0),
+                    PortfolioSummaryResponseDTO(0.toBigDecimal(), 0.toBigDecimal(), 0.toBigDecimal(), 0),
                 )
             }
 

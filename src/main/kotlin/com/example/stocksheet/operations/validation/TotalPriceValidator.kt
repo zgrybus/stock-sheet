@@ -1,21 +1,17 @@
 package com.example.stocksheet.operations.validation
 
-import com.example.stocksheet.operations.dto.OperationRequestDTO
+import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
 
-class TotalPriceValidator : ConstraintValidator<ValidTotalPrice, OperationRequestDTO> {
+class TotalPriceValidator : ConstraintValidator<ValidTotalPrice, OperationsImportRequestDTO.OperationRequestDTO> {
     override fun isValid(
-        dto: OperationRequestDTO,
+        dto: OperationsImportRequestDTO.OperationRequestDTO,
         context: ConstraintValidatorContext,
     ): Boolean {
         val totalPrice = dto.totalPrice
         val pricePerVolume = dto.pricePerVolume
         val volume = dto.volume
-
-        if (totalPrice == null || volume == null || pricePerVolume == null) {
-            return false
-        }
 
         val expectedTotalPrice = volume.multiply(pricePerVolume)
 

@@ -37,10 +37,10 @@ class PortfolioRequestDTOTest : DescribeSpec() {
 
             describe("currency validation") {
                 it("returns an error, when currency is empty") {
-                    val dto = getPortfolioRequestDTO().copy(currency = null)
+                    val dto = getPortfolioRequestDTO().copy(currency = "")
                     val violations = validator.validate(dto)
 
-                    violations.shouldHaveSize(1)
+                    violations.shouldHaveSize(2)
                     violations.first().should {
                         it.message.shouldBe("Currency cannot be empty")
                         it.propertyPath.toString().shouldBe("currency")
@@ -55,17 +55,6 @@ class PortfolioRequestDTOTest : DescribeSpec() {
                     violations.first().should {
                         it.message.shouldBe("Currency is not valid")
                         it.propertyPath.toString().shouldBe("currency")
-                    }
-                }
-            }
-
-            describe("toEntity") {
-                it("should correctly map all fields from DTO to Entity") {
-                    val dto = getPortfolioRequestDTO()
-
-                    dto.toEntity().should {
-                        it.name.shouldBe(dto.name)
-                        it.currency.shouldBe(dto.currency)
                     }
                 }
             }

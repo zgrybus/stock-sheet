@@ -32,8 +32,8 @@ class CurrencyValidatorTest : DescribeSpec() {
                 validator.isValid("pln", context).shouldBeFalse()
             }
 
-            it("returns true for null values") {
-                validator.isValid(null, context).shouldBeTrue()
+            it("returns false for null values") {
+                validator.isValid(null, context).shouldBeFalse()
             }
 
             it("returns false for empty string") {

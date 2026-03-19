@@ -1,10 +1,10 @@
 package com.example.stocksheet.operations.service
 
-import com.example.stocksheet.operations.dto.HoldingPositionDTO
-import com.example.stocksheet.operations.dto.OperationRequestDTO
-import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
+import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
+import com.example.stocksheet.operations.dto.PortfolioHoldingsResponseDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
+import com.example.stocksheet.operations.mappers.OperationsMapper
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
@@ -25,9 +25,10 @@ import java.time.ZoneOffset
 import java.util.Optional
 
 class OperationServiceTest : DescribeSpec() {
-    private var operationRepositoryMock: OperationRepository = mockk()
-    private var portfolioRepositoryMock: PortfolioRepository = mockk()
-    private val operationService = OperationService(operationRepositoryMock, portfolioRepositoryMock)
+    private val operationRepositoryMock: OperationRepository = mockk()
+    private val portfolioRepositoryMock: PortfolioRepository = mockk()
+    private val operationsMapper = OperationsMapper()
+    private val operationService = OperationService(operationRepositoryMock, portfolioRepositoryMock, operationsMapper)
 
     init {
         val portfolio = PortfolioEntity(id = 10003, name = "portfolio_name_1", currency = "USD")
@@ -101,17 +102,29 @@ class OperationServiceTest : DescribeSpec() {
                     result.portfolioId.shouldBe(portfolio.id)
                     result.positions.shouldContainExactly(
                         listOf(
-                            HoldingPositionDTO(stockSymbol = "GOOG.US", totalCost = 2925.toBigDecimal(), totalVolume = 25.toBigDecimal()),
-                            HoldingPositionDTO(stockSymbol = "TSLA.US", totalCost = 1050.toBigDecimal(), totalVolume = 12.toBigDecimal()),
-                            HoldingPositionDTO(stockSymbol = "ALPH.US", totalCost = 190.toBigDecimal(), totalVolume = 95.toBigDecimal()),
+                            PortfolioHoldingsResponseDTO.PositionDTO(
+                                stockSymbol = "GOOG.US",
+                                totalCost = 2925.toBigDecimal(),
+                                totalVolume = 25.toBigDecimal(),
+                            ),
+                            PortfolioHoldingsResponseDTO.PositionDTO(
+                                stockSymbol = "TSLA.US",
+                                totalCost = 1050.toBigDecimal(),
+                                totalVolume = 12.toBigDecimal(),
+                            ),
+                            PortfolioHoldingsResponseDTO.PositionDTO(
+                                stockSymbol = "ALPH.US",
+                                totalCost = 190.toBigDecimal(),
+                                totalVolume = 95.toBigDecimal(),
+                            ),
                         ),
                     )
                 }
             }
 
             describe("importOperations") {
-                fun getOperationRequestDTO(): OperationRequestDTO =
-                    OperationRequestDTO(
+                fun getOperationRequestDTO(): OperationsImportRequestDTO.OperationRequestDTO =
+                    OperationsImportRequestDTO.OperationRequestDTO(
                         externalId = "external-id-1",
                         stockSymbol = "APL.US",
                         type = OperationType.BUY,
@@ -121,8 +134,8 @@ class OperationServiceTest : DescribeSpec() {
                         totalPrice = 1000.toBigDecimal(),
                     )
 
-                fun getOperationsBatchRequestDTO(): OperationsBatchRequestDTO =
-                    OperationsBatchRequestDTO(
+                fun getOperationsImportRequestDTO(): OperationsImportRequestDTO =
+                    OperationsImportRequestDTO(
                         operations =
                             listOf(
                                 getOperationRequestDTO(),
@@ -140,7 +153,7 @@ class OperationServiceTest : DescribeSpec() {
                 }
 
                 it("fetches entities for requested external ids") {
-                    operationService.importOperations(getOperationsBatchRequestDTO(), portfolio.id!!)
+                    operationService.importOperations(getOperationsImportRequestDTO(), portfolio.id!!)
 
                     val externalIds = slot<List<String>>()
                     verify {
@@ -151,7 +164,7 @@ class OperationServiceTest : DescribeSpec() {
                 }
 
                 it("saves only new operations to the database") {
-                    val batch = getOperationsBatchRequestDTO()
+                    val batch = getOperationsImportRequestDTO()
                     operationService.importOperations(batch, portfolio.id!!)
 
                     val newOperations = slot<List<OperationEntity>>()
@@ -159,9 +172,9 @@ class OperationServiceTest : DescribeSpec() {
                         operationRepositoryMock.saveAll(capture(newOperations))
                     }
 
-                    val nvdaOperation = batch.operations!![1]
+                    val nvdaOperation = batch.operations[1]
                     newOperations.captured.shouldHaveSize(1)
-                    newOperations.captured[0].shouldBeEqualToComparingFields(nvdaOperation.toEntity(portfolio))
+                    newOperations.captured[0].shouldBeEqualToComparingFields(operationsMapper.toEntity(nvdaOperation, portfolio))
                 }
             }
         }

@@ -114,7 +114,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OperationsBatchRequestDTO"
+                "$ref": "#/components/schemas/OperationsImportRequestDTO"
               }
             }
           },
@@ -126,7 +126,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperationImportResponseDTO"
+                  "$ref": "#/components/schemas/OperationsImportResponseDTO"
                 }
               }
             }
@@ -265,7 +265,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PortfolioHoldingsDTO"
+                  "$ref": "#/components/schemas/PortfolioHoldingsResponseDTO"
                 }
               }
             }
@@ -314,7 +314,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/PortfolioSummaryDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/PortfolioSummaryResponseDTO"
+                }
               }
             }
           },
@@ -370,7 +372,7 @@
         "properties": {
           "externalId": { "type": "string", "minLength": 1 },
           "stockSymbol": { "type": "string", "minLength": 1 },
-          "type": { "type": "string", "enum": ["BUY", "SELL"] },
+          "type": { "type": "string", "enum": ["BUY", "SELL", "UNKNOWN"] },
           "volume": { "type": "number" },
           "openDate": { "type": "string", "format": "date-time" },
           "pricePerVolume": { "type": "number" },
@@ -386,7 +388,7 @@
           "volume"
         ]
       },
-      "OperationsBatchRequestDTO": {
+      "OperationsImportRequestDTO": {
         "type": "object",
         "properties": {
           "operations": {
@@ -397,7 +399,15 @@
         },
         "required": ["operations"]
       },
-      "OperationImportResponseDTO": {
+      "OperationSummaryDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "externalId": { "type": "string" }
+        },
+        "required": ["externalId", "id"]
+      },
+      "OperationsImportResponseDTO": {
         "type": "object",
         "properties": {
           "added": {
@@ -411,14 +421,18 @@
         },
         "required": ["added", "duplicated"]
       },
-      "OperationSummaryDTO": {
+      "PortfolioHoldingsResponseDTO": {
         "type": "object",
         "properties": {
-          "id": { "type": "integer", "format": "int64" },
-          "externalId": { "type": "string" }
-        }
+          "portfolioId": { "type": "integer", "format": "int64" },
+          "positions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PositionDTO" }
+          }
+        },
+        "required": ["portfolioId", "positions"]
       },
-      "HoldingPositionDTO": {
+      "PositionDTO": {
         "type": "object",
         "properties": {
           "stockSymbol": { "type": "string" },
@@ -427,18 +441,7 @@
         },
         "required": ["stockSymbol", "totalCost", "totalVolume"]
       },
-      "PortfolioHoldingsDTO": {
-        "type": "object",
-        "properties": {
-          "portfolioId": { "type": "integer", "format": "int64" },
-          "positions": {
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/HoldingPositionDTO" }
-          }
-        },
-        "required": ["portfolioId", "positions"]
-      },
-      "PortfolioSummaryDTO": {
+      "PortfolioSummaryResponseDTO": {
         "type": "object",
         "properties": {
           "totalValue": { "type": "number" },

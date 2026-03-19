@@ -2,7 +2,7 @@ package com.example.stocksheet.analytics.dto
 
 import java.math.BigDecimal
 
-data class PortfolioSummaryDTO(
+data class PortfolioSummaryResponseDTO(
     val totalValue: BigDecimal,
     val totalIncome: BigDecimal,
     val investedCapital: BigDecimal,

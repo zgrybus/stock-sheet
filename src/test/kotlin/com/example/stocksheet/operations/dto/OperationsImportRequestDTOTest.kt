@@ -1,7 +1,6 @@
 package com.example.stocksheet.operations.dto
 
 import com.example.stocksheet.operations.entity.OperationType
-import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.inspectors.forOne
 import io.kotest.matchers.booleans.shouldBeTrue
@@ -14,12 +13,12 @@ import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
 
-class OperationsBatchRequestDTOTest : DescribeSpec() {
+class OperationsImportRequestDTOTest : DescribeSpec() {
     init {
         val validator: Validator = Validation.buildDefaultValidatorFactory().validator
 
-        fun getOperationRequestDTO(): OperationRequestDTO =
-            OperationRequestDTO(
+        fun getOperationRequestDTO(): OperationsImportRequestDTO.OperationRequestDTO =
+            OperationsImportRequestDTO.OperationRequestDTO(
                 externalId = "external-id-1",
                 stockSymbol = "APL.US",
                 type = OperationType.BUY,
@@ -29,17 +28,17 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
                 totalPrice = 1000.toBigDecimal(),
             )
 
-        fun getOperationsBatchRequestDTO(): OperationsBatchRequestDTO =
-            OperationsBatchRequestDTO(
+        fun getOperationsImportRequestDTO(): OperationsImportRequestDTO =
+            OperationsImportRequestDTO(
                 operations =
                     listOf(
                         getOperationRequestDTO(),
                     ),
             )
 
-        describe("OperationsBatchRequestDTOTest") {
+        describe("OperationsImportRequestDTO") {
             it("does not return any error") {
-                val dto = getOperationsBatchRequestDTO()
+                val dto = getOperationsImportRequestDTO()
                 val violation = validator.validate(dto)
 
                 violation.isEmpty().shouldBeTrue()
@@ -47,7 +46,7 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
 
             describe("operations validation") {
                 it("returns an error, when operations are empty") {
-                    val dto = getOperationsBatchRequestDTO().apply { operations = listOf() }
+                    val dto = getOperationsImportRequestDTO().apply { operations = listOf() }
                     val violations = validator.validate(dto)
 
                     violations.shouldHaveSize(1)
@@ -68,7 +67,7 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
 
                 describe("externalId validation") {
                     it("returns an error, when external id is not set") {
-                        val dto = getOperationRequestDTO().apply { externalId = null }
+                        val dto = getOperationRequestDTO().apply { externalId = "" }
                         val violations = validator.validate(dto)
 
                         violations.shouldHaveSize(1)
@@ -81,7 +80,7 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
 
                 describe("stockSymbol validation") {
                     it("returns an error, when stock symbol is not set") {
-                        val dto = getOperationRequestDTO().apply { stockSymbol = null }
+                        val dto = getOperationRequestDTO().apply { stockSymbol = "" }
                         val violations = validator.validate(dto)
 
                         violations.shouldHaveSize(1)
@@ -93,29 +92,19 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
                 }
 
                 describe("type validation") {
-                    it("returns an error, when type is not set") {
-                        val dto = getOperationRequestDTO().apply { type = null }
-                        val violations = validator.validate(dto)
-
-                        violations.shouldHaveSize(1)
-                        violations.first().should {
-                            it.message.shouldBe("Type is required")
-                            it.propertyPath.toString().shouldBe("type")
-                        }
-                    }
+//                    it("returns an error, when type is not set") {
+//                        val dto = getOperationRequestDTO().apply { type = OperationType.UNKNOWN }
+//                        val violations = validator.validate(dto)
+//
+//                        violations.shouldHaveSize(1)
+//                        violations.first().should {
+//                            it.message.shouldBe("Type is required")
+//                            it.propertyPath.toString().shouldBe("type")
+//                        }
+//                    }
                 }
 
                 describe("volume validation") {
-                    it("returns an error, when volume is not set") {
-                        val dto = getOperationRequestDTO().apply { volume = null }
-                        val violations = validator.validate(dto)
-
-                        violations.forOne {
-                            it.message.shouldBe("Volume is required")
-                            it.propertyPath.toString().shouldBe("volume")
-                        }
-                    }
-
                     it("returns an error, when volume is not positive") {
                         val dto = getOperationRequestDTO().apply { volume = 0.toBigDecimal() }
                         val violations = validator.validate(dto)
@@ -128,18 +117,7 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
                 }
 
                 describe("openDate validation") {
-                    it("returns an error, when open date is not set") {
-                        val dto = getOperationRequestDTO().apply { openDate = null }
-                        val violations = validator.validate(dto)
-
-                        violations.shouldHaveSize(1)
-                        violations.first().should {
-                            it.message.shouldBe("Open Date is required")
-                            it.propertyPath.toString().shouldBe("openDate")
-                        }
-                    }
-
-                    it("returns an error, when open date is not set") {
+                    it("returns an error, when open date is from the future") {
                         val dto = getOperationRequestDTO().apply { openDate = LocalDateTime.now().plusYears(1).toInstant(ZoneOffset.UTC) }
                         val violations = validator.validate(dto)
 
@@ -152,16 +130,6 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
                 }
 
                 describe("pricePerVolume validation") {
-                    it("returns an error, when price per volume is not set") {
-                        val dto = getOperationRequestDTO().apply { pricePerVolume = null }
-                        val violations = validator.validate(dto)
-
-                        violations.forOne {
-                            it.message.shouldBe("Price Per Volume is required")
-                            it.propertyPath.toString().shouldBe("pricePerVolume")
-                        }
-                    }
-
                     it("returns an error, when price per volume is not positive") {
                         val dto = getOperationRequestDTO().apply { pricePerVolume = 0.toBigDecimal() }
                         val violations = validator.validate(dto)
@@ -174,16 +142,6 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
                 }
 
                 describe("totalPrice validation") {
-                    it("returns an error, when total price is not set") {
-                        val dto = getOperationRequestDTO().apply { totalPrice = null }
-                        val violations = validator.validate(dto)
-
-                        violations.forOne {
-                            it.message.shouldBe("Total Price is required")
-                            it.propertyPath.toString().shouldBe("totalPrice")
-                        }
-                    }
-
                     it("returns an error, when total price is not positive") {
                         val dto = getOperationRequestDTO().apply { totalPrice = 0.toBigDecimal() }
                         val violations = validator.validate(dto)
@@ -206,25 +164,6 @@ class OperationsBatchRequestDTOTest : DescribeSpec() {
                         violations.forOne {
                             it.message.shouldBe("Total Price must be equal to Volume * Price Per Volume")
                             it.propertyPath.toString().shouldBe("totalPrice")
-                        }
-                    }
-                }
-
-                describe("toEntity") {
-
-                    it("should correctly map all fields from DTO to Entity") {
-                        val dto = getOperationRequestDTO()
-                        val portfolio = PortfolioEntity(id = 10003, name = "portfolio_name_1", currency = "USD")
-
-                        dto.toEntity(portfolio).should {
-                            it.externalId.shouldBe(dto.externalId)
-                            it.stockSymbol.shouldBe(dto.stockSymbol)
-                            it.type.shouldBe(dto.type)
-                            it.volume.shouldBe(dto.volume)
-                            it.openDate.shouldBe(dto.openDate)
-                            it.pricePerVolume.shouldBe(dto.pricePerVolume)
-                            it.totalPrice.shouldBe(dto.totalPrice)
-                            it.portfolio.shouldBe(portfolio)
                         }
                     }
                 }

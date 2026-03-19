@@ -5,6 +5,7 @@ import com.example.stocksheet.portfolio.dto.PortfolioRequestDTO
 import com.example.stocksheet.portfolio.dto.PortfolioResponseDTO
 import com.example.stocksheet.portfolio.exceptions.PortfolioNameDuplicatedException
 import com.example.stocksheet.portfolio.exceptions.PortfolioNotFoundException
+import com.example.stocksheet.portfolio.mappers.PortfolioMapper
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -12,21 +13,22 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class PortfolioService(
-    val portfolioRepository: PortfolioRepository,
+    private val portfolioRepository: PortfolioRepository,
+    private val portfolioMapper: PortfolioMapper,
 ) : Loggable {
     @Transactional
     fun createPortfolio(dto: PortfolioRequestDTO): PortfolioResponseDTO {
         logger.info { "Creating portfolio - ${dto.name} - for ${dto.currency} currency" }
 
-        if (portfolioRepository.existsByName(requireNotNull(dto.name))) {
+        if (portfolioRepository.existsByName(dto.name)) {
             throw PortfolioNameDuplicatedException("Portfolio with ${dto.name} already exists")
         }
 
-        val portfolio = portfolioRepository.save(dto.toEntity())
+        val portfolio = portfolioRepository.save(portfolioMapper.toEntity(dto))
 
         logger.info { "Created portfolio ${portfolio.id}" }
 
-        return PortfolioResponseDTO(name = portfolio.name, currency = portfolio.currency, id = portfolio.id!!)
+        return portfolioMapper.toResponseDTO(portfolio)
     }
 
     @Transactional(readOnly = true)
@@ -37,13 +39,7 @@ class PortfolioService(
 
         logger.info { "Retrieved ${portfolios.size} portfolio items" }
 
-        return portfolios.map { portfolio ->
-            PortfolioResponseDTO(
-                id = portfolio.id!!,
-                name = portfolio.name,
-                currency = portfolio.currency,
-            )
-        }
+        return portfolios.map { portfolioMapper.toResponseDTO(it) }
     }
 
     @Transactional(readOnly = true)
@@ -54,7 +50,7 @@ class PortfolioService(
 
         logger.info { "Retrieved ${portfolio.id} portfolio" }
 
-        return PortfolioResponseDTO(name = portfolio.name, currency = portfolio.currency, id = portfolio.id!!)
+        return portfolioMapper.toResponseDTO(portfolio)
     }
 
     @Transactional()

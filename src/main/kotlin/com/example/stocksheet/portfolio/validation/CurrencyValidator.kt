@@ -10,7 +10,7 @@ class CurrencyValidator : ConstraintValidator<ValidCurrency, String?> {
         context: ConstraintValidatorContext,
     ): Boolean {
         if (currency == null) {
-            return true
+            return false
         }
 
         try {

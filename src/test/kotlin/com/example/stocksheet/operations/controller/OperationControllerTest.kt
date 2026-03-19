@@ -3,11 +3,9 @@ package com.example.stocksheet.operations.controller
 import com.example.stocksheet.BaseIntegrationTest
 import com.example.stocksheet.exceptions.dto.ErrorDTO
 import com.example.stocksheet.exceptions.dto.ErrorResponse
-import com.example.stocksheet.operations.dto.HoldingPositionDTO
-import com.example.stocksheet.operations.dto.OperationImportResponseDTO
-import com.example.stocksheet.operations.dto.OperationRequestDTO
-import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
-import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
+import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
+import com.example.stocksheet.operations.dto.OperationsImportResponseDTO
+import com.example.stocksheet.operations.dto.PortfolioHoldingsResponseDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
 import com.example.stocksheet.operations.exceptions.OperationsErrorType
@@ -94,13 +92,21 @@ class OperationControllerTest : BaseIntegrationTest() {
             it("gets holdings for provided portfolio id") {
                 val response = mockMvc.get("/api/operations/${portfolioUSD.id}/holdings").andReturn().response
 
-                val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
+                val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsResponseDTO::class.java)
 
                 returnedHoldings.portfolioId.shouldBe(portfolioUSD.id)
                 returnedHoldings.positions.shouldContainExactly(
                     listOf(
-                        HoldingPositionDTO(stockSymbol = "GOOG.US", totalVolume = 10.toBigDecimal(), totalCost = 1500.toBigDecimal()),
-                        HoldingPositionDTO(stockSymbol = "TSLA.US", totalVolume = 2.toBigDecimal(), totalCost = 1000.toBigDecimal()),
+                        PortfolioHoldingsResponseDTO.PositionDTO(
+                            stockSymbol = "GOOG.US",
+                            totalVolume = 10.toBigDecimal(),
+                            totalCost = 1500.toBigDecimal(),
+                        ),
+                        PortfolioHoldingsResponseDTO.PositionDTO(
+                            stockSymbol = "TSLA.US",
+                            totalVolume = 2.toBigDecimal(),
+                            totalCost = 1000.toBigDecimal(),
+                        ),
                     ),
                 )
             }
@@ -108,7 +114,7 @@ class OperationControllerTest : BaseIntegrationTest() {
             it("gets empty holdings, when operations does not exist for provided portfolio id") {
                 val response = mockMvc.get("/api/operations/${portfolioPLN.id}/holdings").andReturn().response
 
-                val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsDTO::class.java)
+                val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsResponseDTO::class.java)
 
                 returnedHoldings.portfolioId.shouldBe(portfolioPLN.id)
                 returnedHoldings.positions.shouldBeEmpty()
@@ -136,8 +142,8 @@ class OperationControllerTest : BaseIntegrationTest() {
         }
 
         describe("POST /api/operations/:portfolioId/operations/import") {
-            fun getOperationRequestDTO(): OperationRequestDTO =
-                OperationRequestDTO(
+            fun getOperationRequestDTO(): OperationsImportRequestDTO.OperationRequestDTO =
+                OperationsImportRequestDTO.OperationRequestDTO(
                     externalId = "external-id-1",
                     stockSymbol = "APL.US",
                     type = OperationType.BUY,
@@ -147,8 +153,8 @@ class OperationControllerTest : BaseIntegrationTest() {
                     totalPrice = 1000.toBigDecimal(),
                 )
 
-            fun getOperationsBatchRequestDTO(): OperationsBatchRequestDTO =
-                OperationsBatchRequestDTO(
+            fun getOperationsImportRequestDTO(): OperationsImportRequestDTO =
+                OperationsImportRequestDTO(
                     operations =
                         listOf(
                             getOperationRequestDTO(),
@@ -160,7 +166,7 @@ class OperationControllerTest : BaseIntegrationTest() {
                 )
 
             it("saves new operation and do not save duplicated one") {
-                val body = getOperationsBatchRequestDTO()
+                val body = getOperationsImportRequestDTO()
 
                 val response =
                     mockMvc
@@ -170,25 +176,25 @@ class OperationControllerTest : BaseIntegrationTest() {
                         }.andReturn()
                         .response
 
-                val returnedResponse = objectMapper.readValue(response.contentAsString, OperationImportResponseDTO::class.java)
+                val returnedResponse = objectMapper.readValue(response.contentAsString, OperationsImportResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    OperationImportResponseDTO(
-                        added = listOf(OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.added[0].id, "external-id-101")),
+                    OperationsImportResponseDTO(
+                        added = listOf(OperationsImportResponseDTO.OperationSummaryDTO(returnedResponse.added[0].id, "external-id-101")),
                         duplicated =
                             listOf(
-                                OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.duplicated[0].id, "external-id-1"),
+                                OperationsImportResponseDTO.OperationSummaryDTO(returnedResponse.duplicated[0].id, "external-id-1"),
                             ),
                     ),
                 )
             }
 
             it("imports all operations when no duplicates are present") {
-                val batch = getOperationsBatchRequestDTO()
+                val batch = getOperationsImportRequestDTO()
                 val body =
                     batch.copy(
                         operations =
-                            batch.operations!!.toMutableList().apply {
+                            batch.operations.toMutableList().apply {
                                 this[0] = this[0].copy(externalId = "external-id-100")
                             },
                     )
@@ -201,14 +207,14 @@ class OperationControllerTest : BaseIntegrationTest() {
                         }.andReturn()
                         .response
 
-                val returnedResponse = objectMapper.readValue(response.contentAsString, OperationImportResponseDTO::class.java)
+                val returnedResponse = objectMapper.readValue(response.contentAsString, OperationsImportResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    OperationImportResponseDTO(
+                    OperationsImportResponseDTO(
                         added =
                             listOf(
-                                OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.added[0].id, "external-id-100"),
-                                OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.added[1].id, "external-id-101"),
+                                OperationsImportResponseDTO.OperationSummaryDTO(returnedResponse.added[0].id, "external-id-100"),
+                                OperationsImportResponseDTO.OperationSummaryDTO(returnedResponse.added[1].id, "external-id-101"),
                             ),
                         duplicated =
                             listOf(),
@@ -217,11 +223,11 @@ class OperationControllerTest : BaseIntegrationTest() {
             }
 
             it("gets an error, when all of the operations are duplicates") {
-                val batch = getOperationsBatchRequestDTO()
+                val batch = getOperationsImportRequestDTO()
                 val body =
                     batch.copy(
                         operations =
-                            batch.operations!!.toMutableList().apply {
+                            batch.operations.toMutableList().apply {
                                 this[1] = this[1].copy(externalId = "external-id-2")
                             },
                     )
@@ -249,7 +255,7 @@ class OperationControllerTest : BaseIntegrationTest() {
             }
 
             it("gets an error, when provided portfolio id does not exist") {
-                val body = getOperationsBatchRequestDTO()
+                val body = getOperationsImportRequestDTO()
 
                 val response =
                     mockMvc

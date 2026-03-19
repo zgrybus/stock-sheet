@@ -102,36 +102,36 @@ export interface components {
             externalId: string;
             stockSymbol: string;
             /** @enum {string} */
-            type: "BUY" | "SELL";
+            type: "BUY" | "SELL" | "UNKNOWN";
             volume: number;
             /** Format: date-time */
             openDate: string;
             pricePerVolume: number;
             totalPrice: number;
         };
-        OperationsBatchRequestDTO: {
+        OperationsImportRequestDTO: {
             operations: Array<components["schemas"]["OperationRequestDTO"]>;
-        };
-        OperationImportResponseDTO: {
-            added: Array<components["schemas"]["OperationSummaryDTO"]>;
-            duplicated: Array<components["schemas"]["OperationSummaryDTO"]>;
         };
         OperationSummaryDTO: {
             /** Format: int64 */
-            id?: number;
-            externalId?: string;
+            id: number;
+            externalId: string;
         };
-        HoldingPositionDTO: {
+        OperationsImportResponseDTO: {
+            added: Array<components["schemas"]["OperationSummaryDTO"]>;
+            duplicated: Array<components["schemas"]["OperationSummaryDTO"]>;
+        };
+        PortfolioHoldingsResponseDTO: {
+            /** Format: int64 */
+            portfolioId: number;
+            positions: Array<components["schemas"]["PositionDTO"]>;
+        };
+        PositionDTO: {
             stockSymbol: string;
             totalVolume: number;
             totalCost: number;
         };
-        PortfolioHoldingsDTO: {
-            /** Format: int64 */
-            portfolioId: number;
-            positions: Array<components["schemas"]["HoldingPositionDTO"]>;
-        };
-        PortfolioSummaryDTO: {
+        PortfolioSummaryResponseDTO: {
             totalValue: number;
             totalIncome: number;
             investedCapital: number;
@@ -266,7 +266,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["OperationsBatchRequestDTO"];
+                "application/json": components["schemas"]["OperationsImportRequestDTO"];
             };
         };
         responses: {
@@ -276,7 +276,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OperationImportResponseDTO"];
+                    "application/json": components["schemas"]["OperationsImportResponseDTO"];
                 };
             };
             /** @description Bad Request */
@@ -421,7 +421,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PortfolioHoldingsDTO"];
+                    "application/json": components["schemas"]["PortfolioHoldingsResponseDTO"];
                 };
             };
             /** @description Bad Request */
@@ -470,7 +470,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PortfolioSummaryDTO"];
+                    "application/json": components["schemas"]["PortfolioSummaryResponseDTO"];
                 };
             };
             /** @description Bad Request */

@@ -1,6 +1,6 @@
 package com.example.stocksheet.analytics.controller
 
-import com.example.stocksheet.analytics.dto.PortfolioSummaryDTO
+import com.example.stocksheet.analytics.dto.PortfolioSummaryResponseDTO
 import com.example.stocksheet.analytics.service.AnalyticsService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -15,5 +15,5 @@ class AnalyticsController(
     @GetMapping(value = ["/summary"], produces = ["application/json"])
     fun generatePortfolioSummary(
         @PathVariable("portfolioId") portfolioId: Long,
-    ): PortfolioSummaryDTO = analyticsService.generatePortfolioSummary(portfolioId)
+    ): PortfolioSummaryResponseDTO = analyticsService.generatePortfolioSummary(portfolioId)
 }

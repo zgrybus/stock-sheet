@@ -1,6 +1,6 @@
 package com.example.stocksheet.operations.validation
 
-import com.example.stocksheet.operations.dto.OperationRequestDTO
+import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
 import com.example.stocksheet.operations.entity.OperationType
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.booleans.shouldBeFalse
@@ -16,7 +16,7 @@ class TotalPriceValidatorTest : DescribeSpec() {
         val context = mockk<ConstraintValidatorContext>(relaxed = true)
 
         fun getValidDTO() =
-            OperationRequestDTO(
+            OperationsImportRequestDTO.OperationRequestDTO(
                 externalId = "ext-1",
                 stockSymbol = "AAPL",
                 type = OperationType.BUY,
@@ -38,24 +38,6 @@ class TotalPriceValidatorTest : DescribeSpec() {
                 val dto = getValidDTO().apply { totalPrice = 2000.00.toBigDecimal() }
 
                 validator.isValid(dto, context).shouldBeFalse()
-            }
-
-            it("returns false if totalPrice is null") {
-                val dtoWithNull = getValidDTO().apply { totalPrice = null }
-
-                validator.isValid(dtoWithNull, context).shouldBeFalse()
-            }
-
-            it("returns false if pricePerVolume is null") {
-                val dtoWithNull = getValidDTO().apply { pricePerVolume = null }
-
-                validator.isValid(dtoWithNull, context).shouldBeFalse()
-            }
-
-            it("returns false if volume is null") {
-                val dtoWithNull = getValidDTO().apply { volume = null }
-
-                validator.isValid(dtoWithNull, context).shouldBeFalse()
             }
         }
     }
