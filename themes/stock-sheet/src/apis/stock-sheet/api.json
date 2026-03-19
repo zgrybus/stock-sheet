@@ -114,7 +114,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/OperationsBatchRequestDTO"
+                "$ref": "#/components/schemas/OperationsImportRequestDTO"
               }
             }
           },
@@ -126,7 +126,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/OperationImportResponseDTO"
+                  "$ref": "#/components/schemas/OperationsImportResponseDTO"
                 }
               }
             }
@@ -365,11 +365,12 @@
         },
         "required": ["currency", "id", "name"]
       },
-      "OperationRequestDTO": {
+      "OperationImportRequestDTO": {
         "type": "object",
         "properties": {
           "externalId": { "type": "string", "minLength": 1 },
-          "stockSymbol": { "type": "string", "minLength": 1 },
+          "symbol": { "type": "string", "minLength": 1 },
+          "exchange": { "type": "string", "minLength": 1 },
           "type": { "type": "string", "enum": ["BUY", "SELL"] },
           "volume": { "type": "number" },
           "openDate": { "type": "string", "format": "date-time" },
@@ -377,27 +378,37 @@
           "totalPrice": { "type": "number" }
         },
         "required": [
+          "exchange",
           "externalId",
           "openDate",
           "pricePerVolume",
-          "stockSymbol",
+          "symbol",
           "totalPrice",
           "type",
           "volume"
         ]
       },
-      "OperationsBatchRequestDTO": {
+      "OperationsImportRequestDTO": {
         "type": "object",
         "properties": {
           "operations": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/OperationRequestDTO" },
+            "items": {
+              "$ref": "#/components/schemas/OperationImportRequestDTO"
+            },
             "minItems": 1
           }
         },
         "required": ["operations"]
       },
-      "OperationImportResponseDTO": {
+      "OperationSummaryDTO": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int64" },
+          "externalId": { "type": "string" }
+        }
+      },
+      "OperationsImportResponseDTO": {
         "type": "object",
         "properties": {
           "added": {
@@ -410,13 +421,6 @@
           }
         },
         "required": ["added", "duplicated"]
-      },
-      "OperationSummaryDTO": {
-        "type": "object",
-        "properties": {
-          "id": { "type": "integer", "format": "int64" },
-          "externalId": { "type": "string" }
-        }
       },
       "HoldingPositionDTO": {
         "type": "object",

@@ -46,13 +46,13 @@ export type XtbXlsxRowType = {
 );
 
 const parseCurrency = (json: Array<XtbXlsxRowType>): string => {
-  const currenyRow = json.find((row) => row["__rowNum__"] === 5);
+  const currencyRow = json.find((row) => row["__rowNum__"] === 5);
 
-  if (!currenyRow) {
+  if (!currencyRow) {
     throw Error(ParseError.ParsingError);
   }
 
-  const currency = currenyRow.__EMPTY_4;
+  const currency = currencyRow.__EMPTY_4;
 
   if (!isValidCurrency(currency)) {
     throw Error(ParseError.CurrencyError);
@@ -66,7 +66,7 @@ const parseTradeDetails = (input: string) => {
   const regexMatch = input.match(regex);
 
   if (!regexMatch) {
-    throw Error("ParsingError");
+    throw Error(ParseError.ParsingError);
   }
 
   return {
@@ -74,6 +74,24 @@ const parseTradeDetails = (input: string) => {
     pricePerVolume: parseFloat(regexMatch[2]),
   };
 };
+
+const parseStockSymbol = (input: string) => {
+  const regex = /^(.*)\.([^.]+)$/;
+  const regexMatch = input.match(regex);
+
+  // TODO: add different ParseError
+  if (!regexMatch || regexMatch.length !== 3) {
+    throw Error(ParseError.ParsingError);
+  }
+
+  return {
+    symbol: regexMatch[1],
+    exchange: match(regexMatch[2])
+      .with("UK", () => "L")
+      .otherwise((value) => value),
+  };
+};
+
 const parsePositions = (
   json: Array<XtbXlsxRowType>,
 ): CashOperationHistory["positions"] => {
@@ -83,7 +101,7 @@ const parsePositions = (
 
   const currency = parseCurrency(json);
 
-  // todo
+  // TODO: validate currency
   if (currency !== "USD") {
     throw new Error(ParseError.CurrencyMismatch);
   }
@@ -101,9 +119,9 @@ const parsePositions = (
           id: stockPurchaseRow.__EMPTY,
           type: "BUY" as const,
           openDate: stockPurchaseRow.__EMPTY_2,
-          stockSymbol: stockPurchaseRow.__EMPTY_4,
           totalPrice: Math.abs(parseFloat(stockPurchaseRow.__EMPTY_5)),
           ...parseTradeDetails(stockPurchaseRow.__EMPTY_3),
+          ...parseStockSymbol(stockPurchaseRow.__EMPTY_4),
         }))
         .otherwise(() => null),
     )

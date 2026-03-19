@@ -1,12 +1,12 @@
 package com.example.stocksheet.operations.validation
 
-import com.example.stocksheet.operations.dto.OperationRequestDTO
+import com.example.stocksheet.operations.dto.OperationImportRequestDTO
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
 
-class TotalPriceValidator : ConstraintValidator<ValidTotalPrice, OperationRequestDTO> {
+class TotalPriceValidator : ConstraintValidator<ValidTotalPrice, OperationImportRequestDTO> {
     override fun isValid(
-        dto: OperationRequestDTO,
+        dto: OperationImportRequestDTO,
         context: ConstraintValidatorContext,
     ): Boolean {
         val totalPrice = dto.totalPrice

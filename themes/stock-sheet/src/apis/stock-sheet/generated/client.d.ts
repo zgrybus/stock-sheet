@@ -98,9 +98,10 @@ export interface components {
             name: string;
             currency: string;
         };
-        OperationRequestDTO: {
+        OperationImportRequestDTO: {
             externalId: string;
-            stockSymbol: string;
+            symbol: string;
+            exchange: string;
             /** @enum {string} */
             type: "BUY" | "SELL";
             volume: number;
@@ -109,17 +110,17 @@ export interface components {
             pricePerVolume: number;
             totalPrice: number;
         };
-        OperationsBatchRequestDTO: {
-            operations: Array<components["schemas"]["OperationRequestDTO"]>;
-        };
-        OperationImportResponseDTO: {
-            added: Array<components["schemas"]["OperationSummaryDTO"]>;
-            duplicated: Array<components["schemas"]["OperationSummaryDTO"]>;
+        OperationsImportRequestDTO: {
+            operations: Array<components["schemas"]["OperationImportRequestDTO"]>;
         };
         OperationSummaryDTO: {
             /** Format: int64 */
             id?: number;
             externalId?: string;
+        };
+        OperationsImportResponseDTO: {
+            added: Array<components["schemas"]["OperationSummaryDTO"]>;
+            duplicated: Array<components["schemas"]["OperationSummaryDTO"]>;
         };
         HoldingPositionDTO: {
             stockSymbol: string;
@@ -266,7 +267,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["OperationsBatchRequestDTO"];
+                "application/json": components["schemas"]["OperationsImportRequestDTO"];
             };
         };
         responses: {
@@ -276,7 +277,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["OperationImportResponseDTO"];
+                    "application/json": components["schemas"]["OperationsImportResponseDTO"];
                 };
             };
             /** @description Bad Request */

@@ -13,7 +13,8 @@ import { parse, isValid, format } from "date-fns";
 
 type Operation = {
   id: string;
-  stockSymbol: string;
+  symbol: string;
+  exchange: string;
   type: "BUY" | "SELL";
   volume: number;
   openDate: string;
@@ -66,9 +67,7 @@ export const WalletOperationsTable = ({
               <TableCell className="text-sm whitespace-nowrap">
                 {formatDate(operation.openDate)}
               </TableCell>
-              <TableCell className="font-bold">
-                {operation.stockSymbol}
-              </TableCell>
+              <TableCell className="font-bold">{operation.symbol}</TableCell>
               <TableCell>
                 <Badge
                   variant="outline"

@@ -1,7 +1,7 @@
 package com.example.stocksheet.operations.controller
 
-import com.example.stocksheet.operations.dto.OperationImportResponseDTO
-import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
+import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
+import com.example.stocksheet.operations.dto.OperationsImportResponseDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.service.OperationService
 import jakarta.validation.Valid
@@ -33,7 +33,7 @@ class OperationController(
         produces = ["application/json"],
     )
     fun importOperations(
-        @Valid @RequestBody body: OperationsBatchRequestDTO,
+        @Valid @RequestBody body: OperationsImportRequestDTO,
         @PathVariable portfolioId: Long,
-    ): OperationImportResponseDTO = operationService.importOperations(body, portfolioId)
+    ): OperationsImportResponseDTO = operationService.importOperations(body, portfolioId)
 }

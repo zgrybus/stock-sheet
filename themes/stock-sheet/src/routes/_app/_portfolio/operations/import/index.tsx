@@ -52,7 +52,8 @@ function Index() {
 
         const operations = positions.map((position) => ({
           externalId: position.id,
-          stockSymbol: position.stockSymbol,
+          symbol: position.symbol,
+          exchange: position.exchange,
           type: position.type,
           volume: position.volume,
           openDate: parseDate(

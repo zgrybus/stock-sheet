@@ -7,7 +7,8 @@ export enum ParseError {
 
 export type CashOperationHistoryPosition = {
   id: string;
-  stockSymbol: string;
+  exchange: string;
+  symbol: string;
   type: "BUY";
   volume: number;
   openDate: string;

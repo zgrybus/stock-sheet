@@ -1,6 +1,6 @@
 package com.example.stocksheet.operations.dto
 
-data class OperationImportResponseDTO(
+data class OperationsImportResponseDTO(
     val added: List<OperationSummaryDTO>,
     val duplicated: List<OperationSummaryDTO>,
 ) {

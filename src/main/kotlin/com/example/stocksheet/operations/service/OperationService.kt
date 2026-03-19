@@ -3,8 +3,8 @@ package com.example.stocksheet.operations.service
 import com.example.stocksheet.Loggable
 import com.example.stocksheet.integration.finnhub.service.FinnhubService
 import com.example.stocksheet.operations.dto.HoldingPositionDTO
-import com.example.stocksheet.operations.dto.OperationImportResponseDTO
-import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
+import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
+import com.example.stocksheet.operations.dto.OperationsImportResponseDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.exceptions.OperationsBatchEmptyException
 import com.example.stocksheet.operations.repository.OperationRepository
@@ -62,9 +62,9 @@ class OperationService(
 
     @Transactional()
     fun importOperations(
-        batch: OperationsBatchRequestDTO,
+        batch: OperationsImportRequestDTO,
         portfolioId: Long,
-    ): OperationImportResponseDTO {
+    ): OperationsImportResponseDTO {
         logger.info { "Processing batch import for portfolioId - $portfolioId" }
 
         val operations = requireNotNull(batch.operations)
@@ -87,13 +87,14 @@ class OperationService(
         val savedOperations =
             operationRepository.saveAll(
                 newOperations.map { operation ->
-                    val stockSymbol = requireNotNull(operation.stockSymbol)
+                    // TODO: cleanup it
+                    val symbol = requireNotNull(operation.symbol)
                     val stock =
-                        stockRepository.findBySymbol(stockSymbol) ?: finnhubService.getCompanyProfile2(stockSymbol).let {
+                        stockRepository.findBySymbol(symbol) ?: finnhubService.getCompanyProfile2(symbol).let {
                             if (it == null) {
-                                throw IllegalArgumentException("No stock found for symbol $stockSymbol")
+                                throw IllegalArgumentException("No stock found for symbol $symbol")
                             }
-                            stockRepository.save(it.toStockEntity(stockSymbol))
+                            stockRepository.save(it.toStockEntity())
                         }
                     operation.toEntity(portfolio, stock)
                 },
@@ -101,10 +102,10 @@ class OperationService(
 
         logger.info { "Import finished. Added: ${savedOperations.size}, Duplicated: ${duplicatedOperations.size}" }
 
-        return OperationImportResponseDTO(
+        return OperationsImportResponseDTO(
             added =
                 savedOperations.map {
-                    OperationImportResponseDTO.OperationSummaryDTO(
+                    OperationsImportResponseDTO.OperationSummaryDTO(
                         id = it.id,
                         externalId = it.externalId,
                     )
@@ -112,7 +113,7 @@ class OperationService(
             duplicated =
                 duplicatedOperations.map { operation ->
                     val idFromDb = existingIdsMap[operation.externalId]?.id
-                    OperationImportResponseDTO.OperationSummaryDTO(id = idFromDb, externalId = operation.externalId)
+                    OperationsImportResponseDTO.OperationSummaryDTO(id = idFromDb, externalId = operation.externalId)
                 },
         )
     }

@@ -14,18 +14,20 @@ import jakarta.validation.constraints.Positive
 import java.math.BigDecimal
 import java.time.Instant
 
-data class OperationsBatchRequestDTO(
+data class OperationsImportRequestDTO(
     @field:NotEmpty(message = "Operations list cannot be empty")
     @field:Valid
-    var operations: List<OperationRequestDTO>? = null,
+    var operations: List<OperationImportRequestDTO>? = null,
 )
 
 @ValidTotalPrice(message = "Total Price must be equal to Volume * Price Per Volume")
-data class OperationRequestDTO(
+data class OperationImportRequestDTO(
     @field:NotBlank(message = "External ID is required")
     var externalId: String? = null,
-    @field:NotBlank(message = "Stock Symbol is required")
-    var stockSymbol: String? = null,
+    @field:NotBlank(message = "Symbol is required")
+    var symbol: String? = null,
+    @field:NotBlank(message = "Exchange is required")
+    var exchange: String? = null,
     @field:NotNull(message = "Type is required")
     var type: OperationType? = null,
     @field:NotNull(message = "Volume is required")

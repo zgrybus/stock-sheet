@@ -4,9 +4,9 @@ import com.example.stocksheet.BaseIntegrationTest
 import com.example.stocksheet.exceptions.dto.ErrorDTO
 import com.example.stocksheet.exceptions.dto.ErrorResponse
 import com.example.stocksheet.operations.dto.HoldingPositionDTO
-import com.example.stocksheet.operations.dto.OperationImportResponseDTO
 import com.example.stocksheet.operations.dto.OperationRequestDTO
 import com.example.stocksheet.operations.dto.OperationsBatchRequestDTO
+import com.example.stocksheet.operations.dto.OperationsImportResponseDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
@@ -170,14 +170,14 @@ class OperationControllerTest : BaseIntegrationTest() {
                         }.andReturn()
                         .response
 
-                val returnedResponse = objectMapper.readValue(response.contentAsString, OperationImportResponseDTO::class.java)
+                val returnedResponse = objectMapper.readValue(response.contentAsString, OperationsImportResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    OperationImportResponseDTO(
-                        added = listOf(OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.added[0].id, "external-id-101")),
+                    OperationsImportResponseDTO(
+                        added = listOf(OperationsImportResponseDTO.OperationSummaryDTO(returnedResponse.added[0].id, "external-id-101")),
                         duplicated =
                             listOf(
-                                OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.duplicated[0].id, "external-id-1"),
+                                OperationsImportResponseDTO.OperationSummaryDTO(returnedResponse.duplicated[0].id, "external-id-1"),
                             ),
                     ),
                 )
@@ -201,14 +201,14 @@ class OperationControllerTest : BaseIntegrationTest() {
                         }.andReturn()
                         .response
 
-                val returnedResponse = objectMapper.readValue(response.contentAsString, OperationImportResponseDTO::class.java)
+                val returnedResponse = objectMapper.readValue(response.contentAsString, OperationsImportResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    OperationImportResponseDTO(
+                    OperationsImportResponseDTO(
                         added =
                             listOf(
-                                OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.added[0].id, "external-id-100"),
-                                OperationImportResponseDTO.OperationSummaryDTO(returnedResponse.added[1].id, "external-id-101"),
+                                OperationsImportResponseDTO.OperationSummaryDTO(returnedResponse.added[0].id, "external-id-100"),
+                                OperationsImportResponseDTO.OperationSummaryDTO(returnedResponse.added[1].id, "external-id-101"),
                             ),
                         duplicated =
                             listOf(),
