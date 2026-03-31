@@ -35,7 +35,7 @@ class OperationService(
         // TODO: move it to sql
         val items =
             operations
-                .groupingBy { it.stock.name }
+                .groupingBy { it.stock.symbol }
                 .fold(
                     {
                         key,

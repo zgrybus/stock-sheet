@@ -40,14 +40,14 @@ class OperationControllerTest : BaseIntegrationTest() {
                 returnedHoldings.positions.shouldContainExactly(
                     listOf(
                         PortfolioHoldingsResponseDTO.PositionDTO(
-                            stockSymbol = "GOOG.US",
-                            totalVolume = 10.toBigDecimal(),
-                            totalCost = 1500.toBigDecimal(),
+                            stockSymbol = "AAPL.US",
+                            totalVolume = 15.toBigDecimal(),
+                            totalCost = 1900.toBigDecimal(),
                         ),
                         PortfolioHoldingsResponseDTO.PositionDTO(
-                            stockSymbol = "TSLA.US",
-                            totalVolume = 2.toBigDecimal(),
-                            totalCost = 1000.toBigDecimal(),
+                            stockSymbol = "GOOGL.US",
+                            totalVolume = 50.toBigDecimal(),
+                            totalCost = 500.toBigDecimal(),
                         ),
                     ),
                 )

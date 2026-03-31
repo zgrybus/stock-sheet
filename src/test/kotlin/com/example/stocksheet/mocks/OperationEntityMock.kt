@@ -8,6 +8,7 @@ import java.math.BigDecimal
 import java.time.Instant
 
 fun createMockOperationEntity(
+    id: Long? = null,
     externalId: String = "external-id-1",
     stock: StockEntity = createMockStockEntity(),
     type: OperationType = OperationType.BUY,
@@ -16,6 +17,7 @@ fun createMockOperationEntity(
     openDate: Instant = Instant.now(),
     portfolio: PortfolioEntity = createMockPortfolioEntity(),
 ) = OperationEntity(
+    id = id,
     externalId = externalId,
     stock = stock,
     type = type,
