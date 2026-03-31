@@ -30,12 +30,18 @@ export const WalletSummary = ({
   totalValue,
   investedCapital,
 }: WalletSummaryProps) => {
-  const capitalRatio = Math.min((investedCapital / totalValue) * 100, 100);
-  const profitRatio = 100 - capitalRatio;
+  const capitalRatio =
+    totalValue !== 0 ? Math.min((investedCapital / totalValue) * 100, 100) : 0;
 
-  const totalProfitPercent = (totalIncome / investedCapital) * 100;
+  const profitRatio = totalValue !== 0 ? 100 - capitalRatio : 0;
+
+  const totalProfitPercent =
+    investedCapital !== 0 ? (totalIncome / investedCapital) * 100 : 0;
+
   const yesterdayValue = totalValue - todayIncome;
-  const todayIncomePercent = (todayIncome / yesterdayValue) * 100;
+
+  const todayIncomePercent =
+    yesterdayValue !== 0 ? (todayIncome / yesterdayValue) * 100 : 0;
 
   return (
     <div className="mt-6 flex flex-col gap-4">

@@ -106,4 +106,81 @@ describe("Wallet Summary", () => {
       "$200.002.27%dzisiaj",
     );
   });
+
+  test("renders correct values when all amounts are exactly 0", () => {
+    render(
+      <WalletSummary
+        currency="USD"
+        totalValue={0}
+        totalIncome={0}
+        investedCapital={0}
+        todayIncome={0}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    expect(screen.getByTestId("total-wallet-value")).toHaveTextContent(
+      "$0.00Kapitał: 0%Zysk: 0%",
+    );
+    expect(
+      screen.getByTestId("total-wallet-invested-capital"),
+    ).toHaveTextContent("$0.00Suma wpłaconych przez Ciebie środków.");
+    expect(screen.getByTestId("total-wallet-income")).toHaveTextContent(
+      "$0.000%od początku",
+    );
+    expect(screen.getByTestId("today-wallet-income")).toHaveTextContent(
+      "$0.000%dzisiaj",
+    );
+  });
+
+  test("renders correct values for a wallet with an overall profit but a daily loss", () => {
+    render(
+      <WalletSummary
+        currency="USD"
+        totalValue={12_000}
+        totalIncome={2_000}
+        investedCapital={10_000}
+        todayIncome={-500}
+      />,
+      { wrapper: TestProviders },
+    );
+    expect(screen.getByTestId("total-wallet-value")).toHaveTextContent(
+      "$12,000.00Kapitał: 83.33%Zysk: 16.67%",
+    );
+    expect(
+      screen.getByTestId("total-wallet-invested-capital"),
+    ).toHaveTextContent("$10,000.00Suma wpłaconych przez Ciebie środków.");
+    expect(screen.getByTestId("total-wallet-income")).toHaveTextContent(
+      "$2,000.0020%od początku",
+    );
+    expect(screen.getByTestId("today-wallet-income")).toHaveTextContent(
+      "-$500.00-4%dzisiaj",
+    );
+  });
+
+  test("renders correct values for massive exponential profit (e.g. huge crypto gain)", () => {
+    render(
+      <WalletSummary
+        currency="USD"
+        totalValue={100_000}
+        totalIncome={99_000}
+        investedCapital={1_000}
+        todayIncome={50_000}
+      />,
+      { wrapper: TestProviders },
+    );
+
+    expect(screen.getByTestId("total-wallet-value")).toHaveTextContent(
+      "$100,000.00Kapitał: 1%Zysk: 99%",
+    );
+    expect(
+      screen.getByTestId("total-wallet-invested-capital"),
+    ).toHaveTextContent("$1,000.00Suma wpłaconych przez Ciebie środków.");
+    expect(screen.getByTestId("total-wallet-income")).toHaveTextContent(
+      "$99,000.009,900%od początku",
+    );
+    expect(screen.getByTestId("today-wallet-income")).toHaveTextContent(
+      "$50,000.00100%dzisiaj",
+    );
+  });
 });
