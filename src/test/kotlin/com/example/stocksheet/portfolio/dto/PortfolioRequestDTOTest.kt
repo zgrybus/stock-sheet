@@ -41,7 +41,7 @@ class PortfolioRequestDTOTest : DescribeSpec() {
                     val violations = validator.validate(dto)
 
                     violations.shouldHaveSize(2)
-                    violations.first().should {
+                    violations.last().should {
                         it.message.shouldBe("Currency cannot be empty")
                         it.propertyPath.toString().shouldBe("currency")
                     }
