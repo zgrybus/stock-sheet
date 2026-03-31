@@ -9,6 +9,7 @@ build/
 *.iml
 *.ipr
 out/
+src/main/resources/application-local.yml
 
 .kotlin/
 

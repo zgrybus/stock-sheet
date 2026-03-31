@@ -1,13 +1,16 @@
 package com.example.stocksheet.operations.service
 
+import com.example.stocksheet.mocks.createMockOperationsList
+import com.example.stocksheet.mocks.createMockPortfolioEntity
+import com.example.stocksheet.mocks.createMockStockEntity
 import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsResponseDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
 import com.example.stocksheet.operations.mappers.OperationsMapper
 import com.example.stocksheet.operations.repository.OperationRepository
-import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
+import com.example.stocksheet.stocks.service.StockService
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
@@ -18,7 +21,6 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
@@ -27,60 +29,24 @@ import java.util.Optional
 class OperationServiceTest : DescribeSpec() {
     private val operationRepositoryMock: OperationRepository = mockk()
     private val portfolioRepositoryMock: PortfolioRepository = mockk()
+    private val stockServiceMock: StockService = mockk()
     private val operationsMapper = OperationsMapper()
-    private val operationService = OperationService(operationRepositoryMock, portfolioRepositoryMock, operationsMapper)
+    private val operationService = OperationService(operationRepositoryMock, portfolioRepositoryMock, operationsMapper, stockServiceMock)
 
     init {
-        val portfolio = PortfolioEntity(id = 10003, name = "portfolio_name_1", currency = "USD")
-
-        fun getOperationEntity(): OperationEntity =
-            OperationEntity(
-                id = 100,
-                externalId = "external-id-1",
-                stockSymbol = "GOOG.US",
-                type = OperationType.BUY,
-                volume = 10.toBigDecimal(),
-                openDate = Instant.now(),
-                pricePerVolume = 150.toBigDecimal(),
-                totalPrice = 1500.toBigDecimal(),
-                portfolio = portfolio,
-            )
-
         val operations =
-            listOf(
-                getOperationEntity(),
-                getOperationEntity().apply {
-                    id = 101
-                    externalId = "external-id-2"
-                    volume = 15.toBigDecimal()
-                    pricePerVolume = 95.toBigDecimal()
-                    totalPrice = 1425.toBigDecimal()
-                },
-                getOperationEntity().apply {
-                    id = 102
-                    externalId = "external-id-3"
-                    volume = 2.toBigDecimal()
-                    pricePerVolume = 500.toBigDecimal()
-                    totalPrice = 1000.toBigDecimal()
-                    stockSymbol = "TSLA.US"
-                },
-                getOperationEntity().apply {
-                    id = 103
-                    externalId = "external-id-4"
-                    volume = 95.toBigDecimal()
-                    pricePerVolume = 2.toBigDecimal()
-                    totalPrice = 190.toBigDecimal()
-                    stockSymbol = "ALPH.US"
-                },
-                getOperationEntity().apply {
-                    id = 103
-                    externalId = "external-id-4"
-                    volume = 10.toBigDecimal()
-                    pricePerVolume = 5.toBigDecimal()
-                    totalPrice = 50.toBigDecimal()
-                    stockSymbol = "TSLA.US"
-                },
-            )
+            createMockOperationsList().apply {
+                this[0].id = 100
+                this[0].stock = createMockStockEntity(symbol = "GOOG", name = "Alphabet")
+
+                this[1].id = 101
+                this[1].stock = createMockStockEntity(symbol = "TSL", name = "Tesla")
+
+                this[2].id = 102
+
+                this[3].id = 103
+            }
+        val portfolio = createMockPortfolioEntity(id = 1003)
 
         beforeEach {
             every { portfolioRepositoryMock.existsById(portfolio.id!!) } returns true
@@ -103,19 +69,19 @@ class OperationServiceTest : DescribeSpec() {
                     result.positions.shouldContainExactly(
                         listOf(
                             PortfolioHoldingsResponseDTO.PositionDTO(
-                                stockSymbol = "GOOG.US",
-                                totalCost = 2925.toBigDecimal(),
-                                totalVolume = 25.toBigDecimal(),
+                                stockSymbol = "GOOG",
+                                totalCost = 1500.toBigDecimal(),
+                                totalVolume = 10.toBigDecimal(),
                             ),
                             PortfolioHoldingsResponseDTO.PositionDTO(
-                                stockSymbol = "TSLA.US",
-                                totalCost = 1050.toBigDecimal(),
-                                totalVolume = 12.toBigDecimal(),
+                                stockSymbol = "TSL",
+                                totalCost = 400.toBigDecimal(),
+                                totalVolume = 5.toBigDecimal(),
                             ),
                             PortfolioHoldingsResponseDTO.PositionDTO(
-                                stockSymbol = "ALPH.US",
-                                totalCost = 190.toBigDecimal(),
-                                totalVolume = 95.toBigDecimal(),
+                                stockSymbol = "AAPL",
+                                totalCost = 1500.toBigDecimal(),
+                                totalVolume = 150.toBigDecimal(),
                             ),
                         ),
                     )
@@ -126,7 +92,7 @@ class OperationServiceTest : DescribeSpec() {
                 fun getOperationRequestDTO(): OperationsImportRequestDTO.OperationRequestDTO =
                     OperationsImportRequestDTO.OperationRequestDTO(
                         externalId = "external-id-1",
-                        stockSymbol = "APL.US",
+                        stockSymbol = "AAPL",
                         type = OperationType.BUY,
                         volume = 10.toBigDecimal(),
                         openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
@@ -141,7 +107,7 @@ class OperationServiceTest : DescribeSpec() {
                                 getOperationRequestDTO(),
                                 getOperationRequestDTO().apply {
                                     externalId = "external-id-101"
-                                    stockSymbol = "NVDA.US"
+                                    stockSymbol = "NVDA"
                                 },
                             ),
                     )
@@ -150,6 +116,11 @@ class OperationServiceTest : DescribeSpec() {
                     every { operationRepositoryMock.findAllByExternalIdIn(any()) } returns operations
                     every { operationRepositoryMock.saveAll<OperationEntity>(any()) } returns listOf<OperationEntity>()
                     every { portfolioRepositoryMock.findById(portfolio.id!!) } returns Optional.of(portfolio)
+
+                    every { stockServiceMock.getStock(any()) } answers {
+                        val requestedSymbol = firstArg<String>()
+                        createMockStockEntity(symbol = requestedSymbol)
+                    }
                 }
 
                 it("fetches entities for requested external ids") {
@@ -173,8 +144,12 @@ class OperationServiceTest : DescribeSpec() {
                     }
 
                     val nvdaOperation = batch.operations[1]
+                    val expectedStock = createMockStockEntity(symbol = nvdaOperation.stockSymbol)
+
                     newOperations.captured.shouldHaveSize(1)
-                    newOperations.captured[0].shouldBeEqualToComparingFields(operationsMapper.toEntity(nvdaOperation, portfolio))
+                    newOperations.captured[0].shouldBeEqualToComparingFields(
+                        operationsMapper.toEntity(nvdaOperation, portfolio, expectedStock),
+                    )
                 }
             }
         }

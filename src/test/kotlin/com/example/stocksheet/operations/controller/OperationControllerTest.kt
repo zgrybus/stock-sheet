@@ -6,13 +6,10 @@ import com.example.stocksheet.exceptions.dto.ErrorResponse
 import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
 import com.example.stocksheet.operations.dto.OperationsImportResponseDTO
 import com.example.stocksheet.operations.dto.PortfolioHoldingsResponseDTO
-import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
 import com.example.stocksheet.operations.exceptions.OperationsErrorType
-import com.example.stocksheet.operations.repository.OperationRepository
-import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import com.example.stocksheet.portfolio.exceptions.PortfolioErrorType
-import com.example.stocksheet.portfolio.repository.PortfolioRepository
+import com.example.stocksheet.scenarios.StandardMarketScenario
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
@@ -21,75 +18,20 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
-import java.time.Instant
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
 
+@Transactional
 class OperationControllerTest : BaseIntegrationTest() {
-    @Autowired lateinit var operationRepository: OperationRepository
-
-    @Autowired lateinit var portfolioRepository: PortfolioRepository
-
-    private lateinit var portfolioUSD: PortfolioEntity
-    private lateinit var portfolioEURO: PortfolioEntity
-    private lateinit var portfolioPLN: PortfolioEntity
+    @Autowired lateinit var standardMarketScenario: StandardMarketScenario
 
     init {
-
-        fun getOperationEntity(): OperationEntity =
-            OperationEntity(
-                externalId = "external-id-1",
-                stockSymbol = "GOOG.US",
-                type = OperationType.BUY,
-                volume = 10.toBigDecimal(),
-                openDate = Instant.now(),
-                pricePerVolume = 150.toBigDecimal(),
-                totalPrice = 1500.toBigDecimal(),
-                portfolio = portfolioUSD,
-            )
-
-        beforeEach {
-            portfolioUSD = PortfolioEntity(name = "portfolio_name_1", currency = "USD")
-            portfolioPLN = PortfolioEntity(name = "portfolio_name_3", currency = "PLN")
-            portfolioEURO = PortfolioEntity(name = "portfolio_name_2", currency = "EUR")
-
-            portfolioRepository.saveAll(
-                listOf(
-                    portfolioUSD,
-                    portfolioEURO,
-                    portfolioPLN,
-                ),
-            )
-
-            operationRepository.saveAll(
-                listOf(
-                    getOperationEntity(),
-                    getOperationEntity().apply {
-                        externalId = "external-id-2"
-                        volume = 15.toBigDecimal()
-                        pricePerVolume = 95.toBigDecimal()
-                        totalPrice = 1425.toBigDecimal()
-                        portfolio = portfolioEURO
-                    },
-                    getOperationEntity().apply {
-                        externalId = "external-id-3"
-                        volume = 2.toBigDecimal()
-                        pricePerVolume = 500.toBigDecimal()
-                        totalPrice = 1000.toBigDecimal()
-                        stockSymbol = "TSLA.US"
-                    },
-                ),
-            )
-        }
-
-        afterEach {
-            operationRepository.deleteAllInBatch()
-            portfolioRepository.deleteAllInBatch()
-        }
-
         describe("GET /api/operations/{portfolioId}/holdings") {
             it("gets holdings for provided portfolio id") {
+                val data = standardMarketScenario.setup()
+                val portfolioUSD = data.portfolios[0]
                 val response = mockMvc.get("/api/operations/${portfolioUSD.id}/holdings").andReturn().response
 
                 val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsResponseDTO::class.java)
@@ -98,20 +40,22 @@ class OperationControllerTest : BaseIntegrationTest() {
                 returnedHoldings.positions.shouldContainExactly(
                     listOf(
                         PortfolioHoldingsResponseDTO.PositionDTO(
-                            stockSymbol = "GOOG.US",
-                            totalVolume = 10.toBigDecimal(),
-                            totalCost = 1500.toBigDecimal(),
+                            stockSymbol = "AAPL.US",
+                            totalVolume = 15.toBigDecimal(),
+                            totalCost = 1900.toBigDecimal(),
                         ),
                         PortfolioHoldingsResponseDTO.PositionDTO(
-                            stockSymbol = "TSLA.US",
-                            totalVolume = 2.toBigDecimal(),
-                            totalCost = 1000.toBigDecimal(),
+                            stockSymbol = "GOOGL.US",
+                            totalVolume = 50.toBigDecimal(),
+                            totalCost = 500.toBigDecimal(),
                         ),
                     ),
                 )
             }
 
             it("gets empty holdings, when operations does not exist for provided portfolio id") {
+                val data = standardMarketScenario.setup()
+                val portfolioPLN = data.portfolios[1]
                 val response = mockMvc.get("/api/operations/${portfolioPLN.id}/holdings").andReturn().response
 
                 val returnedHoldings = objectMapper.readValue(response.contentAsString, PortfolioHoldingsResponseDTO::class.java)
@@ -167,6 +111,8 @@ class OperationControllerTest : BaseIntegrationTest() {
 
             it("saves new operation and do not save duplicated one") {
                 val body = getOperationsImportRequestDTO()
+                val data = standardMarketScenario.setup()
+                val portfolioUSD = data.portfolios[0]
 
                 val response =
                     mockMvc
@@ -191,6 +137,9 @@ class OperationControllerTest : BaseIntegrationTest() {
 
             it("imports all operations when no duplicates are present") {
                 val batch = getOperationsImportRequestDTO()
+                val data = standardMarketScenario.setup()
+                val portfolioUSD = data.portfolios[0]
+
                 val body =
                     batch.copy(
                         operations =
@@ -224,6 +173,8 @@ class OperationControllerTest : BaseIntegrationTest() {
 
             it("gets an error, when all of the operations are duplicates") {
                 val batch = getOperationsImportRequestDTO()
+                val data = standardMarketScenario.setup()
+                val portfolioUSD = data.portfolios[0]
                 val body =
                     batch.copy(
                         operations =

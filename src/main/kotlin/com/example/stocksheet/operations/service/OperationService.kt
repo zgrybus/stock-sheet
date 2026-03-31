@@ -9,6 +9,7 @@ import com.example.stocksheet.operations.mappers.OperationsMapper
 import com.example.stocksheet.operations.repository.OperationRepository
 import com.example.stocksheet.portfolio.exceptions.PortfolioNotFoundException
 import com.example.stocksheet.portfolio.repository.PortfolioRepository
+import com.example.stocksheet.stocks.service.StockService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,6 +20,7 @@ class OperationService(
     private val operationRepository: OperationRepository,
     private val portfolioRepository: PortfolioRepository,
     private val operationsMapper: OperationsMapper,
+    private val stockService: StockService,
 ) : Loggable {
     @Transactional(readOnly = true)
     fun getHoldings(portfolioId: Long): PortfolioHoldingsResponseDTO {
@@ -30,9 +32,10 @@ class OperationService(
 
         val operations = operationRepository.findAllByPortfolioId(portfolioId)
 
+        // TODO: move it to sql
         val items =
             operations
-                .groupingBy { it.stockSymbol }
+                .groupingBy { it.stock.symbol }
                 .fold(
                     {
                         key,
@@ -80,7 +83,14 @@ class OperationService(
             throw OperationsBatchEmptyException("Could not find new operations")
         }
 
-        val savedOperations = operationRepository.saveAll(newOperations.map { operationsMapper.toEntity(it, portfolio) })
+        val savedOperations =
+            operationRepository.saveAll(
+                newOperations.map { operation ->
+                    // TODO: optimize it
+                    val stock = stockService.getStock(operation.stockSymbol)
+                    operationsMapper.toEntity(operation, portfolio, stock)
+                },
+            )
 
         logger.info { "Import finished. Added: ${savedOperations.size}, Duplicated: ${duplicatedOperations.size}" }
 
