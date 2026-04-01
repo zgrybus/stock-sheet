@@ -20,7 +20,9 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional
 class PortfolioControllerTest : BaseIntegrationTest() {
     @Autowired lateinit var portfolioRepository: PortfolioRepository
 
@@ -38,10 +40,6 @@ class PortfolioControllerTest : BaseIntegrationTest() {
                     portfolioPLN,
                 ),
             )
-        }
-
-        afterEach {
-            portfolioRepository.deleteAllInBatch()
         }
 
         describe("POST /api/portfolio") {

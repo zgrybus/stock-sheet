@@ -8,6 +8,7 @@ import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
 
 @Service
 class AnalyticsService(
@@ -20,8 +21,8 @@ class AnalyticsService(
 
         portfolioRepository.findByIdOrNull(portfolioId) ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
 
-        val todayIncome = 0.toLong()
-        val totalIncome = 0.toBigDecimal()
+        val todayIncome = BigDecimal.ZERO
+        val totalIncome = BigDecimal.ZERO
 
         val investedCapital = operationRepository.calculateInvestedCapitalByPortfolioId(portfolioId)
 

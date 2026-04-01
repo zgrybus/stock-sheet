@@ -9,6 +9,7 @@ import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation
 import jakarta.validation.Validator
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
@@ -106,7 +107,7 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
 
                 describe("volume validation") {
                     it("returns an error, when volume is not positive") {
-                        val dto = getOperationRequestDTO().apply { volume = 0.toBigDecimal() }
+                        val dto = getOperationRequestDTO().apply { volume = BigDecimal.ZERO }
                         val violations = validator.validate(dto)
 
                         violations.forOne {
@@ -131,7 +132,7 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
 
                 describe("pricePerVolume validation") {
                     it("returns an error, when price per volume is not positive") {
-                        val dto = getOperationRequestDTO().apply { pricePerVolume = 0.toBigDecimal() }
+                        val dto = getOperationRequestDTO().apply { pricePerVolume = BigDecimal.ZERO }
                         val violations = validator.validate(dto)
 
                         violations.forOne {
@@ -143,7 +144,7 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
 
                 describe("totalPrice validation") {
                     it("returns an error, when total price is not positive") {
-                        val dto = getOperationRequestDTO().apply { totalPrice = 0.toBigDecimal() }
+                        val dto = getOperationRequestDTO().apply { totalPrice = BigDecimal.ZERO }
                         val violations = validator.validate(dto)
 
                         violations.forOne {
