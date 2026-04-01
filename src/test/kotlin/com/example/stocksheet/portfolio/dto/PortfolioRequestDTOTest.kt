@@ -2,6 +2,7 @@ package com.example.stocksheet.portfolio.dto
 
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.booleans.shouldBeTrue
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
@@ -36,15 +37,25 @@ class PortfolioRequestDTOTest : DescribeSpec() {
             }
 
             describe("currency validation") {
+                data class ExpectedError(
+                    val propertyPath: String,
+                    val message: String,
+                )
+
                 it("returns an error, when currency is empty") {
                     val dto = getPortfolioRequestDTO().copy(currency = "")
                     val violations = validator.validate(dto)
 
-                    violations.shouldHaveSize(2)
-                    violations.last().should {
-                        it.message.shouldBe("Currency cannot be empty")
-                        it.propertyPath.toString().shouldBe("currency")
-                    }
+                    val errors =
+                        violations.map {
+                            ExpectedError(propertyPath = it.propertyPath.toString(), message = it.message)
+                        }
+
+                    errors.shouldHaveSize(2)
+                    errors.shouldContainExactlyInAnyOrder(
+                        ExpectedError(propertyPath = "currency", message = "Currency cannot be empty"),
+                        ExpectedError(propertyPath = "currency", message = "Currency is not valid"),
+                    )
                 }
 
                 it("returns an error, when currency is not valid") {
