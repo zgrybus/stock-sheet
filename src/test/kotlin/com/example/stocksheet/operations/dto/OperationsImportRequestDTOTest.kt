@@ -9,6 +9,7 @@ import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import jakarta.validation.Validation
 import jakarta.validation.Validator
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
@@ -22,10 +23,10 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
                 externalId = "external-id-1",
                 stockSymbol = "APL.US",
                 type = OperationType.BUY,
-                volume = 10.toBigDecimal(),
+                volume = BigDecimal("10.00"),
                 openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
-                pricePerVolume = 100.toBigDecimal(),
-                totalPrice = 1000.toBigDecimal(),
+                pricePerVolume = BigDecimal("100.00"),
+                totalPrice = BigDecimal("1000.00"),
             )
 
         fun getOperationsImportRequestDTO(): OperationsImportRequestDTO =
@@ -106,7 +107,7 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
 
                 describe("volume validation") {
                     it("returns an error, when volume is not positive") {
-                        val dto = getOperationRequestDTO().apply { volume = 0.toBigDecimal() }
+                        val dto = getOperationRequestDTO().apply { volume = BigDecimal.ZERO }
                         val violations = validator.validate(dto)
 
                         violations.forOne {
@@ -131,7 +132,7 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
 
                 describe("pricePerVolume validation") {
                     it("returns an error, when price per volume is not positive") {
-                        val dto = getOperationRequestDTO().apply { pricePerVolume = 0.toBigDecimal() }
+                        val dto = getOperationRequestDTO().apply { pricePerVolume = BigDecimal.ZERO }
                         val violations = validator.validate(dto)
 
                         violations.forOne {
@@ -143,7 +144,7 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
 
                 describe("totalPrice validation") {
                     it("returns an error, when total price is not positive") {
-                        val dto = getOperationRequestDTO().apply { totalPrice = 0.toBigDecimal() }
+                        val dto = getOperationRequestDTO().apply { totalPrice = BigDecimal.ZERO }
                         val violations = validator.validate(dto)
 
                         violations.forOne {
@@ -155,9 +156,9 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
                     it("returns an error, when total price is does not equal Volume * Price Per Volume") {
                         val dto =
                             getOperationRequestDTO().apply {
-                                pricePerVolume = 100.toBigDecimal()
-                                volume = 10.toBigDecimal()
-                                totalPrice = 900.toBigDecimal()
+                                pricePerVolume = BigDecimal("100.00")
+                                volume = BigDecimal("10.00")
+                                totalPrice = BigDecimal("900.00")
                             }
                         val violations = validator.validate(dto)
 

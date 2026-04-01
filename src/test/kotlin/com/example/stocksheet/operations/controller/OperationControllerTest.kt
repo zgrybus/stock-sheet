@@ -19,6 +19,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
@@ -41,13 +42,13 @@ class OperationControllerTest : BaseIntegrationTest() {
                     listOf(
                         PortfolioHoldingsResponseDTO.PositionDTO(
                             stockSymbol = "AAPL.US",
-                            totalVolume = 15.toBigDecimal(),
-                            totalCost = 1900.toBigDecimal(),
+                            totalVolume = BigDecimal("15.0000"),
+                            totalCost = BigDecimal("1900.00"),
                         ),
                         PortfolioHoldingsResponseDTO.PositionDTO(
                             stockSymbol = "GOOGL.US",
-                            totalVolume = 50.toBigDecimal(),
-                            totalCost = 500.toBigDecimal(),
+                            totalVolume = BigDecimal("50.0000"),
+                            totalCost = BigDecimal("500.00"),
                         ),
                     ),
                 )
@@ -91,10 +92,10 @@ class OperationControllerTest : BaseIntegrationTest() {
                     externalId = "external-id-1",
                     stockSymbol = "APL.US",
                     type = OperationType.BUY,
-                    volume = 10.toBigDecimal(),
+                    volume = BigDecimal("10.00"),
                     openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
-                    pricePerVolume = 100.toBigDecimal(),
-                    totalPrice = 1000.toBigDecimal(),
+                    pricePerVolume = BigDecimal("100.00"),
+                    totalPrice = BigDecimal("1000.00"),
                 )
 
             fun getOperationsImportRequestDTO(): OperationsImportRequestDTO =

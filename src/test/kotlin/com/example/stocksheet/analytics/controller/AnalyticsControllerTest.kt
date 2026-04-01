@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.get
 import org.springframework.transaction.annotation.Transactional
+import java.math.BigDecimal
 
 @Transactional
 class AnalyticsControllerTest : BaseIntegrationTest() {
@@ -26,7 +27,7 @@ class AnalyticsControllerTest : BaseIntegrationTest() {
                 val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    PortfolioSummaryResponseDTO(2400.toBigDecimal(), 0.toBigDecimal(), 2400.toBigDecimal(), 0),
+                    PortfolioSummaryResponseDTO(BigDecimal("2400.00"), BigDecimal.ZERO, BigDecimal("2400.00"), BigDecimal.ZERO),
                 )
             }
 
@@ -38,7 +39,7 @@ class AnalyticsControllerTest : BaseIntegrationTest() {
                 val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    PortfolioSummaryResponseDTO(0.toBigDecimal(), 0.toBigDecimal(), 0.toBigDecimal(), 0),
+                    PortfolioSummaryResponseDTO(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO),
                 )
             }
 

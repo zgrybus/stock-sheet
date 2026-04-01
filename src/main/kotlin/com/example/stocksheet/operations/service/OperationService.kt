@@ -45,8 +45,8 @@ class OperationService(
                     },
                     { _, acc, element ->
                         acc.copy(
-                            totalVolume = acc.totalVolume.add(element.volume),
-                            totalCost = acc.totalCost.add(element.totalPrice),
+                            totalVolume = acc.totalVolume.add(element.volume).setScale(4),
+                            totalCost = acc.totalCost.add(element.totalPrice).setScale(2),
                         )
                     },
                 ).values

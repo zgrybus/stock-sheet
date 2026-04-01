@@ -6,5 +6,5 @@ data class PortfolioSummaryResponseDTO(
     val totalValue: BigDecimal,
     val totalIncome: BigDecimal,
     val investedCapital: BigDecimal,
-    val todayIncome: Long,
+    val todayIncome: BigDecimal,
 )

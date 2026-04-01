@@ -7,6 +7,7 @@ import io.kotest.matchers.booleans.shouldBeFalse
 import io.kotest.matchers.booleans.shouldBeTrue
 import io.mockk.mockk
 import jakarta.validation.ConstraintValidatorContext
+import java.math.BigDecimal
 import java.time.Instant
 
 class TotalPriceValidatorTest : DescribeSpec() {
@@ -20,9 +21,9 @@ class TotalPriceValidatorTest : DescribeSpec() {
                 externalId = "ext-1",
                 stockSymbol = "AAPL",
                 type = OperationType.BUY,
-                volume = 10.00.toBigDecimal(),
-                pricePerVolume = 150.00.toBigDecimal(),
-                totalPrice = 1500.00.toBigDecimal(),
+                volume = BigDecimal("10.00"),
+                pricePerVolume = BigDecimal("150.00"),
+                totalPrice = BigDecimal("1500.00"),
                 openDate = Instant.now(),
             )
 
@@ -35,7 +36,7 @@ class TotalPriceValidatorTest : DescribeSpec() {
             }
 
             it("returns false when totalPrice is higher than volume * pricePerVolume") {
-                val dto = getValidDTO().apply { totalPrice = 2000.00.toBigDecimal() }
+                val dto = getValidDTO().apply { totalPrice = BigDecimal("2000.00") }
 
                 validator.isValid(dto, context).shouldBeFalse()
             }

@@ -12,8 +12,8 @@ fun createMockOperationEntity(
     externalId: String = "external-id-1",
     stock: StockEntity = createMockStockEntity(),
     type: OperationType = OperationType.BUY,
-    volume: BigDecimal = 10.toBigDecimal(),
-    pricePerVolume: BigDecimal = 150.toBigDecimal(),
+    volume: BigDecimal = BigDecimal("10.00"),
+    pricePerVolume: BigDecimal = BigDecimal("150.00"),
     openDate: Instant = Instant.now(),
     portfolio: PortfolioEntity = createMockPortfolioEntity(),
 ) = OperationEntity(

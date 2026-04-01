@@ -27,16 +27,16 @@ data class OperationsImportRequestDTO(
         var type: OperationType = OperationType.UNKNOWN,
         @field:NotNull(message = "Volume is required")
         @field:Positive(message = "Volume needs to be positive")
-        var volume: BigDecimal = 0.toBigDecimal(),
+        var volume: BigDecimal = BigDecimal.ZERO,
         // TODO: add validation
         @field:NotNull(message = "Open Date is required")
         @field:Past(message = "Open Date needs to be date from the past")
         var openDate: Instant = Instant.EPOCH,
         @field:NotNull(message = "Price Per Volume is required")
         @field:Positive(message = "Price Per Volume needs to be positive")
-        var pricePerVolume: BigDecimal = 0.toBigDecimal(),
+        var pricePerVolume: BigDecimal = BigDecimal.ZERO,
         @field:NotNull(message = "Total Price is required")
         @field:Positive(message = "Total Price needs to be positive")
-        var totalPrice: BigDecimal = 0.toBigDecimal(),
+        var totalPrice: BigDecimal = BigDecimal.ZERO,
     )
 }
