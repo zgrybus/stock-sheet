@@ -21,7 +21,6 @@ class PortfolioEntity(
     var name: String,
     @Column(nullable = false)
     var currency: String,
-    // TODO: remove this relation
     @OneToMany(mappedBy = "portfolio", fetch = FetchType.LAZY, cascade = [CascadeType.ALL], orphanRemoval = true)
     var operations: MutableList<OperationEntity> = mutableListOf(),
 )
