@@ -21,6 +21,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.time.Month
 import java.time.ZoneOffset
@@ -70,18 +71,18 @@ class OperationServiceTest : DescribeSpec() {
                         listOf(
                             PortfolioHoldingsResponseDTO.PositionDTO(
                                 stockSymbol = "GOOG",
-                                totalCost = 1500.toBigDecimal(),
-                                totalVolume = 10.toBigDecimal(),
+                                totalCost = BigDecimal("1500.00"),
+                                totalVolume = BigDecimal("10.0000"),
                             ),
                             PortfolioHoldingsResponseDTO.PositionDTO(
                                 stockSymbol = "TSL",
-                                totalCost = 400.toBigDecimal(),
-                                totalVolume = 5.toBigDecimal(),
+                                totalCost = BigDecimal("400.00"),
+                                totalVolume = BigDecimal("5.0000"),
                             ),
                             PortfolioHoldingsResponseDTO.PositionDTO(
                                 stockSymbol = "AAPL",
-                                totalCost = 1500.toBigDecimal(),
-                                totalVolume = 150.toBigDecimal(),
+                                totalCost = BigDecimal("1500.00"),
+                                totalVolume = BigDecimal("150.0000"),
                             ),
                         ),
                     )
@@ -94,10 +95,10 @@ class OperationServiceTest : DescribeSpec() {
                         externalId = "external-id-1",
                         stockSymbol = "AAPL",
                         type = OperationType.BUY,
-                        volume = 10.toBigDecimal(),
+                        volume = BigDecimal("10.00"),
                         openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
-                        pricePerVolume = 100.toBigDecimal(),
-                        totalPrice = 1000.toBigDecimal(),
+                        pricePerVolume = BigDecimal("100.00"),
+                        totalPrice = BigDecimal("1000.00"),
                     )
 
                 fun getOperationsImportRequestDTO(): OperationsImportRequestDTO =

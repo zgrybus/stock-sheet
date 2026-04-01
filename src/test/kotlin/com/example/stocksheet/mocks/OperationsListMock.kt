@@ -1,26 +1,27 @@
 package com.example.stocksheet.mocks
 
 import com.example.stocksheet.operations.entity.OperationEntity
+import java.math.BigDecimal
 
 fun createMockOperationsList(): List<OperationEntity> =
     listOf(
         createMockOperationEntity(
             externalId = "external-id-1",
-            volume = 10.toBigDecimal(),
+            volume = BigDecimal("10.00"),
         ),
         createMockOperationEntity(
             externalId = "external-id-2",
-            volume = 5.toBigDecimal(),
-            pricePerVolume = 80.toBigDecimal(),
+            volume = BigDecimal("5.00"),
+            pricePerVolume = BigDecimal("80.00"),
         ),
         createMockOperationEntity(
             externalId = "external-id-3",
-            volume = 100.toBigDecimal(),
-            pricePerVolume = 10.toBigDecimal(),
+            volume = BigDecimal("100.00"),
+            pricePerVolume = BigDecimal("10.00"),
         ),
         createMockOperationEntity(
             externalId = "external-id-4",
-            volume = 50.toBigDecimal(),
-            pricePerVolume = 10.toBigDecimal(),
+            volume = BigDecimal("50.00"),
+            pricePerVolume = BigDecimal("10.00"),
         ),
     )

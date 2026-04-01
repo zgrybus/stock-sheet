@@ -23,10 +23,10 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
                 externalId = "external-id-1",
                 stockSymbol = "APL.US",
                 type = OperationType.BUY,
-                volume = 10.toBigDecimal(),
+                volume = BigDecimal("10.00"),
                 openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
-                pricePerVolume = 100.toBigDecimal(),
-                totalPrice = 1000.toBigDecimal(),
+                pricePerVolume = BigDecimal("100.00"),
+                totalPrice = BigDecimal("1000.00"),
             )
 
         fun getOperationsImportRequestDTO(): OperationsImportRequestDTO =
@@ -156,9 +156,9 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
                     it("returns an error, when total price is does not equal Volume * Price Per Volume") {
                         val dto =
                             getOperationRequestDTO().apply {
-                                pricePerVolume = 100.toBigDecimal()
-                                volume = 10.toBigDecimal()
-                                totalPrice = 900.toBigDecimal()
+                                pricePerVolume = BigDecimal("100.00")
+                                volume = BigDecimal("10.00")
+                                totalPrice = BigDecimal("900.00")
                             }
                         val violations = validator.validate(dto)
 

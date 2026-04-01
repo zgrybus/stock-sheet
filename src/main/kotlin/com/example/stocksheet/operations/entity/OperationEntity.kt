@@ -32,13 +32,13 @@ class OperationEntity(
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     var type: OperationType,
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 4)
     var volume: BigDecimal,
     @Column(nullable = false)
     var openDate: Instant,
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 4)
     var pricePerVolume: BigDecimal,
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 2)
     var totalPrice: BigDecimal,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "portfolio_id", nullable = false, updatable = false)
