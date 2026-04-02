@@ -16,11 +16,33 @@ interface OperationRepository :
 
     @Query(
         """
-        SELECT COALESCE(SUM(operation.totalPrice), 0) FROM OperationEntity operation
+        SELECT COALESCE(SUM(operation.totalPrice), 0) 
+        FROM OperationEntity operation
         WHERE operation.portfolio.id = :portfolio_id
     """,
     )
     fun calculateInvestedCapitalByPortfolioId(
         @Param("portfolio_id") portfolioId: Long,
     ): BigDecimal
+
+    interface PortfolioHoldingProjection {
+        val stockSymbol: String
+        val totalVolume: BigDecimal
+        val totalCost: BigDecimal
+    }
+
+    @Query(
+        """
+            SELECT
+                operation.stock.symbol AS stockSymbol,
+                SUM(operation.volume) AS totalVolume,
+                SUM(operation.totalPrice) AS totalCost
+            FROM OperationEntity operation
+            WHERE operation.portfolio.id = :portfolio_id
+            GROUP BY operation.stock.symbol
+        """,
+    )
+    fun getHoldingsSummaryByPortfolioId(
+        @Param("portfolio_id") portfolioId: Long,
+    ): List<PortfolioHoldingProjection>
 }

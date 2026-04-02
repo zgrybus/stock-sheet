@@ -13,7 +13,6 @@ import com.example.stocksheet.stocks.service.StockService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.math.BigDecimal
 
 @Service
 class OperationService(
@@ -30,28 +29,14 @@ class OperationService(
             throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
         }
 
-        val operations = operationRepository.findAllByPortfolioId(portfolioId)
-
-        // TODO: move it to sql
         val items =
-            operations
-                .groupingBy { it.stock.symbol }
-                .fold(
-                    {
-                        key,
-                        _,
-                        ->
-                        PortfolioHoldingsResponseDTO.PositionDTO(key, BigDecimal.ZERO, BigDecimal.ZERO)
-                    },
-                    { _, acc, element ->
-                        acc.copy(
-                            totalVolume = acc.totalVolume.add(element.volume).setScale(4),
-                            totalCost = acc.totalCost.add(element.totalPrice).setScale(2),
-                        )
-                    },
-                ).values
-                .toList()
-
+            operationRepository.getHoldingsSummaryByPortfolioId(portfolioId).map {
+                PortfolioHoldingsResponseDTO.PositionDTO(
+                    stockSymbol = it.stockSymbol,
+                    totalVolume = it.totalVolume,
+                    totalCost = it.totalCost,
+                )
+            }
         val response = PortfolioHoldingsResponseDTO(portfolioId, items)
 
         logger.info { "Portfolio holdings generated for $portfolioId" }
