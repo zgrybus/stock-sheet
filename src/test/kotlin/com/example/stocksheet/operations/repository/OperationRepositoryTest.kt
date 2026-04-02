@@ -1,7 +1,10 @@
 package com.example.stocksheet.operations.repository
 
 import com.example.stocksheet.BaseRepositoryTest
+import com.example.stocksheet.mocks.createMockOperationEntity
 import com.example.stocksheet.scenarios.StandardMarketScenario
+import io.kotest.inspectors.shouldForExactly
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeEqualComparingTo
 import io.kotest.matchers.shouldBe
 import org.springframework.beans.factory.annotation.Autowired
@@ -36,6 +39,40 @@ class OperationRepositoryTest : BaseRepositoryTest() {
                 val investedCapital = operationRepository.calculateInvestedCapitalByPortfolioId(portfolioUSD.id!!)
 
                 investedCapital.shouldBeEqualComparingTo(BigDecimal("2400.00"))
+            }
+        }
+
+        describe("getHoldingsSummaryByPortfolioId") {
+            it("aggregates multiple operations into correct portfolio positions") {
+                val data = standardMarketScenario.setup()
+                val portfolioUSD = data.portfolios[0]
+
+                val newOperation1 =
+                    createMockOperationEntity(
+                        externalId = "new_operation_id_1",
+                        volume = BigDecimal("92.3423"),
+                        pricePerVolume = BigDecimal("2.18"),
+                        stock = data.stocks[1],
+                        portfolio = portfolioUSD,
+                    )
+                operationRepository.save(newOperation1)
+
+                entityManager.flush()
+                entityManager.clear()
+
+                val holdings = operationRepository.getHoldingsSummaryByPortfolioId(portfolioUSD.id!!)
+
+                holdings.shouldHaveSize(2)
+                holdings.shouldForExactly(1) {
+                    it.stockSymbol.shouldBe("AAPL.US")
+                    it.totalCost.shouldBe(BigDecimal("2101.31"))
+                    it.totalVolume.shouldBe(BigDecimal("107.3423"))
+                }
+                holdings.shouldForExactly(1) {
+                    it.stockSymbol.shouldBe("GOOGL.US")
+                    it.totalCost.shouldBe(BigDecimal("500.00"))
+                    it.totalVolume.shouldBe(BigDecimal("50.0000"))
+                }
             }
         }
     }

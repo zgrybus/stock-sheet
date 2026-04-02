@@ -4,7 +4,6 @@ import com.example.stocksheet.mocks.createMockOperationsList
 import com.example.stocksheet.mocks.createMockPortfolioEntity
 import com.example.stocksheet.mocks.createMockStockEntity
 import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
-import com.example.stocksheet.operations.dto.PortfolioHoldingsResponseDTO
 import com.example.stocksheet.operations.entity.OperationEntity
 import com.example.stocksheet.operations.entity.OperationType
 import com.example.stocksheet.operations.mappers.OperationsMapper
@@ -15,7 +14,6 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.equality.shouldBeEqualToComparingFields
-import io.kotest.matchers.shouldBe
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -58,37 +56,6 @@ class OperationServiceTest : DescribeSpec() {
         }
 
         describe("OperationServiceTest") {
-            describe("getHoldings") {
-                beforeEach {
-                    every { operationRepositoryMock.findAllByPortfolioId(portfolio.id!!) } returns operations
-                }
-
-                it("groups and sum operations correctly") {
-                    val result = operationService.getHoldings(portfolio.id!!)
-
-                    result.portfolioId.shouldBe(portfolio.id)
-                    result.positions.shouldContainExactly(
-                        listOf(
-                            PortfolioHoldingsResponseDTO.PositionDTO(
-                                stockSymbol = "GOOG",
-                                totalCost = BigDecimal("1500.00"),
-                                totalVolume = BigDecimal("10.0000"),
-                            ),
-                            PortfolioHoldingsResponseDTO.PositionDTO(
-                                stockSymbol = "TSL",
-                                totalCost = BigDecimal("400.00"),
-                                totalVolume = BigDecimal("5.0000"),
-                            ),
-                            PortfolioHoldingsResponseDTO.PositionDTO(
-                                stockSymbol = "AAPL",
-                                totalCost = BigDecimal("1500.00"),
-                                totalVolume = BigDecimal("150.0000"),
-                            ),
-                        ),
-                    )
-                }
-            }
-
             describe("importOperations") {
                 fun getOperationRequestDTO(): OperationsImportRequestDTO.OperationRequestDTO =
                     OperationsImportRequestDTO.OperationRequestDTO(
