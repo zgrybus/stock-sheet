@@ -11,8 +11,23 @@ class StockService(
     private val stockRepository: StockRepository,
     private val stockMapper: StockMapper,
 ) {
-    fun getStock(symbol: String): StockEntity =
-        stockRepository.findBySymbol(symbol) ?: stockRepository.save(
-            stockMapper.toEntity(StockDTO(name = symbol, symbol = symbol, industry = symbol, exchange = symbol)),
-        )
+    fun getOrCreateStocks(symbols: Set<String>): List<StockEntity> {
+        val existingStocks = stockRepository.findAllBySymbolIn(symbols)
+        val existingStocksSymbols = existingStocks.map { it.symbol }.toSet()
+
+        val (_, missingSymbols) = symbols.partition { existingStocksSymbols.contains(it) }
+
+        if (missingSymbols.isEmpty()) {
+            return existingStocks
+        }
+
+        val newStocks =
+            missingSymbols.map {
+                stockMapper.toEntity(StockDTO(name = it, symbol = it, industry = it, exchange = it))
+            }
+
+        val savedStocks = stockRepository.saveAll(newStocks)
+
+        return existingStocks.plus(savedStocks)
+    }
 }
