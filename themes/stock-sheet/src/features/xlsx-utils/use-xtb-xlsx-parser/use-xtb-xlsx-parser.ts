@@ -74,6 +74,24 @@ const parseTradeDetails = (input: string) => {
     pricePerVolume: parseFloat(regexMatch[2]),
   };
 };
+
+const parseStockSymbol = (input: string) => {
+  const regex = /^(.*)\.([^.]+)$/;
+  const regexMatch = input.match(regex);
+
+  // TODO: add different ParseError
+  if (!regexMatch || regexMatch.length !== 3) {
+    throw Error(ParseError.ParsingError);
+  }
+
+  return {
+    stockSymbol: regexMatch[1],
+    stockExchange: match(regexMatch[2])
+      .with("UK", () => "L")
+      .otherwise((value) => value),
+  };
+};
+
 const parsePositions = (
   json: Array<XtbXlsxRowType>,
 ): CashOperationHistory["positions"] => {
@@ -101,9 +119,9 @@ const parsePositions = (
           id: stockPurchaseRow.__EMPTY,
           type: "BUY" as const,
           openDate: stockPurchaseRow.__EMPTY_2,
-          stockSymbol: stockPurchaseRow.__EMPTY_4,
           totalPrice: Math.abs(parseFloat(stockPurchaseRow.__EMPTY_5)),
           ...parseTradeDetails(stockPurchaseRow.__EMPTY_3),
+          ...parseStockSymbol(stockPurchaseRow.__EMPTY_4),
         }))
         .otherwise(() => null),
     )

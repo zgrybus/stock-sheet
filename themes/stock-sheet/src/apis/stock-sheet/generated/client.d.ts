@@ -101,6 +101,7 @@ export interface components {
         OperationRequestDTO: {
             externalId: string;
             stockSymbol: string;
+            stockExchange: string;
             /** @enum {string} */
             type: "BUY" | "SELL" | "UNKNOWN";
             volume: number;
@@ -135,7 +136,6 @@ export interface components {
             totalValue: number;
             totalIncome: number;
             investedCapital: number;
-            /** Format: int64 */
             todayIncome: number;
         };
         ErrorResponse: {
