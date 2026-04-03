@@ -11,8 +11,8 @@ import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import com.example.stocksheet.stocks.service.StockService
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
-import io.kotest.matchers.equality.shouldBeEqualToComparingFields
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -93,17 +93,17 @@ class OperationServiceTest : DescribeSpec() {
                     every { operationRepositoryMock.findAllByExternalIdIn(any()) } returns operationExternalIdProjection
                     every { portfolioRepositoryMock.findById(portfolio.id!!) } returns Optional.of(portfolio)
 
-                    every { stockServiceMock.getOrCreateStocks(any()) } answers {
+                    every { stockServiceMock.getOrCreateStocks(any<Set<String>>()) } answers {
                         val requestedSymbols = firstArg<Set<String>>()
                         requestedSymbols.map { createMockStockEntity(symbol = it) }
                     }
 
-                    every { operationRepositoryMock.saveAll(any<Iterable<OperationEntity>>()) } answers {
-                        val entitiesToSave = firstArg<Iterable<OperationEntity>>().toList()
-                        entitiesToSave.forEachIndexed { index, entity ->
+                    every { operationRepositoryMock.saveAll(any<List<OperationEntity>>()) } answers {
+                        val entitiesToSave = firstArg<List<OperationEntity>>()
+                        entitiesToSave.mapIndexed { index, entity ->
                             entity.id = (1000 + index).toLong()
+                            entity
                         }
-                        entitiesToSave
                     }
                 }
 
@@ -144,7 +144,7 @@ class OperationServiceTest : DescribeSpec() {
                     val expectedStock = createMockStockEntity(symbol = nvdaOperation.stockSymbol)
 
                     newOperations.captured.shouldHaveSize(1)
-                    newOperations.captured[0].shouldBeEqualToComparingFields(
+                    newOperations.captured.shouldContainExactlyInAnyOrder(
                         operationsMapper.toEntity(nvdaOperation, portfolio, expectedStock).apply { id = 1000L },
                     )
                 }
