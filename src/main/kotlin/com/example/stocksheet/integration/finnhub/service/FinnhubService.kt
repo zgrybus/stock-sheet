@@ -31,16 +31,20 @@ class FinnhubService(
     fun getSymbolLookup(
         symbol: String,
         exchange: String,
-    ): FinnhubSymbolLookupResponse? =
-        finnhubConfig
-            .finnhubWebClient()
-            .get()
-            .uri { uriBuilder ->
-                uriBuilder
-                    .path(SYMBOL_LOOKUP)
-                    .queryParam("q", symbol)
-                    .queryParam("exchange", exchange)
-                    .build()
-            }.retrieve()
-            .body<FinnhubSymbolLookupResponse>()
+    ): FinnhubSymbolLookupResponse.FinnhubSymbolLookupType {
+        val response =
+            finnhubConfig
+                .finnhubWebClient()
+                .get()
+                .uri { uriBuilder ->
+                    uriBuilder
+                        .path(SYMBOL_LOOKUP)
+                        .queryParam("q", symbol)
+                        .queryParam("exchange", exchange)
+                        .build()
+                }.retrieve()
+                .body<FinnhubSymbolLookupResponse>()
+
+        return response?.result?.firstOrNull()?.type ?: FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.UNKNOWN
+    }
 }

@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class FinnhubSymbolLookupResponse(
     @JsonProperty("count") val count: Int,
-    @JsonProperty("results") val results: List<SymbolResults>,
+    @JsonProperty("result") val result: List<SymbolResult>,
 ) {
-    data class SymbolResults(
+    data class SymbolResult(
         @JsonProperty("type") val type: FinnhubSymbolLookupType?,
     )
 
