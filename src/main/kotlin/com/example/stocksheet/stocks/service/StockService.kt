@@ -15,10 +15,10 @@ class StockService(
     private val stockMapper: StockMapper,
     private val finnhubService: FinnhubService,
 ) : Loggable {
-    interface StockIdentifier {
-        val symbol: String
-        val exchange: String
-    }
+    data class StockIdentifier(
+        val symbol: String,
+        val exchange: String,
+    )
 
     fun getOrCreateStocks(stocks: List<StockIdentifier>): List<StockEntity> {
         val existingStocks = stockRepository.findAllBySymbolIn(stocks.map { it.symbol })
@@ -57,7 +57,9 @@ class StockService(
         val stockType = finnhubService.getSymbolLookup(stock.symbol, stock.exchange)
 
         return when (stockType) {
-            FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.CommonStock -> {
+            FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.CommonStock,
+            FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.REIT,
+            -> {
                 val stockProfile = finnhubService.getCompanyProfile2(stock.symbol)
                 StockDTO(
                     name = stockProfile?.name ?: stock.symbol,

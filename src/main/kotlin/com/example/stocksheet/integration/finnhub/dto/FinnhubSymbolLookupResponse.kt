@@ -8,7 +8,7 @@ data class FinnhubSymbolLookupResponse(
     @JsonProperty("result") val result: List<SymbolResult>,
 ) {
     data class SymbolResult(
-        @JsonProperty("type") val type: FinnhubSymbolLookupType?,
+        @JsonProperty("type") val type: FinnhubSymbolLookupType = FinnhubSymbolLookupType.UNKNOWN,
     )
 
     enum class FinnhubSymbolLookupType {
@@ -17,6 +17,9 @@ data class FinnhubSymbolLookupResponse(
 
         @JsonProperty("ETP")
         ETP,
+
+        @JsonProperty("REIT")
+        REIT,
 
         @JsonEnumDefaultValue
         UNKNOWN,
