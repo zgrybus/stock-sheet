@@ -36,7 +36,7 @@ export const MockXtbXlsxParserData: Array<XtbXlsxRowType> = [
     __EMPTY_1: "Stock purchase",
     __EMPTY_2: "2023-02-10 10:15:00",
     __EMPTY_3: "OPEN BUY 5.5 @ 300.20",
-    __EMPTY_4: "MSFT.US",
+    __EMPTY_4: "MSFT.UK",
     __EMPTY_5: "-1651.10",
   },
 
@@ -56,7 +56,7 @@ export const MockXtbXlsxParserData: Array<XtbXlsxRowType> = [
     __EMPTY_1: "Stock sale",
     __EMPTY_2: "2023-07-01 11:00:00",
     __EMPTY_3: "CLOSE BUY 5.5 @ 320.00",
-    __EMPTY_4: "MSFT.US",
+    __EMPTY_4: "MSFT.UK",
     __EMPTY_5: "1760.00",
   },
 
