@@ -90,7 +90,8 @@ class OperationControllerTest : BaseIntegrationTest() {
             fun getOperationRequestDTO(): OperationsImportRequestDTO.OperationRequestDTO =
                 OperationsImportRequestDTO.OperationRequestDTO(
                     externalId = "external-id-1",
-                    stockSymbol = "APL.US",
+                    stockSymbol = "AAPL",
+                    stockExchange = "US",
                     type = OperationType.BUY,
                     volume = BigDecimal("10.00"),
                     openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
@@ -105,7 +106,8 @@ class OperationControllerTest : BaseIntegrationTest() {
                             getOperationRequestDTO(),
                             getOperationRequestDTO().apply {
                                 externalId = "external-id-101"
-                                stockSymbol = "NVDA.US"
+                                stockSymbol = "NVDA"
+                                stockExchange = "L"
                             },
                         ),
                 )
