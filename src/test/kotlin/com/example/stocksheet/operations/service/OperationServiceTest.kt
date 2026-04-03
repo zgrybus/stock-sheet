@@ -1,5 +1,6 @@
 package com.example.stocksheet.operations.service
 
+import com.example.stocksheet.mocks.createMockOperationEntity
 import com.example.stocksheet.mocks.createMockPortfolioEntity
 import com.example.stocksheet.mocks.createMockStockEntity
 import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
@@ -11,8 +12,8 @@ import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import com.example.stocksheet.stocks.service.StockService
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainExactly
-import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.equality.shouldBeEqualToComparingFields
 import io.mockk.clearAllMocks
 import io.mockk.every
 import io.mockk.mockk
@@ -28,12 +29,11 @@ class OperationServiceTest : DescribeSpec() {
     private val operationRepositoryMock: OperationRepository = mockk()
     private val portfolioRepositoryMock: PortfolioRepository = mockk()
     private val stockServiceMock: StockService = mockk()
-    private val operationsMapper = OperationsMapper()
     private val operationService =
         OperationService(
             operationRepositoryMock,
             portfolioRepositoryMock,
-            operationsMapper,
+            OperationsMapper(),
             stockServiceMock,
         )
 
@@ -56,9 +56,9 @@ class OperationServiceTest : DescribeSpec() {
                         stockSymbol = "AAPL",
                         type = OperationType.BUY,
                         volume = BigDecimal("10.00"),
-                        openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
-                        pricePerVolume = BigDecimal("100.00"),
-                        totalPrice = BigDecimal("1000.00"),
+                        openDate = LocalDateTime.of(2024, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
+                        pricePerVolume = BigDecimal("150.00"),
+                        totalPrice = BigDecimal("1500.00"),
                     )
 
                 fun getOperationsImportRequestDTO(): OperationsImportRequestDTO =
@@ -144,8 +144,14 @@ class OperationServiceTest : DescribeSpec() {
                     val expectedStock = createMockStockEntity(symbol = nvdaOperation.stockSymbol)
 
                     newOperations.captured.shouldHaveSize(1)
-                    newOperations.captured.shouldContainExactlyInAnyOrder(
-                        operationsMapper.toEntity(nvdaOperation, portfolio, expectedStock).apply { id = 1000L },
+                    newOperations.captured[0].shouldBeEqualToComparingFields(
+                        createMockOperationEntity(
+                            id = 1000L,
+                            stock = expectedStock,
+                            portfolio = portfolio,
+                            externalId = "external-id-2",
+                            totalPrice = BigDecimal("1500.00"),
+                        ),
                     )
                 }
             }

@@ -16,9 +16,8 @@ import io.mockk.verify
 
 class StockServiceTest : DescribeSpec() {
     private val stockRepositoryMock = mockk<StockRepository>()
-    private val stockMapper = StockMapper()
 
-    private val stockService = StockService(stockRepositoryMock, stockMapper)
+    private val stockService = StockService(stockRepositoryMock, StockMapper())
 
     init {
         beforeEach {
@@ -74,10 +73,10 @@ class StockServiceTest : DescribeSpec() {
                 }
                 capturedCreatedSymbols.captured.shouldHaveSize(2)
                 capturedCreatedSymbols.captured[0].shouldBeEqualToComparingFields(
-                    createMockStockEntity(symbol = "GOOG", id = 2000L),
+                    createMockStockEntity(symbol = "GOOG", id = 2000L, industry = "GOOG", exchange = "GOOG", name = "GOOG"),
                 )
                 capturedCreatedSymbols.captured[1].shouldBeEqualToComparingFields(
-                    createMockStockEntity(symbol = "TSL", id = 2001L),
+                    createMockStockEntity(symbol = "TSL", id = 2001L, industry = "TSL", exchange = "TSL", name = "TSL"),
                 )
             }
 
