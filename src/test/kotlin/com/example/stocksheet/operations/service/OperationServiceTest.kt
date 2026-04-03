@@ -1,6 +1,6 @@
 package com.example.stocksheet.operations.service
 
-import com.example.stocksheet.mocks.createMockOperationsList
+import com.example.stocksheet.mocks.createMockOperationEntity
 import com.example.stocksheet.mocks.createMockPortfolioEntity
 import com.example.stocksheet.mocks.createMockStockEntity
 import com.example.stocksheet.operations.dto.OperationsImportRequestDTO
@@ -29,22 +29,15 @@ class OperationServiceTest : DescribeSpec() {
     private val operationRepositoryMock: OperationRepository = mockk()
     private val portfolioRepositoryMock: PortfolioRepository = mockk()
     private val stockServiceMock: StockService = mockk()
-    private val operationsMapper = OperationsMapper()
-    private val operationService = OperationService(operationRepositoryMock, portfolioRepositoryMock, operationsMapper, stockServiceMock)
+    private val operationService =
+        OperationService(
+            operationRepositoryMock,
+            portfolioRepositoryMock,
+            OperationsMapper(),
+            stockServiceMock,
+        )
 
     init {
-        val operations =
-            createMockOperationsList().apply {
-                this[0].id = 100
-                this[0].stock = createMockStockEntity(symbol = "GOOG", name = "Alphabet")
-
-                this[1].id = 101
-                this[1].stock = createMockStockEntity(symbol = "TSL", name = "Tesla")
-
-                this[2].id = 102
-
-                this[3].id = 103
-            }
         val portfolio = createMockPortfolioEntity(id = 1003)
 
         beforeEach {
@@ -63,9 +56,9 @@ class OperationServiceTest : DescribeSpec() {
                         stockSymbol = "AAPL",
                         type = OperationType.BUY,
                         volume = BigDecimal("10.00"),
-                        openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
-                        pricePerVolume = BigDecimal("100.00"),
-                        totalPrice = BigDecimal("1000.00"),
+                        openDate = LocalDateTime.of(2024, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
+                        pricePerVolume = BigDecimal("150.00"),
+                        totalPrice = BigDecimal("1500.00"),
                     )
 
                 fun getOperationsImportRequestDTO(): OperationsImportRequestDTO =
@@ -74,20 +67,43 @@ class OperationServiceTest : DescribeSpec() {
                             listOf(
                                 getOperationRequestDTO(),
                                 getOperationRequestDTO().apply {
-                                    externalId = "external-id-101"
+                                    externalId = "external-id-2"
+                                    stockSymbol = "NVDA"
+                                },
+                                getOperationRequestDTO().apply {
+                                    externalId = "external-id-3"
                                     stockSymbol = "NVDA"
                                 },
                             ),
                     )
 
                 beforeEach {
-                    every { operationRepositoryMock.findAllByExternalIdIn(any()) } returns operations
-                    every { operationRepositoryMock.saveAll<OperationEntity>(any()) } returns listOf<OperationEntity>()
+                    val operationExternalIdProjection =
+                        listOf(
+                            object : OperationRepository.OperationExternalIdProjection {
+                                override val id: Long = 100L
+                                override val externalId: String = "external-id-1"
+                            },
+                            object : OperationRepository.OperationExternalIdProjection {
+                                override val id: Long = 101L
+                                override val externalId: String = "external-id-3"
+                            },
+                        )
+
+                    every { operationRepositoryMock.findAllByExternalIdIn(any()) } returns operationExternalIdProjection
                     every { portfolioRepositoryMock.findById(portfolio.id!!) } returns Optional.of(portfolio)
 
-                    every { stockServiceMock.getStock(any()) } answers {
-                        val requestedSymbol = firstArg<String>()
-                        createMockStockEntity(symbol = requestedSymbol)
+                    every { stockServiceMock.getOrCreateStocks(any<Set<String>>()) } answers {
+                        val requestedSymbols = firstArg<Set<String>>()
+                        requestedSymbols.map { createMockStockEntity(symbol = it) }
+                    }
+
+                    every { operationRepositoryMock.saveAll(any<List<OperationEntity>>()) } answers {
+                        val entitiesToSave = firstArg<List<OperationEntity>>()
+                        entitiesToSave.mapIndexed { index, entity ->
+                            entity.id = (1000 + index).toLong()
+                            entity
+                        }
                     }
                 }
 
@@ -99,7 +115,20 @@ class OperationServiceTest : DescribeSpec() {
                         operationRepositoryMock.findAllByExternalIdIn(capture(externalIds))
                     }
 
-                    externalIds.captured.shouldContainExactly(listOf("external-id-1", "external-id-101"))
+                    externalIds.captured.shouldContainExactly(listOf("external-id-1", "external-id-2", "external-id-3"))
+                }
+
+                it("extracts and pass unique stock symbols to stock service") {
+                    every { operationRepositoryMock.findAllByExternalIdIn(any()) } returns listOf()
+
+                    operationService.importOperations(getOperationsImportRequestDTO(), portfolio.id!!)
+
+                    val uniqueStockSymbols = slot<Set<String>>()
+                    verify {
+                        stockServiceMock.getOrCreateStocks(capture(uniqueStockSymbols))
+                    }
+
+                    uniqueStockSymbols.captured.shouldContainExactly(setOf("AAPL", "NVDA"))
                 }
 
                 it("saves only new operations to the database") {
@@ -116,7 +145,13 @@ class OperationServiceTest : DescribeSpec() {
 
                     newOperations.captured.shouldHaveSize(1)
                     newOperations.captured[0].shouldBeEqualToComparingFields(
-                        operationsMapper.toEntity(nvdaOperation, portfolio, expectedStock),
+                        createMockOperationEntity(
+                            id = 1000L,
+                            stock = expectedStock,
+                            portfolio = portfolio,
+                            externalId = "external-id-2",
+                            totalPrice = BigDecimal("1500.00"),
+                        ),
                     )
                 }
             }

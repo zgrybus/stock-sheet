@@ -10,9 +10,12 @@ import java.math.BigDecimal
 interface OperationRepository :
     JpaRepository<OperationEntity, Long>,
     JpaSpecificationExecutor<OperationEntity> {
-    fun findAllByPortfolioId(portfolioId: Long): List<OperationEntity>
+    interface OperationExternalIdProjection {
+        val id: Long
+        val externalId: String
+    }
 
-    fun findAllByExternalIdIn(externalIds: Collection<String>): List<OperationEntity>
+    fun findAllByExternalIdIn(externalIds: Collection<String>): List<OperationExternalIdProjection>
 
     @Query(
         """

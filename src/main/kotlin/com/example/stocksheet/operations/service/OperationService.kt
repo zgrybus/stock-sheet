@@ -57,24 +57,32 @@ class OperationService(
             portfolioRepository.findByIdOrNull(portfolioId)
                 ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
 
-        // TODO: move logic to sql - if possible
         val requestedExternalIds = operations.map { it.externalId }
-        val existingEntities = operationRepository.findAllByExternalIdIn(requestedExternalIds)
-        val existingIdsMap = existingEntities.associateBy { it.externalId }
+        val existingOperations = operationRepository.findAllByExternalIdIn(requestedExternalIds)
+        val existingOperationsByExternalIdMap = existingOperations.associateBy { it.externalId }
 
-        val (duplicatedOperations, newOperations) = operations.partition { existingIdsMap.containsKey(it.externalId) }
+        val (duplicatedOperations, newOperations) = operations.partition { existingOperationsByExternalIdMap.containsKey(it.externalId) }
 
         if (newOperations.isEmpty()) {
             throw OperationsBatchEmptyException("Could not find new operations")
         }
 
+        val uniqueStockSymbols = newOperations.map { it.stockSymbol }.toSet()
+        val stocksBySymbolMap = stockService.getOrCreateStocks(uniqueStockSymbols).associateBy { it.symbol }
+
+        val operationsToSave =
+            newOperations.map { operation ->
+                val stock =
+                    stocksBySymbolMap[operation.stockSymbol]
+                        ?: throw IllegalStateException(
+                            "Stock missing from map after batching: ${operation.stockSymbol}.",
+                        )
+                operationsMapper.toEntity(operation, portfolio, stock)
+            }
+
         val savedOperations =
             operationRepository.saveAll(
-                newOperations.map { operation ->
-                    // TODO: optimize it
-                    val stock = stockService.getStock(operation.stockSymbol)
-                    operationsMapper.toEntity(operation, portfolio, stock)
-                },
+                operationsToSave,
             )
 
         logger.info { "Import finished. Added: ${savedOperations.size}, Duplicated: ${duplicatedOperations.size}" }
@@ -89,8 +97,10 @@ class OperationService(
                 },
             duplicated =
                 duplicatedOperations.map { operation ->
-                    val idFromDb = existingIdsMap[operation.externalId]?.id
-                    OperationsImportResponseDTO.OperationSummaryDTO(id = idFromDb!!, externalId = operation.externalId)
+                    val idFromDb =
+                        existingOperationsByExternalIdMap[operation.externalId]?.id
+                            ?: throw IllegalStateException("Duplicated operation missing from map or has null ID: ${operation.externalId})")
+                    OperationsImportResponseDTO.OperationSummaryDTO(id = idFromDb, externalId = operation.externalId)
                 },
         )
     }

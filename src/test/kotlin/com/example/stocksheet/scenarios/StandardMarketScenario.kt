@@ -24,8 +24,8 @@ class StandardMarketScenario(
     )
 
     fun setup(): Setup {
-        val stockApple = stockRepository.save(createMockStockEntity(symbol = "AAPL.US", name = "Apple"))
         val stockGoogle = stockRepository.save(createMockStockEntity(symbol = "GOOGL.US", name = "Alphabet"))
+        val stockApple = stockRepository.save(createMockStockEntity(symbol = "AAPL.US", name = "Apple"))
 
         val portfolioUSD = portfolioRepository.save(createMockPortfolioEntity(name = "Global USD", currency = "USD"))
         val portfolioPLN = portfolioRepository.save(createMockPortfolioEntity(name = "Portfolio PLN", currency = "PLN"))
