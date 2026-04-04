@@ -1,5 +1,7 @@
 package com.example.stocksheet.stocks.service
 
+import com.example.stocksheet.integration.finnhub.dto.FinnhubCompanyProfile2Response
+import com.example.stocksheet.integration.finnhub.dto.FinnhubSymbolLookupResponse
 import com.example.stocksheet.integration.finnhub.service.FinnhubService
 import com.example.stocksheet.mocks.createMockStockEntity
 import com.example.stocksheet.stocks.entity.StockEntity
@@ -24,7 +26,7 @@ class StockServiceTest : DescribeSpec() {
     init {
         beforeEach {
             every { stockRepositoryMock.findAllBySymbolIn(any<List<String>>()) } answers {
-                val symbols = firstArg<Set<String>>()
+                val symbols = firstArg<List<String>>()
                 symbols.take(2).mapIndexed { index, symbol ->
                     createMockStockEntity(id = (1000 + index).toLong(), symbol = symbol)
                 }
@@ -36,6 +38,21 @@ class StockServiceTest : DescribeSpec() {
                     symbol.id = (2000 + index).toLong()
                     symbol
                 }
+            }
+
+            every { finnhubServiceMock.getSymbolLookup(any<String>(), any<String>()) } answers {
+                FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.CommonStock
+            }
+
+            every { finnhubServiceMock.getCompanyProfile2(any<String>()) } answers {
+                val symbol = firstArg<String>()
+
+                FinnhubCompanyProfile2Response(
+                    name = "name".plus(symbol),
+                    ticker = symbol,
+                    exchange = "exchange".plus(symbol),
+                    industry = "industry".plus(symbol),
+                )
             }
         }
 
@@ -52,7 +69,7 @@ class StockServiceTest : DescribeSpec() {
                     stockRepositoryMock.findAllBySymbolIn(capture(capturedSymbols))
                 }
 
-                capturedSymbols.captured.shouldBe(setOf<String>())
+                capturedSymbols.captured.shouldBe(listOf<String>())
             }
 
             it("calls repository with all provided symbols") {
@@ -70,7 +87,7 @@ class StockServiceTest : DescribeSpec() {
                     stockRepositoryMock.findAllBySymbolIn(capture(capturedSymbols))
                 }
 
-                capturedSymbols.captured.shouldBe(setOf("NVDA", "AAPL", "GOOG", "TSL"))
+                capturedSymbols.captured.shouldBe(listOf("NVDA", "AAPL", "GOOG", "TSL"))
             }
 
             it("calls saveAll only for missing symbols") {
@@ -89,10 +106,16 @@ class StockServiceTest : DescribeSpec() {
                 }
                 capturedCreatedSymbols.captured.shouldHaveSize(2)
                 capturedCreatedSymbols.captured[0].shouldBeEqualToComparingFields(
-                    createMockStockEntity(symbol = "GOOG", id = 2000L, industry = "GOOG", exchange = "GOOG", name = "GOOG"),
+                    createMockStockEntity(
+                        symbol = "GOOG",
+                        id = 2000L,
+                        industry = "industryGOOG",
+                        exchange = "exchangeGOOG",
+                        name = "nameGOOG",
+                    ),
                 )
                 capturedCreatedSymbols.captured[1].shouldBeEqualToComparingFields(
-                    createMockStockEntity(symbol = "TSL", id = 2001L, industry = "TSL", exchange = "TSL", name = "TSL"),
+                    createMockStockEntity(symbol = "TSL", id = 2001L, industry = "industryTSL", exchange = "exchangeTSL", name = "nameTSL"),
                 )
             }
 
@@ -120,7 +143,13 @@ class StockServiceTest : DescribeSpec() {
                     createMockStockEntity(symbol = "AAPL", id = 1001L),
                 )
                 result[2].shouldBeEqualToComparingFields(
-                    createMockStockEntity(symbol = "GOOG", id = 2000L, industry = "GOOG", exchange = "GOOG", name = "GOOG"),
+                    createMockStockEntity(
+                        symbol = "GOOG",
+                        id = 2000L,
+                        industry = "industryGOOG",
+                        exchange = "exchangeGOOG",
+                        name = "nameGOOG",
+                    ),
                 )
             }
         }

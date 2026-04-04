@@ -22,7 +22,7 @@ class StockService(
 
     fun getOrCreateStocks(stocks: List<StockIdentifier>): List<StockEntity> {
         val existingStocks = stockRepository.findAllBySymbolIn(stocks.map { it.symbol })
-        val existingStocksSymbols = existingStocks.map { it.symbol }.toSet()
+        val existingStocksSymbols = existingStocks.map { it.symbol }
 
         val (_, missingStocks) = stocks.partition { existingStocksSymbols.contains(it.symbol) }
 
