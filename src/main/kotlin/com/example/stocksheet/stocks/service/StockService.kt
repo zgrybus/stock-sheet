@@ -37,13 +37,22 @@ class StockService(
 
     private fun createStocks(stocks: List<StockIdentifier>): List<StockEntity> {
         val stocksToSave =
-            stocks.mapNotNull { stock ->
+            stocks.map { stock ->
                 runCatching {
                     val stockDTO = fetchStock(stock)
                     stockMapper.toEntity(stockDTO)
                 }.onFailure { exception ->
                     logger.error { "Failed to create stock for symbol: ${stock.symbol}. Error: ${exception.message}" }
-                }.getOrNull()
+                }.getOrDefault(
+                    stockMapper.toEntity(
+                        StockDTO(
+                            symbol = stock.symbol,
+                            exchange = stock.exchange,
+                            name = stock.symbol,
+                            industry = "",
+                        ),
+                    ),
+                )
             }
 
         return if (stocksToSave.isEmpty()) {

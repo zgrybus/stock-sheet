@@ -168,11 +168,20 @@ class StockServiceTest : DescribeSpec() {
                         ),
                     )
 
-                result.shouldHaveSize(1)
+                result.shouldHaveSize(2)
                 result[0].shouldBeEqualToComparingFields(
                     createMockStockEntity(
-                        symbol = "SUCCESS",
+                        symbol = "FAIL",
                         id = 2000L,
+                        industry = "",
+                        exchange = "US",
+                        name = "FAIL",
+                    ),
+                )
+                result[1].shouldBeEqualToComparingFields(
+                    createMockStockEntity(
+                        symbol = "SUCCESS",
+                        id = 2001L,
                         industry = "industrySUCCESS",
                         exchange = "exchangeSUCCESS",
                         name = "nameSUCCESS",
