@@ -18,7 +18,7 @@ class StockRepositoryTest : BaseRepositoryTest() {
                 entityManager.flush()
                 entityManager.clear()
 
-                val returnedStocks = stockRepository.findAllBySymbolIn(setOf())
+                val returnedStocks = stockRepository.findAllBySymbolIn(listOf())
 
                 returnedStocks.shouldHaveSize(0)
             }
@@ -28,7 +28,7 @@ class StockRepositoryTest : BaseRepositoryTest() {
                 entityManager.flush()
                 entityManager.clear()
 
-                val returnedStocks = stockRepository.findAllBySymbolIn(setOf("AAPL.US", "MSC", "TSL"))
+                val returnedStocks = stockRepository.findAllBySymbolIn(listOf("AAPL.US", "MSC", "TSL"))
 
                 returnedStocks.shouldHaveSize(1)
                 returnedStocks[0].shouldBeEqualToComparingFields(
@@ -41,7 +41,7 @@ class StockRepositoryTest : BaseRepositoryTest() {
                 entityManager.flush()
                 entityManager.clear()
 
-                val returnedStocks = stockRepository.findAllBySymbolIn(setOf("AAPL", "GOOGL.US"))
+                val returnedStocks = stockRepository.findAllBySymbolIn(listOf("AAPL", "GOOGL.US"))
 
                 returnedStocks.shouldHaveSize(1)
                 returnedStocks[0].shouldBeEqualToComparingFields(
@@ -54,7 +54,7 @@ class StockRepositoryTest : BaseRepositoryTest() {
                 entityManager.flush()
                 entityManager.clear()
 
-                val returnedStocks = stockRepository.findAllBySymbolIn(setOf("GOOGL.US", "AAPL.US"))
+                val returnedStocks = stockRepository.findAllBySymbolIn(listOf("GOOGL.US", "AAPL.US"))
 
                 returnedStocks.shouldHaveSize(2)
                 returnedStocks[0].shouldBeEqualToComparingFields(

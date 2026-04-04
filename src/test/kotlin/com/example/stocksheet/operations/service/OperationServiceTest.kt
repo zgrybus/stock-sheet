@@ -54,6 +54,7 @@ class OperationServiceTest : DescribeSpec() {
                     OperationsImportRequestDTO.OperationRequestDTO(
                         externalId = "external-id-1",
                         stockSymbol = "AAPL",
+                        stockExchange = "US",
                         type = OperationType.BUY,
                         volume = BigDecimal("10.00"),
                         openDate = LocalDateTime.of(2024, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
@@ -93,9 +94,9 @@ class OperationServiceTest : DescribeSpec() {
                     every { operationRepositoryMock.findAllByExternalIdIn(any()) } returns operationExternalIdProjection
                     every { portfolioRepositoryMock.findById(portfolio.id!!) } returns Optional.of(portfolio)
 
-                    every { stockServiceMock.getOrCreateStocks(any<Set<String>>()) } answers {
-                        val requestedSymbols = firstArg<Set<String>>()
-                        requestedSymbols.map { createMockStockEntity(symbol = it) }
+                    every { stockServiceMock.getOrCreateStocks(any<List<StockService.StockIdentifier>>()) } answers {
+                        val requestedSymbols = firstArg<List<StockService.StockIdentifier>>()
+                        requestedSymbols.map { createMockStockEntity(symbol = it.symbol) }
                     }
 
                     every { operationRepositoryMock.saveAll(any<List<OperationEntity>>()) } answers {
@@ -123,12 +124,17 @@ class OperationServiceTest : DescribeSpec() {
 
                     operationService.importOperations(getOperationsImportRequestDTO(), portfolio.id!!)
 
-                    val uniqueStockSymbols = slot<Set<String>>()
+                    val uniqueStocks = slot<List<StockService.StockIdentifier>>()
                     verify {
-                        stockServiceMock.getOrCreateStocks(capture(uniqueStockSymbols))
+                        stockServiceMock.getOrCreateStocks(capture(uniqueStocks))
                     }
 
-                    uniqueStockSymbols.captured.shouldContainExactly(setOf("AAPL", "NVDA"))
+                    uniqueStocks.captured.shouldContainExactly(
+                        listOf(
+                            StockService.StockIdentifier(symbol = "AAPL", exchange = "US"),
+                            StockService.StockIdentifier(symbol = "NVDA", exchange = "US"),
+                        ),
+                    )
                 }
 
                 it("saves only new operations to the database") {
