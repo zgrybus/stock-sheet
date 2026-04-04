@@ -1,0 +1,5 @@
+spring:
+  finnhub:
+    api:
+      key: "dummy-key-for-tests"
+      base-url: "http://localhost:8080/dummy-finnhub"

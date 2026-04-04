@@ -13,6 +13,7 @@ import com.example.stocksheet.scenarios.StandardMarketScenario
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
+import io.mockk.every
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -90,7 +91,8 @@ class OperationControllerTest : BaseIntegrationTest() {
             fun getOperationRequestDTO(): OperationsImportRequestDTO.OperationRequestDTO =
                 OperationsImportRequestDTO.OperationRequestDTO(
                     externalId = "external-id-1",
-                    stockSymbol = "APL.US",
+                    stockSymbol = "AAPL",
+                    stockExchange = "US",
                     type = OperationType.BUY,
                     volume = BigDecimal("10.00"),
                     openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
@@ -105,7 +107,8 @@ class OperationControllerTest : BaseIntegrationTest() {
                             getOperationRequestDTO(),
                             getOperationRequestDTO().apply {
                                 externalId = "external-id-101"
-                                stockSymbol = "NVDA.US"
+                                stockSymbol = "NVDA"
+                                stockExchange = "L"
                             },
                         ),
                 )
@@ -137,6 +140,44 @@ class OperationControllerTest : BaseIntegrationTest() {
             }
 
             it("imports all operations when no duplicates are present") {
+                val batch = getOperationsImportRequestDTO()
+                val data = standardMarketScenario.setup()
+                val portfolioUSD = data.portfolios[0]
+
+                val body =
+                    batch.copy(
+                        operations =
+                            batch.operations.toMutableList().apply {
+                                this[0] = this[0].copy(externalId = "external-id-100")
+                            },
+                    )
+
+                val response =
+                    mockMvc
+                        .post("/api/operations/${portfolioUSD.id}/operations/import") {
+                            contentType = MediaType.APPLICATION_JSON
+                            content = objectMapper.writeValueAsString(body)
+                        }.andReturn()
+                        .response
+
+                val returnedResponse = objectMapper.readValue(response.contentAsString, OperationsImportResponseDTO::class.java)
+
+                returnedResponse.shouldBe(
+                    OperationsImportResponseDTO(
+                        added =
+                            listOf(
+                                OperationsImportResponseDTO.OperationSummaryDTO(returnedResponse.added[0].id, "external-id-100"),
+                                OperationsImportResponseDTO.OperationSummaryDTO(returnedResponse.added[1].id, "external-id-101"),
+                            ),
+                        duplicated =
+                            listOf(),
+                    ),
+                )
+            }
+
+            it("successfully imports operations using fallback stock data when Finnhub API fails") {
+                every { finnhubService.getSymbolLookup("NVDA", any<String>()) } throws RuntimeException("Error")
+
                 val batch = getOperationsImportRequestDTO()
                 val data = standardMarketScenario.setup()
                 val portfolioUSD = data.portfolios[0]

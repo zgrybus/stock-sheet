@@ -14,6 +14,7 @@ import { parse, isValid, format } from "date-fns";
 type Operation = {
   id: string;
   stockSymbol: string;
+  stockExchange: string;
   type: "BUY" | "SELL";
   volume: number;
   openDate: string;

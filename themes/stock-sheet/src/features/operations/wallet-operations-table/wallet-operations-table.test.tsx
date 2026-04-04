@@ -5,6 +5,7 @@ const operations = [
   {
     id: "id-1",
     stockSymbol: "AAPL",
+    stockExchange: "US",
     type: "BUY" as const,
     volume: 10,
     openDate: "15/05/2023 14:30:00",
@@ -14,6 +15,7 @@ const operations = [
   {
     id: "id-2",
     stockSymbol: "TSLA",
+    stockExchange: "L",
     type: "SELL" as const,
     volume: 5,
     openDate: "16/05/2023 09:15:00",

@@ -67,8 +67,16 @@ class OperationService(
             throw OperationsBatchEmptyException("Could not find new operations")
         }
 
-        val uniqueStockSymbols = newOperations.map { it.stockSymbol }.toSet()
-        val stocksBySymbolMap = stockService.getOrCreateStocks(uniqueStockSymbols).associateBy { it.symbol }
+        val uniqueStocks =
+            newOperations
+                .map {
+                    StockService.StockIdentifier(
+                        symbol = it.stockSymbol,
+                        exchange = it.stockExchange,
+                    )
+                }.distinct()
+
+        val stocksBySymbolMap = stockService.getOrCreateStocks(uniqueStocks).associateBy { it.symbol }
 
         val operationsToSave =
             newOperations.map { operation ->

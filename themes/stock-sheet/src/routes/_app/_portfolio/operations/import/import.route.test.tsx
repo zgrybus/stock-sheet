@@ -103,7 +103,8 @@ describe("Route - /operations/import", () => {
           externalId: "1000001",
           openDate: "2023-01-15T13:30:00.000Z",
           pricePerVolume: 150,
-          stockSymbol: "AAPL.US",
+          stockSymbol: "AAPL",
+          stockExchange: "US",
           totalPrice: 1500,
           type: "BUY",
           volume: 10,
@@ -112,7 +113,8 @@ describe("Route - /operations/import", () => {
           externalId: "1000002",
           openDate: "2023-02-10T09:15:00.000Z",
           pricePerVolume: 300.2,
-          stockSymbol: "MSFT.US",
+          stockSymbol: "MSFT",
+          stockExchange: "US",
           totalPrice: 1651.1,
           type: "BUY",
           volume: 5.5,
@@ -158,7 +160,7 @@ describe("Route - /operations/import", () => {
     const row1Cells = within(rows[1]).getAllByRole("cell");
     expect(row1Cells[0]).toHaveTextContent("1000001");
     expect(row1Cells[1]).toHaveTextContent("15.01.2023, 14:30");
-    expect(row1Cells[2]).toHaveTextContent("AAPL.US");
+    expect(row1Cells[2]).toHaveTextContent("AAPL");
     expect(row1Cells[3]).toHaveTextContent("BUY");
     expect(row1Cells[4]).toHaveTextContent("10");
     expect(row1Cells[5]).toHaveTextContent("$150.00");
@@ -167,7 +169,7 @@ describe("Route - /operations/import", () => {
     const row2Cells = within(rows[2]).getAllByRole("cell");
     expect(row2Cells[0]).toHaveTextContent("1000002");
     expect(row2Cells[1]).toHaveTextContent("10.02.2023, 10:15");
-    expect(row2Cells[2]).toHaveTextContent("MSFT.US");
+    expect(row2Cells[2]).toHaveTextContent("MSFT");
     expect(row2Cells[3]).toHaveTextContent("BUY");
     expect(row2Cells[4]).toHaveTextContent("5");
     expect(row2Cells[5]).toHaveTextContent("$300.20");

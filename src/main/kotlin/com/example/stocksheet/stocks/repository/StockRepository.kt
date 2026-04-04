@@ -18,6 +18,6 @@ interface StockRepository :
         """,
     )
     fun findAllBySymbolIn(
-        @Param("symbols") symbols: Set<String>,
+        @Param("symbols") symbols: List<String>,
     ): List<StockEntity>
 }
