@@ -8,6 +8,7 @@ testcontainers = "1.21.4"
 jakarta = "3.1.1"
 oshaiLogging = "7.0.3"
 mockk = "1.14.7"
+springmockk = "5.0.1"
 openApi = "3.0.1"
 
 [libraries]
@@ -38,6 +39,7 @@ kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core",
 kotest-extensions-spring = { group = "io.kotest", name = "kotest-extensions-spring", version.ref = "kotest" }
 
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+springmockk = { group = "com.ninja-squad", name = "springmockk", version.ref = "springmockk" }
 
 testcontainers-postgresql = { group = "org.testcontainers", name = "postgresql", version.ref = "testcontainers" }
 testcontainers-junit-jupiter = { group = "org.testcontainers", name = "junit-jupiter", version.ref = "testcontainers" }
