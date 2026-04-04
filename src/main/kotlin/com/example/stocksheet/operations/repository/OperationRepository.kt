@@ -30,6 +30,7 @@ interface OperationRepository :
 
     interface PortfolioHoldingProjection {
         val stockSymbol: String
+        val stockName: String
         val totalVolume: BigDecimal
         val totalCost: BigDecimal
     }
@@ -38,11 +39,12 @@ interface OperationRepository :
         """
             SELECT
                 operation.stock.symbol AS stockSymbol,
+                operation.stock.name AS stockName,
                 SUM(operation.volume) AS totalVolume,
                 SUM(operation.totalPrice) AS totalCost
             FROM OperationEntity operation
             WHERE operation.portfolio.id = :portfolio_id
-            GROUP BY operation.stock.symbol
+            GROUP BY operation.stock
         """,
     )
     fun getHoldingsSummaryByPortfolioId(

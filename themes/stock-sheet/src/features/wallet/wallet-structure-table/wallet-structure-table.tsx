@@ -11,6 +11,7 @@ import { numberFormatUtil } from "@/features/number-utils/number-format-util/num
 type Operation = {
   totalCost: number;
   stockSymbol: string;
+  stockName: string;
   totalVolume: number;
 };
 
@@ -79,15 +80,24 @@ export const WalletStructureTable = ({
                   hover:bg-muted/60
                 `}
               >
-                <TableCell className="py-3 font-semibold text-foreground">
+                <TableCell className="py-3">
                   <div className="flex items-center gap-3">
                     <div
-                      className="h-5 w-1 rounded-full"
+                      className="h-8 w-1 shrink-0 rounded-full"
                       style={{
                         backgroundColor: `hsl(${(index * 137.5) % 360}, 65%, 50%)`,
                       }}
                     />
-                    <span>{operation.stockSymbol}</span>
+                    <div className="flex flex-col gap-0.5">
+                      <span className="font-semibold text-foreground">
+                        {operation.stockName}
+                      </span>
+                      <span
+                        className={`text-xs font-medium text-muted-foreground`}
+                      >
+                        {operation.stockSymbol}
+                      </span>
+                    </div>
                   </div>
                 </TableCell>
                 <TableCell className="px-8 text-right font-mono">
