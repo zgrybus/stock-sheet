@@ -152,6 +152,79 @@ class StockServiceTest : DescribeSpec() {
                     ),
                 )
             }
+
+            it("ignores failing symbols and successfully saves the rest") {
+                every { stockRepositoryMock.findAllBySymbolIn(any<List<String>>()) } returns emptyList()
+                every { finnhubServiceMock.getSymbolLookup("FAIL", any<String>()) } throws RuntimeException("Error")
+                every { finnhubServiceMock.getSymbolLookup("SUCCESS", any<String>()) } answers {
+                    FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.CommonStock
+                }
+
+                val result =
+                    stockService.getOrCreateStocks(
+                        listOf(
+                            StockService.StockIdentifier("FAIL", "US"),
+                            StockService.StockIdentifier("SUCCESS", "US"),
+                        ),
+                    )
+
+                result.shouldHaveSize(1)
+                result[0].shouldBeEqualToComparingFields(
+                    createMockStockEntity(
+                        symbol = "SUCCESS",
+                        id = 2000L,
+                        industry = "industrySUCCESS",
+                        exchange = "exchangeSUCCESS",
+                        name = "nameSUCCESS",
+                    ),
+                )
+            }
+
+            it("does not fetch company profile for non-common stocks") {
+                every { stockRepositoryMock.findAllBySymbolIn(any<List<String>>()) } returns emptyList()
+                every { finnhubServiceMock.getSymbolLookup("VWRA", any<String>()) } answers {
+                    FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.ETP
+                }
+                every { finnhubServiceMock.getSymbolLookup("AAPL", any<String>()) } answers {
+                    FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.UNKNOWN
+                }
+
+                stockService.getOrCreateStocks(
+                    listOf(
+                        StockService.StockIdentifier("VWRA", "US"),
+                        StockService.StockIdentifier("AAPL", "US"),
+                    ),
+                )
+
+                verify(exactly = 0) { finnhubServiceMock.getCompanyProfile2("VWRA") }
+                verify(exactly = 0) { finnhubServiceMock.getCompanyProfile2("AAPL") }
+            }
+
+            it("uses fallback values when company profile is null") {
+                every { stockRepositoryMock.findAllBySymbolIn(any<List<String>>()) } returns emptyList()
+                every { finnhubServiceMock.getSymbolLookup(any<String>(), any<String>()) } answers {
+                    FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.CommonStock
+                }
+                every { finnhubServiceMock.getCompanyProfile2(any<String>()) } returns null
+
+                val result =
+                    stockService.getOrCreateStocks(
+                        listOf(
+                            StockService.StockIdentifier("VWRA", "US"),
+                        ),
+                    )
+
+                result.shouldHaveSize(1)
+                result[0].shouldBeEqualToComparingFields(
+                    createMockStockEntity(
+                        symbol = "VWRA",
+                        id = 2000L,
+                        industry = "",
+                        exchange = "US",
+                        name = "VWRA",
+                    ),
+                )
+            }
         }
     }
 }
