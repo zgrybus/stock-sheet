@@ -59,9 +59,9 @@ class StockServiceTest : DescribeSpec() {
                     ticker = symbol,
                     exchange = "exchange".plus(symbol),
                     industry = "industry".plus(symbol),
-                    dividend = BigDecimal.ZERO,
-                    price = BigDecimal.ZERO,
-                    dividendFrequency = DividendFrequency.NONE.name,
+                    dividend = BigDecimal("1.0025"),
+                    price = BigDecimal("520.5222"),
+                    dividendFrequency = DividendFrequency.MONTHLY.name,
                 )
             }
         }
@@ -122,8 +122,9 @@ class StockServiceTest : DescribeSpec() {
                         industry = "industryGOOG",
                         exchange = "exchangeGOOG",
                         name = "nameGOOG",
-                        price = BigDecimal.ZERO,
-                        dividend = BigDecimal.ZERO,
+                        dividend = BigDecimal("1.0025"),
+                        price = BigDecimal("520.5222"),
+                        dividendFrequency = DividendFrequency.MONTHLY,
                     ),
                 )
                 capturedCreatedSymbols.captured[1].shouldBeEqualToComparingFields(
@@ -133,8 +134,9 @@ class StockServiceTest : DescribeSpec() {
                         industry = "industryTSL",
                         exchange = "exchangeTSL",
                         name = "nameTSL",
-                        price = BigDecimal.ZERO,
-                        dividend = BigDecimal.ZERO,
+                        dividend = BigDecimal("1.0025"),
+                        price = BigDecimal("520.5222"),
+                        dividendFrequency = DividendFrequency.MONTHLY,
                     ),
                 )
             }
@@ -179,8 +181,9 @@ class StockServiceTest : DescribeSpec() {
                         industry = "industryGOOG",
                         exchange = "exchangeGOOG",
                         name = "nameGOOG",
-                        price = BigDecimal.ZERO,
-                        dividend = BigDecimal.ZERO,
+                        dividend = BigDecimal("1.0025"),
+                        price = BigDecimal("520.5222"),
+                        dividendFrequency = DividendFrequency.MONTHLY,
                     ),
                 )
             }
@@ -219,8 +222,9 @@ class StockServiceTest : DescribeSpec() {
                         industry = "industrySUCCESS",
                         exchange = "exchangeSUCCESS",
                         name = "nameSUCCESS",
-                        price = BigDecimal.ZERO,
-                        dividend = BigDecimal.ZERO,
+                        dividend = BigDecimal("1.0025"),
+                        price = BigDecimal("520.5222"),
+                        dividendFrequency = DividendFrequency.MONTHLY,
                     ),
                 )
             }
