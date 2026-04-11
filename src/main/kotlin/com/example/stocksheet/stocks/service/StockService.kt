@@ -44,7 +44,7 @@ class StockService(
                     val stockDTO = fetchStock(stock)
                     stockMapper.toEntity(stockDTO)
                 }.onFailure { exception ->
-                    logger.error { "Failed to create stock for symbol: ${stock.symbol}. Error: ${exception.message}" }
+                    logger.error { "Failed to create stock for symbol: $stock.symbol. Error: $exception" }
                 }.getOrDefault(
                     stockMapper.toEntity(
                         StockDTO(
