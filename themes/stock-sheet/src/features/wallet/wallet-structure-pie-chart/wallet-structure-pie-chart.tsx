@@ -13,6 +13,7 @@ import { numberFormatUtil } from "@/features/number-utils/number-format-util/num
 
 type Stock = {
   totalCost: number;
+  stockName: string;
   stockSymbol: string;
 };
 
@@ -31,8 +32,8 @@ export function WalletStructurePieChart({
         const hue = (index * 137.5) % 360;
 
         acc[stock.stockSymbol] = {
-          label: stock.stockSymbol,
-          color: `hsl(${hue}, 70%, 45%)`,
+          label: stock.stockName,
+          color: `hsl(${hue}, 50%, 45%)`,
         };
         return acc;
       },
@@ -59,7 +60,7 @@ export function WalletStructurePieChart({
       }).format(totalValue > 0 ? Number(stock.totalCost) / totalValue : 0);
 
       const hue = (index * 137.5) % 360;
-      const color = `hsl(${hue}, 65%, 50%)`;
+      const color = `hsl(${hue}, 50%, 45%)`;
 
       return {
         ...stock,
@@ -74,7 +75,7 @@ export function WalletStructurePieChart({
     <div className="flex items-center justify-center p-6">
       <ChartContainer
         config={chartConfig}
-        className="aspect-square max-h-146 w-full max-w-146"
+        className="aspect-square max-h-146 w-full max-w-full"
       >
         <PieChart>
           <ChartTooltip
@@ -89,7 +90,7 @@ export function WalletStructurePieChart({
                         style={{ backgroundColor: item.payload.color }}
                       />
                       <span>
-                        <strong>{item.payload.stockSymbol}</strong> ({" "}
+                        <strong>{item.payload.stockName}</strong> ({" "}
                         {item.payload.price} ) {item.payload.percentage}
                       </span>
                     </div>

@@ -85,7 +85,7 @@ export const WalletStructureTable = ({
                     <div
                       className="h-8 w-1 shrink-0 rounded-full"
                       style={{
-                        backgroundColor: `hsl(${(index * 137.5) % 360}, 65%, 50%)`,
+                        backgroundColor: `hsl(${(index * 137.5) % 360}, 50%, 45%)`,
                       }}
                     />
                     <div className="flex flex-col gap-0.5">
