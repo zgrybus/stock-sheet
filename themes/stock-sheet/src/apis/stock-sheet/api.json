@@ -438,10 +438,11 @@
         "type": "object",
         "properties": {
           "stockSymbol": { "type": "string" },
+          "stockName": { "type": "string" },
           "totalVolume": { "type": "number" },
           "totalCost": { "type": "number" }
         },
-        "required": ["stockSymbol", "totalCost", "totalVolume"]
+        "required": ["stockName", "stockSymbol", "totalCost", "totalVolume"]
       },
       "PortfolioSummaryResponseDTO": {
         "type": "object",

@@ -38,9 +38,7 @@ function Index() {
     if (!holdings?.positions) {
       return [];
     }
-    return holdings.positions.sort((a, b) =>
-      a.totalCost > b.totalCost ? -1 : 1,
-    );
+    return holdings.positions;
   }, [holdings]);
 
   if (isPending) {

@@ -3,7 +3,7 @@ package com.example.stocksheet.operations.repository
 import com.example.stocksheet.BaseRepositoryTest
 import com.example.stocksheet.mocks.createMockOperationEntity
 import com.example.stocksheet.scenarios.StandardMarketScenario
-import io.kotest.inspectors.shouldForExactly
+import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeEqualComparingTo
 import io.kotest.matchers.shouldBe
@@ -43,7 +43,7 @@ class OperationRepositoryTest : BaseRepositoryTest() {
         }
 
         describe("getHoldingsSummaryByPortfolioId") {
-            it("aggregates multiple operations into correct portfolio positions") {
+            it("aggregates multiple operations into correct portfolio positions and orders them") {
                 val data = standardMarketScenario.setup()
                 val portfolioUSD = data.portfolios[0]
 
@@ -63,16 +63,22 @@ class OperationRepositoryTest : BaseRepositoryTest() {
                 val holdings = operationRepository.getHoldingsSummaryByPortfolioId(portfolioUSD.id!!)
 
                 holdings.shouldHaveSize(2)
-                holdings.shouldForExactly(1) {
-                    it.stockSymbol.shouldBe("AAPL.US")
-                    it.totalCost.shouldBe(BigDecimal("2101.31"))
-                    it.totalVolume.shouldBe(BigDecimal("107.3423"))
-                }
-                holdings.shouldForExactly(1) {
-                    it.stockSymbol.shouldBe("GOOGL.US")
-                    it.totalCost.shouldBe(BigDecimal("500.00"))
-                    it.totalVolume.shouldBe(BigDecimal("50.0000"))
-                }
+                holdings.shouldContainExactly(
+                    listOf(
+                        OperationRepository.PortfolioHoldingProjection(
+                            stockName = "Apple",
+                            stockSymbol = "AAPL.US",
+                            totalVolume = BigDecimal("107.3423"),
+                            totalCost = BigDecimal("2101.31"),
+                        ),
+                        OperationRepository.PortfolioHoldingProjection(
+                            stockName = "Alphabet",
+                            stockSymbol = "GOOGL.US",
+                            totalVolume = BigDecimal("50.0000"),
+                            totalCost = BigDecimal("500.00"),
+                        ),
+                    ),
+                )
             }
         }
     }

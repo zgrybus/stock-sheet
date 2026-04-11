@@ -33,6 +33,7 @@ class OperationService(
             operationRepository.getHoldingsSummaryByPortfolioId(portfolioId).map {
                 PortfolioHoldingsResponseDTO.PositionDTO(
                     stockSymbol = it.stockSymbol,
+                    stockName = it.stockName,
                     totalVolume = it.totalVolume,
                     totalCost = it.totalCost,
                 )
