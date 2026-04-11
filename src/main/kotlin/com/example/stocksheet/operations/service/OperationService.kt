@@ -37,6 +37,7 @@ class OperationService(
                     stockPrice = it.stockPrice,
                     totalVolume = it.totalVolume,
                     totalCost = it.totalCost,
+                    averagePrice = it.totalCost.div(it.totalVolume),
                 )
             }
         val response = PortfolioHoldingsResponseDTO(portfolioId, items)

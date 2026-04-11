@@ -131,6 +131,7 @@ export interface components {
             stockSymbol: string;
             stockName: string;
             stockPrice: number;
+            averagePrice: number;
             totalVolume: number;
             totalCost: number;
         };
