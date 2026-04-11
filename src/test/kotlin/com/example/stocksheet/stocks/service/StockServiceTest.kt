@@ -4,6 +4,7 @@ import com.example.stocksheet.integration.finnhub.dto.FinnhubCompanyProfile2Resp
 import com.example.stocksheet.integration.finnhub.dto.FinnhubSymbolLookupResponse
 import com.example.stocksheet.integration.finnhub.service.FinnhubService
 import com.example.stocksheet.mocks.createMockStockEntity
+import com.example.stocksheet.stocks.entity.DividendFrequency
 import com.example.stocksheet.stocks.entity.StockEntity
 import com.example.stocksheet.stocks.mappers.StockMapper
 import com.example.stocksheet.stocks.repository.StockRepository
@@ -16,6 +17,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
+import java.math.BigDecimal
 
 class StockServiceTest : DescribeSpec() {
     private val stockRepositoryMock = mockk<StockRepository>()
@@ -28,7 +30,12 @@ class StockServiceTest : DescribeSpec() {
             every { stockRepositoryMock.findAllBySymbolIn(any<List<String>>()) } answers {
                 val symbols = firstArg<List<String>>()
                 symbols.take(2).mapIndexed { index, symbol ->
-                    createMockStockEntity(id = (1000 + index).toLong(), symbol = symbol)
+                    createMockStockEntity(
+                        id = (1000 + index).toLong(),
+                        symbol = symbol,
+                        dividend = BigDecimal.ZERO,
+                        price = BigDecimal.ZERO,
+                    )
                 }
             }
 
@@ -52,6 +59,9 @@ class StockServiceTest : DescribeSpec() {
                     ticker = symbol,
                     exchange = "exchange".plus(symbol),
                     industry = "industry".plus(symbol),
+                    dividend = BigDecimal.ZERO,
+                    price = BigDecimal.ZERO,
+                    dividendFrequency = DividendFrequency.NONE.name,
                 )
             }
         }
@@ -112,10 +122,20 @@ class StockServiceTest : DescribeSpec() {
                         industry = "industryGOOG",
                         exchange = "exchangeGOOG",
                         name = "nameGOOG",
+                        price = BigDecimal.ZERO,
+                        dividend = BigDecimal.ZERO,
                     ),
                 )
                 capturedCreatedSymbols.captured[1].shouldBeEqualToComparingFields(
-                    createMockStockEntity(symbol = "TSL", id = 2001L, industry = "industryTSL", exchange = "exchangeTSL", name = "nameTSL"),
+                    createMockStockEntity(
+                        symbol = "TSL",
+                        id = 2001L,
+                        industry = "industryTSL",
+                        exchange = "exchangeTSL",
+                        name = "nameTSL",
+                        price = BigDecimal.ZERO,
+                        dividend = BigDecimal.ZERO,
+                    ),
                 )
             }
 
@@ -137,10 +157,20 @@ class StockServiceTest : DescribeSpec() {
 
                 result.shouldHaveSize(3)
                 result[0].shouldBeEqualToComparingFields(
-                    createMockStockEntity(symbol = "NVDA", id = 1000L),
+                    createMockStockEntity(
+                        symbol = "NVDA",
+                        id = 1000L,
+                        price = BigDecimal.ZERO,
+                        dividend = BigDecimal.ZERO,
+                    ),
                 )
                 result[1].shouldBeEqualToComparingFields(
-                    createMockStockEntity(symbol = "AAPL", id = 1001L),
+                    createMockStockEntity(
+                        symbol = "AAPL",
+                        id = 1001L,
+                        price = BigDecimal.ZERO,
+                        dividend = BigDecimal.ZERO,
+                    ),
                 )
                 result[2].shouldBeEqualToComparingFields(
                     createMockStockEntity(
@@ -149,6 +179,8 @@ class StockServiceTest : DescribeSpec() {
                         industry = "industryGOOG",
                         exchange = "exchangeGOOG",
                         name = "nameGOOG",
+                        price = BigDecimal.ZERO,
+                        dividend = BigDecimal.ZERO,
                     ),
                 )
             }
@@ -176,6 +208,8 @@ class StockServiceTest : DescribeSpec() {
                         industry = "",
                         exchange = "US",
                         name = "FAIL",
+                        price = BigDecimal.ZERO,
+                        dividend = BigDecimal.ZERO,
                     ),
                 )
                 result[1].shouldBeEqualToComparingFields(
@@ -185,6 +219,8 @@ class StockServiceTest : DescribeSpec() {
                         industry = "industrySUCCESS",
                         exchange = "exchangeSUCCESS",
                         name = "nameSUCCESS",
+                        price = BigDecimal.ZERO,
+                        dividend = BigDecimal.ZERO,
                     ),
                 )
             }
@@ -231,6 +267,8 @@ class StockServiceTest : DescribeSpec() {
                         industry = "",
                         exchange = "US",
                         name = "VWRA",
+                        price = BigDecimal.ZERO,
+                        dividend = BigDecimal.ZERO,
                     ),
                 )
             }

@@ -10,6 +10,7 @@ import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import com.example.stocksheet.stocks.entity.StockEntity
 import com.example.stocksheet.stocks.repository.StockRepository
 import org.springframework.stereotype.Component
+import java.math.BigDecimal
 
 @Component
 class StandardMarketScenario(
@@ -24,8 +25,24 @@ class StandardMarketScenario(
     )
 
     fun setup(): Setup {
-        val stockGoogle = stockRepository.save(createMockStockEntity(symbol = "GOOGL.US", name = "Alphabet"))
-        val stockApple = stockRepository.save(createMockStockEntity(symbol = "AAPL.US", name = "Apple"))
+        val stockGoogle =
+            stockRepository.save(
+                createMockStockEntity(
+                    symbol = "GOOGL.US",
+                    name = "Alphabet",
+                    price = BigDecimal("100.0126"),
+                    dividend = BigDecimal("2.0153"),
+                ),
+            )
+        val stockApple =
+            stockRepository.save(
+                createMockStockEntity(
+                    symbol = "AAPL.US",
+                    name = "Apple",
+                    price = BigDecimal("75.2500"),
+                    dividend = BigDecimal("0.5523"),
+                ),
+            )
 
         val portfolioUSD = portfolioRepository.save(createMockPortfolioEntity(name = "Global USD", currency = "USD"))
         val portfolioPLN = portfolioRepository.save(createMockPortfolioEntity(name = "Portfolio PLN", currency = "PLN"))
