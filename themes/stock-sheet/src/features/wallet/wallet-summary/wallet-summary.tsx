@@ -7,7 +7,10 @@ import {
   Activity,
   TrendingDown,
 } from "lucide-react";
-import { numberFormatUtil } from "@/features/number-utils/number-format-util/number-format-util";
+import {
+  formatStockPrice,
+  numberFormatUtil,
+} from "@/features/number-utils/number-format-util/number-format-util";
 import { cn } from "@/lib/utils";
 
 const percentFormatter = numberFormatUtil({
@@ -58,10 +61,7 @@ export const WalletSummary = ({
           </CardHeader>
           <CardContent data-testid="total-wallet-value">
             <p className="mb-4 text-3xl font-bold text-amber-400">
-              {numberFormatUtil({
-                style: "currency",
-                currency,
-              }).format(totalValue)}
+              {formatStockPrice(totalValue, currency)}
             </p>
             <div
               className={`
@@ -97,10 +97,7 @@ export const WalletSummary = ({
           </CardHeader>
           <CardContent data-testid="total-wallet-invested-capital">
             <p className="mb-4 text-3xl font-bold text-blue-400">
-              {numberFormatUtil({
-                style: "currency",
-                currency,
-              }).format(investedCapital)}
+              {formatStockPrice(investedCapital, currency)}
             </p>
             <p className="text-sm text-muted-foreground">
               Suma wpłaconych przez Ciebie środków.
@@ -131,10 +128,7 @@ export const WalletSummary = ({
                 "text-red-500": totalIncome < 0,
               })}
             >
-              {numberFormatUtil({
-                style: "currency",
-                currency,
-              }).format(totalIncome)}
+              {formatStockPrice(totalIncome, currency)}
             </p>
             <p className="flex items-center text-sm text-muted-foreground">
               <Badge
@@ -168,10 +162,7 @@ export const WalletSummary = ({
                 "text-red-500": todayIncome < 0,
               })}
             >
-              {numberFormatUtil({
-                style: "currency",
-                currency,
-              }).format(todayIncome)}
+              {formatStockPrice(todayIncome, currency)}
             </p>
             <p className="flex items-center text-sm text-muted-foreground">
               <Badge

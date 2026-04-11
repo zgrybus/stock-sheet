@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { numberFormatUtil } from "@/features/number-utils/number-format-util/number-format-util";
+import { formatStockPrice } from "@/features/number-utils/number-format-util/number-format-util";
 import { parse, isValid, format } from "date-fns";
 
 type Operation = {
@@ -47,8 +47,8 @@ export const WalletOperationsTable = ({
         <TableCaption className="sr-only">
           Historia operacji portfelowych
         </TableCaption>
-        <TableHeader>
-          <TableRow className="bg-muted/50">
+        <TableHeader className="bg-secondary">
+          <TableRow>
             <TableHead className="w-25">ID</TableHead>
             <TableHead>Data</TableHead>
             <TableHead>Instrument</TableHead>
@@ -60,7 +60,15 @@ export const WalletOperationsTable = ({
         </TableHeader>
         <TableBody>
           {operations.map((operation) => (
-            <TableRow key={operation.id} className="hover:bg-muted/50">
+            <TableRow
+              key={operation.id}
+              className={`
+                border-b transition-colors duration-200
+                last:border-0
+                even:bg-muted/20
+                hover:bg-primary/10
+              `}
+            >
               <TableCell className="font-mono text-xs text-muted-foreground">
                 {operation.id}
               </TableCell>
@@ -86,16 +94,10 @@ export const WalletOperationsTable = ({
               </TableCell>
               <TableCell className="text-right">{operation.volume}</TableCell>
               <TableCell className="text-right text-muted-foreground">
-                {numberFormatUtil({
-                  style: "currency",
-                  currency,
-                }).format(operation.pricePerVolume)}
+                {formatStockPrice(operation.pricePerVolume, currency)}
               </TableCell>
               <TableCell className="text-right font-semibold">
-                {numberFormatUtil({
-                  style: "currency",
-                  currency,
-                }).format(operation.totalPrice)}
+                {formatStockPrice(operation.totalPrice, currency)}
               </TableCell>
             </TableRow>
           ))}

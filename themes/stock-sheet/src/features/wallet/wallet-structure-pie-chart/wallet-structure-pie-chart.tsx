@@ -9,7 +9,10 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useMemo } from "react";
-import { numberFormatUtil } from "@/features/number-utils/number-format-util/number-format-util";
+import {
+  formatStockPrice,
+  numberFormatUtil,
+} from "@/features/number-utils/number-format-util/number-format-util";
 
 type Stock = {
   totalCost: number;
@@ -48,10 +51,7 @@ export function WalletStructurePieChart({
 
   const data = useMemo(() => {
     return stocks.map((stock, index) => {
-      const price = numberFormatUtil({
-        style: "currency",
-        currency,
-      }).format(Number(stock.totalCost));
+      const price = formatStockPrice(stock.totalCost, currency);
 
       const percentage = numberFormatUtil({
         style: "percent",

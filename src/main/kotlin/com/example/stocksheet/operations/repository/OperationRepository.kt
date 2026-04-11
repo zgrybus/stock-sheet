@@ -31,6 +31,7 @@ interface OperationRepository :
     data class PortfolioHoldingProjection(
         val stockSymbol: String,
         val stockName: String,
+        val stockPrice: BigDecimal,
         val totalVolume: BigDecimal,
         val totalCost: BigDecimal,
     )
@@ -40,6 +41,7 @@ interface OperationRepository :
             SELECT
                 stock.symbol AS stockSymbol,
                 stock.name AS stockName,
+                stock.price as stockPrice,
                 SUM(operation.volume) AS totalVolume,
                 SUM(operation.totalPrice) AS totalCost
             FROM OperationEntity operation
@@ -48,7 +50,8 @@ interface OperationRepository :
             GROUP BY
                 stock.id,
                 stock.name,
-                stock.symbol
+                stock.symbol,
+                stock.price
             ORDER BY SUM(operation.totalPrice) DESC
         """,
     )
