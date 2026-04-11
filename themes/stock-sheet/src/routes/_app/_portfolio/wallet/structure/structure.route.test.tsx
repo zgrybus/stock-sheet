@@ -30,19 +30,19 @@ describe("Route /wallet/structure/", () => {
     expect(rows).toHaveLength(3);
 
     const firstRowCells = within(rows[0]).getAllByRole("cell");
-    expect(firstRowCells[0]).toHaveTextContent("Mid Americ ApartmentsMID");
-    expect(firstRowCells[1]).toHaveTextContent("12");
-    expect(firstRowCells[2]).toHaveTextContent("520");
+    expect(firstRowCells[0]).toHaveTextContent("NvidiaNVDA");
+    expect(firstRowCells[1]).toHaveTextContent("5");
+    expect(firstRowCells[2]).toHaveTextContent("$100.00");
 
     const secondRowCells = within(rows[1]).getAllByRole("cell");
-    expect(secondRowCells[0]).toHaveTextContent("NvidiaNVDA");
-    expect(secondRowCells[1]).toHaveTextContent("5");
-    expect(secondRowCells[2]).toHaveTextContent("100");
+    expect(secondRowCells[0]).toHaveTextContent("TeslaTSLA");
+    expect(secondRowCells[1]).toHaveTextContent("10");
+    expect(secondRowCells[2]).toHaveTextContent("$50.00");
 
     const thirdRowCells = within(rows[2]).getAllByRole("cell");
-    expect(thirdRowCells[0]).toHaveTextContent("TeslaTSLA");
-    expect(thirdRowCells[1]).toHaveTextContent("10");
-    expect(thirdRowCells[2]).toHaveTextContent("50");
+    expect(thirdRowCells[0]).toHaveTextContent("Mid Americ ApartmentsMID");
+    expect(thirdRowCells[1]).toHaveTextContent("12");
+    expect(thirdRowCells[2]).toHaveTextContent("$520.00");
   });
 
   checkPortfolioGuard({ to: "/wallet/structure" });

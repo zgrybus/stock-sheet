@@ -45,11 +45,13 @@ class OperationControllerTest : BaseIntegrationTest() {
                             stockSymbol = "AAPL.US",
                             totalVolume = BigDecimal("15.0000"),
                             totalCost = BigDecimal("1900.00"),
+                            stockName = "Apple",
                         ),
                         PortfolioHoldingsResponseDTO.PositionDTO(
                             stockSymbol = "GOOGL.US",
                             totalVolume = BigDecimal("50.0000"),
                             totalCost = BigDecimal("500.00"),
+                            stockName = "Alphabet",
                         ),
                     ),
                 )
