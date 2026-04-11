@@ -30,7 +30,7 @@ class StandardMarketScenario(
                 createMockStockEntity(
                     symbol = "GOOGL.US",
                     name = "Alphabet",
-                    price = BigDecimal("100.0126"),
+                    price = BigDecimal("100.0000"),
                     dividend = BigDecimal("2.0153"),
                 ),
             )

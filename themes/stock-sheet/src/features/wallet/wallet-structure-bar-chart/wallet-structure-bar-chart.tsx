@@ -10,7 +10,10 @@ import {
 } from "recharts";
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart";
 import type { ChartConfig } from "@/components/ui/chart";
-import { numberFormatUtil } from "@/features/number-utils/number-format-util/number-format-util";
+import {
+  formatStockPrice,
+  numberFormatUtil,
+} from "@/features/number-utils/number-format-util/number-format-util";
 
 const chartConfig = {
   totalPrice: {
@@ -41,10 +44,7 @@ export function WalletStructureBarChart({
 
   const data = useMemo(() => {
     return stocks.map((stock, index) => {
-      const price = numberFormatUtil({
-        style: "currency",
-        currency,
-      }).format(Number(stock.totalCost));
+      const price = formatStockPrice(stock.totalCost, currency);
 
       const percentage = numberFormatUtil({
         maximumFractionDigits: 2,
@@ -118,13 +118,13 @@ export function WalletStructureBarChart({
                 hideLabel
                 formatter={(_value, _name, item) => {
                   return (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 font-medium">
                       <div
                         className="size-3 rounded-xs"
                         style={{ backgroundColor: item.payload.color }}
                       />
-                      <span className="font-medium">
-                        <strong>{item.payload.stockSymbol}</strong> ({" "}
+                      <span>
+                        <strong>{item.payload.stockName}</strong> ({" "}
                         {item.payload.price} ) {item.payload.percentage}
                       </span>
                     </div>

@@ -130,6 +130,7 @@ export interface components {
         PositionDTO: {
             stockSymbol: string;
             stockName: string;
+            stockPrice: number;
             totalVolume: number;
             totalCost: number;
         };

@@ -9,6 +9,7 @@ data class PortfolioHoldingsResponseDTO(
     data class PositionDTO(
         val stockSymbol: String,
         val stockName: String,
+        val stockPrice: BigDecimal,
         val totalVolume: BigDecimal,
         val totalCost: BigDecimal,
     )

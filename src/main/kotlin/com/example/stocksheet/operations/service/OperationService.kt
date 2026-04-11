@@ -34,6 +34,7 @@ class OperationService(
                 PortfolioHoldingsResponseDTO.PositionDTO(
                     stockSymbol = it.stockSymbol,
                     stockName = it.stockName,
+                    stockPrice = it.stockPrice,
                     totalVolume = it.totalVolume,
                     totalCost = it.totalCost,
                 )

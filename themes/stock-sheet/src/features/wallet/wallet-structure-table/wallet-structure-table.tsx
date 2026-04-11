@@ -6,11 +6,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { numberFormatUtil } from "@/features/number-utils/number-format-util/number-format-util";
+import { formatStockPrice } from "@/features/number-utils/number-format-util/number-format-util";
 
 type Operation = {
   totalCost: number;
   stockSymbol: string;
+  stockPrice: number;
   stockName: string;
   totalVolume: number;
 };
@@ -28,7 +29,7 @@ export const WalletStructureTable = ({
     <div className="overflow-hidden rounded-md border bg-card">
       <Table aria-label="Twoje operacje">
         <TableHeader className="bg-secondary">
-          <TableRow className="hover:bg-secondary">
+          <TableRow>
             <TableHead
               className={`
                 w-full text-xs font-bold tracking-wider text-foreground
@@ -44,6 +45,14 @@ export const WalletStructureTable = ({
               `}
             >
               Wolumeny
+            </TableHead>
+            <TableHead
+              className={`
+                px-8 text-right text-xs font-bold tracking-wider
+                whitespace-nowrap text-foreground uppercase
+              `}
+            >
+              Aktualna Cena
             </TableHead>
             {/* <TableHead
               className={`
@@ -75,9 +84,10 @@ export const WalletStructureTable = ({
               <TableRow
                 key={operation.stockSymbol}
                 className={`
-                  border-b-0
-                  even:bg-muted/50
-                  hover:bg-muted/60
+                  border-b transition-colors duration-200
+                  last:border-0
+                  even:bg-muted/20
+                  hover:bg-primary/10
                 `}
               >
                 <TableCell className="py-3">
@@ -103,6 +113,11 @@ export const WalletStructureTable = ({
                 <TableCell className="px-8 text-right font-mono">
                   {operation.totalVolume}
                 </TableCell>
+                <TableCell
+                  className={`px-8 text-right font-mono text-muted-foreground`}
+                >
+                  {formatStockPrice(operation.stockPrice, currency)}
+                </TableCell>
                 {/* <TableCell
                   className={`px-8 text-right font-mono text-muted-foreground`}
                 >
@@ -116,10 +131,7 @@ export const WalletStructureTable = ({
                     px-8 text-right font-mono font-bold text-foreground
                   `}
                 >
-                  {numberFormatUtil({
-                    style: "currency",
-                    currency,
-                  }).format(operation.totalCost)}
+                  {formatStockPrice(operation.totalCost, currency)}
                 </TableCell>
               </TableRow>
             ))

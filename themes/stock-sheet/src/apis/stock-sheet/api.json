@@ -439,10 +439,17 @@
         "properties": {
           "stockSymbol": { "type": "string" },
           "stockName": { "type": "string" },
+          "stockPrice": { "type": "number" },
           "totalVolume": { "type": "number" },
           "totalCost": { "type": "number" }
         },
-        "required": ["stockName", "stockSymbol", "totalCost", "totalVolume"]
+        "required": [
+          "stockName",
+          "stockPrice",
+          "stockSymbol",
+          "totalCost",
+          "totalVolume"
+        ]
       },
       "PortfolioSummaryResponseDTO": {
         "type": "object",
