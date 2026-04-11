@@ -440,10 +440,12 @@
           "stockSymbol": { "type": "string" },
           "stockName": { "type": "string" },
           "stockPrice": { "type": "number" },
+          "averagePrice": { "type": "number" },
           "totalVolume": { "type": "number" },
           "totalCost": { "type": "number" }
         },
         "required": [
+          "averagePrice",
           "stockName",
           "stockPrice",
           "stockSymbol",
