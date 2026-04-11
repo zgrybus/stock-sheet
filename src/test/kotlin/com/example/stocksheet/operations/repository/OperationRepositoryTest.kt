@@ -70,12 +70,14 @@ class OperationRepositoryTest : BaseRepositoryTest() {
                             stockSymbol = "AAPL.US",
                             totalVolume = BigDecimal("107.3423"),
                             totalCost = BigDecimal("2101.31"),
+                            stockPrice = BigDecimal("75.2500"),
                         ),
                         OperationRepository.PortfolioHoldingProjection(
                             stockName = "Alphabet",
                             stockSymbol = "GOOGL.US",
                             totalVolume = BigDecimal("50.0000"),
                             totalCost = BigDecimal("500.00"),
+                            stockPrice = BigDecimal("100.0000"),
                         ),
                     ),
                 )
