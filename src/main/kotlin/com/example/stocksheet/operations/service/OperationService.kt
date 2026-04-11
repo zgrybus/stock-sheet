@@ -13,6 +13,7 @@ import com.example.stocksheet.stocks.service.StockService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.math.RoundingMode
 
 @Service
 class OperationService(
@@ -37,7 +38,7 @@ class OperationService(
                     stockPrice = it.stockPrice,
                     totalVolume = it.totalVolume,
                     totalCost = it.totalCost,
-                    averagePrice = it.totalCost.div(it.totalVolume),
+                    averagePrice = it.totalCost.divide(it.totalVolume, 4, RoundingMode.HALF_EVEN),
                 )
             }
         val response = PortfolioHoldingsResponseDTO(portfolioId, items)
