@@ -4,10 +4,12 @@ import com.example.stocksheet.Loggable
 import com.example.stocksheet.integration.finnhub.dto.FinnhubSymbolLookupResponse
 import com.example.stocksheet.integration.finnhub.service.FinnhubService
 import com.example.stocksheet.stocks.dto.StockDTO
+import com.example.stocksheet.stocks.entity.DividendFrequency
 import com.example.stocksheet.stocks.entity.StockEntity
 import com.example.stocksheet.stocks.mappers.StockMapper
 import com.example.stocksheet.stocks.repository.StockRepository
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 
 @Service
 class StockService(
@@ -50,6 +52,9 @@ class StockService(
                             exchange = stock.exchange,
                             name = stock.symbol,
                             industry = "",
+                            price = BigDecimal.ZERO,
+                            dividend = BigDecimal.ZERO,
+                            dividendFrequency = DividendFrequency.NONE,
                         ),
                     ),
                 )
@@ -70,16 +75,31 @@ class StockService(
             FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.REIT,
             -> {
                 val stockProfile = finnhubService.getCompanyProfile2(stock.symbol)
+
                 StockDTO(
                     name = stockProfile?.name ?: stock.symbol,
                     symbol = stockProfile?.ticker ?: stock.symbol,
                     industry = stockProfile?.industry ?: "",
                     exchange = stockProfile?.exchange ?: stock.exchange,
+                    price = stockProfile?.price ?: BigDecimal.ZERO,
+                    dividend = stockProfile?.dividend ?: BigDecimal.ZERO,
+                    dividendFrequency =
+                        DividendFrequency.entries.find {
+                            it.name == stockProfile?.dividendFrequency
+                        } ?: DividendFrequency.NONE,
                 )
             }
 
             else -> {
-                StockDTO(name = stock.symbol, symbol = stock.symbol, industry = "", exchange = stock.exchange)
+                StockDTO(
+                    name = stock.symbol,
+                    symbol = stock.symbol,
+                    industry = "",
+                    exchange = stock.exchange,
+                    price = BigDecimal.ZERO,
+                    dividend = BigDecimal.ZERO,
+                    dividendFrequency = DividendFrequency.NONE,
+                )
             }
         }
     }

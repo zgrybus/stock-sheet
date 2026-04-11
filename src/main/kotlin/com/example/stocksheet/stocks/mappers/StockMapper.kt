@@ -12,5 +12,8 @@ class StockMapper {
             symbol = dto.symbol,
             exchange = dto.exchange,
             industry = dto.industry,
+            dividend = dto.dividend,
+            dividendFrequency = dto.dividendFrequency,
+            price = dto.price,
         )
 }
