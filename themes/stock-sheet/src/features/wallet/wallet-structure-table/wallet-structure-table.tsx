@@ -78,7 +78,7 @@ export const WalletStructureTable = ({
             >
               <div className="flex flex-col items-center gap-1 leading-none">
                 <span>Średnia</span>
-                <span>Cena</span>
+                <span>Cena Zakupu</span>
               </div>
             </TableHead>
             <TableHead
