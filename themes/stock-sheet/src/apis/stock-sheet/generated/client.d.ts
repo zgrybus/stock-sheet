@@ -134,6 +134,8 @@ export interface components {
             averagePrice: number;
             totalVolume: number;
             totalCost: number;
+            totalProfit: number;
+            profitPercentage: number;
         };
         PortfolioSummaryResponseDTO: {
             totalValue: number;

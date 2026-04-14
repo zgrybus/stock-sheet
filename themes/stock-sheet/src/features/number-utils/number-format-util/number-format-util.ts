@@ -4,14 +4,15 @@ export const numberFormatUtil = (options: Intl.NumberFormatOptions) =>
 export const formatStockPrice = (
   value: number,
   currency: string | undefined,
+  { fractionDigits }: { fractionDigits?: number } = {},
 ) => {
-  const fractionDigits = Math.abs(value) < 1 && value !== 0 ? 4 : 2;
+  const digits = fractionDigits ?? (Math.abs(value) < 1 && value !== 0 ? 4 : 2);
 
   return numberFormatUtil({
     style: "currency",
     currency: currency,
-    minimumFractionDigits: fractionDigits,
-    maximumFractionDigits: fractionDigits,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
   }).format(value);
 };
 

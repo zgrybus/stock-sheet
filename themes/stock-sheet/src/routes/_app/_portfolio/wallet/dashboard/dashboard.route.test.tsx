@@ -44,17 +44,22 @@ describe("Route - /wallet/dashboard", () => {
       ).not.toBeInTheDocument();
     });
 
+    expect(await screen.findByTestId("structure-of-capital")).toHaveTextContent(
+      "Wkład własny90.00%Pieniądze z zysku10.00%",
+    );
     expect(await screen.findByTestId("total-wallet-value")).toHaveTextContent(
-      "$10,000.00Kapitał: 90%Zysk: 10%",
+      "$10,000.00Aktualna wartość Twoich udziałów na podstawie kursów giełdowych",
     );
     expect(
       screen.getByTestId("total-wallet-invested-capital"),
-    ).toHaveTextContent("$9,000.00Suma wpłaconych przez Ciebie środków.");
+    ).toHaveTextContent(
+      "$9,000.00Suma wszystkich środków wpłaconych na zakup papierów wartościowych.",
+    );
     expect(screen.getByTestId("total-wallet-income")).toHaveTextContent(
-      "$1,000.0011.11%od początku",
+      "$1,000.00+11.11%od początku",
     );
     expect(screen.getByTestId("today-wallet-income")).toHaveTextContent(
-      "$100.001.01%dzisiaj",
+      "$100.00+1.01%dzisiaj",
     );
   });
 

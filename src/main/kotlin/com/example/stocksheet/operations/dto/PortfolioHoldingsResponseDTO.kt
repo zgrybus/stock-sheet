@@ -13,5 +13,7 @@ data class PortfolioHoldingsResponseDTO(
         val averagePrice: BigDecimal,
         val totalVolume: BigDecimal,
         val totalCost: BigDecimal,
+        val totalProfit: BigDecimal,
+        val profitPercentage: BigDecimal,
     )
 }
