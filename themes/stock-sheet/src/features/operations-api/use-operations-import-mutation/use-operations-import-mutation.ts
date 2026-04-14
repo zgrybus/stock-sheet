@@ -18,14 +18,22 @@ export const useOperationsImportMutation = () => {
       const portfolioId = variables.params.path.portfolioId;
       const { added, duplicated } = data;
 
-      const queryKey = $apiStockSheet.queryOptions(
+      const holdingsQueryKey = $apiStockSheet.queryOptions(
         "get",
         "/api/operations/{portfolioId}/holdings",
         { params: { path: { portfolioId } } },
       ).queryKey;
-
       queryClient.invalidateQueries({
-        queryKey,
+        queryKey: holdingsQueryKey,
+      });
+
+      const summaryQueryKey = $apiStockSheet.queryOptions(
+        "get",
+        "/api/analytics/{portfolioId}/summary",
+        { params: { path: { portfolioId } } },
+      ).queryKey;
+      queryClient.invalidateQueries({
+        queryKey: summaryQueryKey,
       });
 
       const addedText = `Nowe pozycje: ${added.length}`;

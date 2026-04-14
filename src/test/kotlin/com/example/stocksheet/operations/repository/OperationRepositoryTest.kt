@@ -16,7 +16,7 @@ class OperationRepositoryTest : BaseRepositoryTest() {
     @Autowired lateinit var standardMarketScenario: StandardMarketScenario
 
     init {
-        describe("calculateInvestedCapitalByPortfolioId") {
+        describe("calculatePortfolioSummaryByPortfolioId") {
             it("returns zero when portfolio has no assigned operations") {
                 val data = standardMarketScenario.setup()
                 entityManager.flush()
@@ -24,9 +24,11 @@ class OperationRepositoryTest : BaseRepositoryTest() {
 
                 val portfolioPLN = data.portfolios[1]
 
-                val investedCapital = operationRepository.calculateInvestedCapitalByPortfolioId(portfolioPLN.id!!)
+                val portfolioSummary = operationRepository.calculatePortfolioSummaryByPortfolioId(portfolioPLN.id!!)
 
-                investedCapital.shouldBe(BigDecimal.ZERO)
+                portfolioSummary.shouldBe(
+                    OperationRepository.PortfolioSummaryProjection(totalValue = BigDecimal.ZERO, investedCapital = BigDecimal.ZERO),
+                )
             }
 
             it("returns sum of total price for all operations within specified portfolio") {
@@ -36,9 +38,10 @@ class OperationRepositoryTest : BaseRepositoryTest() {
 
                 val portfolioUSD = data.portfolios[0]
 
-                val investedCapital = operationRepository.calculateInvestedCapitalByPortfolioId(portfolioUSD.id!!)
+                val portfolioSummary = operationRepository.calculatePortfolioSummaryByPortfolioId(portfolioUSD.id!!)
 
-                investedCapital.shouldBeEqualComparingTo(BigDecimal("2400.00"))
+                portfolioSummary.totalValue.shouldBeEqualComparingTo(BigDecimal("6128.75"))
+                portfolioSummary.investedCapital.shouldBeEqualComparingTo(BigDecimal("2400.00"))
             }
         }
 

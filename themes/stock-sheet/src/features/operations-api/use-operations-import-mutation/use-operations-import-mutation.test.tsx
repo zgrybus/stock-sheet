@@ -127,5 +127,13 @@ describe("useOperationsImportMutation", () => {
         { params: { path: { portfolioId: 101 } } },
       ).queryKey,
     });
+
+    expect(queryClient.invalidateQueries).toHaveBeenCalledWith({
+      queryKey: $apiStockSheet.queryOptions(
+        "get",
+        "/api/analytics/{portfolioId}/summary",
+        { params: { path: { portfolioId: 101 } } },
+      ).queryKey,
+    });
   });
 });
