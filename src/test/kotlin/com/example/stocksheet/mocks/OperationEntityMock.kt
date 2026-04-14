@@ -17,7 +17,7 @@ fun createMockOperationEntity(
     type: OperationType = OperationType.BUY,
     volume: BigDecimal = BigDecimal("10.00"),
     pricePerVolume: BigDecimal = BigDecimal("150.00"),
-    totalPrice: BigDecimal = volume.multiply(pricePerVolume),
+    totalPrice: BigDecimal? = null,
     openDate: Instant = LocalDateTime.of(2024, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
     portfolio: PortfolioEntity = createMockPortfolioEntity(),
 ) = OperationEntity(
@@ -28,6 +28,6 @@ fun createMockOperationEntity(
     volume = volume,
     openDate = openDate,
     pricePerVolume = pricePerVolume,
-    totalPrice = totalPrice,
+    totalPrice = totalPrice ?: volume.multiply(pricePerVolume),
     portfolio = portfolio,
 )

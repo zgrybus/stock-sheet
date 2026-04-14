@@ -17,17 +17,6 @@ interface OperationRepository :
 
     fun findAllByExternalIdIn(externalIds: Collection<String>): List<OperationExternalIdProjection>
 
-    @Query(
-        """
-        SELECT COALESCE(SUM(operation.totalPrice), 0) 
-        FROM OperationEntity operation
-        WHERE operation.portfolio.id = :portfolio_id
-    """,
-    )
-    fun calculateInvestedCapitalByPortfolioId(
-        @Param("portfolio_id") portfolioId: Long,
-    ): BigDecimal
-
     data class PortfolioHoldingProjection(
         val stockSymbol: String,
         val stockName: String,
@@ -58,4 +47,23 @@ interface OperationRepository :
     fun getHoldingsSummaryByPortfolioId(
         @Param("portfolio_id") portfolioId: Long,
     ): List<PortfolioHoldingProjection>
+
+    data class PortfolioSummaryProjection(
+        val totalValue: BigDecimal,
+        val investedCapital: BigDecimal,
+    )
+
+    @Query(
+        """
+            SELECT 
+                COALESCE(SUM(operation.volume * stock.price), 0) as totalValue,
+                COALESCE(SUM(operation.totalPrice), 0) as investedCapital 
+            FROM OperationEntity operation
+            JOIN operation.stock stock
+            WHERE operation.portfolio.id = :portfolio_id
+        """,
+    )
+    fun calculatePortfolioSummaryByPortfolioId(
+        @Param("portfolio_id") portfolioId: Long,
+    ): PortfolioSummaryProjection
 }
