@@ -8,8 +8,8 @@ import com.example.stocksheet.portfolio.repository.PortfolioRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.math.BigDecimal
 import java.math.RoundingMode
+import java.time.LocalDate
 
 @Service
 class AnalyticsService(
@@ -18,21 +18,22 @@ class AnalyticsService(
 ) : Loggable {
     @Transactional(readOnly = true)
     fun generatePortfolioSummary(portfolioId: Long): PortfolioSummaryResponseDTO {
-        logger.info { "Attempt to generate portfolio summary" }
+        logger.info { "Attempt to generate portfolio summary for id: $portfolioId" }
 
-        portfolioRepository.findByIdOrNull(portfolioId) ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
+        portfolioRepository.findByIdOrNull(portfolioId)
+            ?: throw PortfolioNotFoundException("Could not find portfolio with id $portfolioId")
 
-        val todayIncome = BigDecimal.ZERO
+        val summary = operationRepository.calculatePortfolioSummaryByPortfolioId(portfolioId)
+        val snapshot = operationRepository.calculateValuationSnapshotByPortfolioId(portfolioId, LocalDate.now().minusDays(1))
 
-        val portfolioSummary = operationRepository.calculatePortfolioSummaryByPortfolioId(portfolioId)
-        val totalValue = portfolioSummary.totalValue.setScale(2, RoundingMode.HALF_EVEN)
-        val investedCapital = portfolioSummary.investedCapital.setScale(2, RoundingMode.HALF_EVEN)
+        val totalValue = summary.totalValue.setScale(2, RoundingMode.HALF_EVEN)
+        val investedCapital = summary.investedCapital.setScale(2, RoundingMode.HALF_EVEN)
 
-        val totalIncome = totalValue.subtract(investedCapital)
+        val todayIncome = (snapshot.currentValue - snapshot.historicalValue).setScale(2, RoundingMode.HALF_EVEN)
+        val totalIncome = (totalValue - investedCapital).setScale(2, RoundingMode.HALF_EVEN)
 
-        logger.info { "Portfolio summary generated for $portfolioId" }
+        logger.info { "Portfolio summary successfully generated for $portfolioId" }
 
-        // TODO: move percentage and other values from FE here
         return PortfolioSummaryResponseDTO(
             todayIncome = todayIncome,
             totalIncome = totalIncome,

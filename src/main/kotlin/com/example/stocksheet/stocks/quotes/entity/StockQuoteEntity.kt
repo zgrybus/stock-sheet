@@ -28,7 +28,7 @@ class StockQuoteEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, scale = 4, precision = 19)
     var closedPrice: BigDecimal,
     @Column(nullable = false, updatable = false)
     var date: LocalDate? = null,
