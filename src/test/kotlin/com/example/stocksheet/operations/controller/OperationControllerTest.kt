@@ -48,6 +48,8 @@ class OperationControllerTest : BaseIntegrationTest() {
                             stockName = "Apple",
                             stockPrice = BigDecimal("75.2500"),
                             averagePrice = BigDecimal("126.6667"),
+                            totalProfit = BigDecimal("-771.25"),
+                            profitPercentage = BigDecimal("-0.4059"),
                         ),
                         PortfolioHoldingsResponseDTO.PositionDTO(
                             stockSymbol = "GOOGL.US",
@@ -56,6 +58,8 @@ class OperationControllerTest : BaseIntegrationTest() {
                             stockName = "Alphabet",
                             stockPrice = BigDecimal("100.0000"),
                             averagePrice = BigDecimal("10.0000"),
+                            totalProfit = BigDecimal("4500.00"),
+                            profitPercentage = BigDecimal("9.0000"),
                         ),
                     ),
                 )
