@@ -32,6 +32,7 @@ class AnalyticsService(
 
         logger.info { "Portfolio summary generated for $portfolioId" }
 
+        // TODO: move percentage and other values from FE here
         return PortfolioSummaryResponseDTO(
             todayIncome = todayIncome,
             totalIncome = totalIncome,

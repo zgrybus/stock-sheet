@@ -6,6 +6,7 @@ import {
   TrendingUp,
   Activity,
   TrendingDown,
+  PieChart,
 } from "lucide-react";
 import {
   formatStockPrice,
@@ -13,9 +14,17 @@ import {
 } from "@/features/number-utils/number-format-util/number-format-util";
 import { cn } from "@/lib/utils";
 
-const percentFormatter = numberFormatUtil({
+const ratioFormatter = numberFormatUtil({
   style: "percent",
   maximumFractionDigits: 2,
+  minimumFractionDigits: 2,
+});
+
+const signPercentFormatter = numberFormatUtil({
+  style: "percent",
+  maximumFractionDigits: 2,
+  minimumFractionDigits: 2,
+  signDisplay: "always",
 });
 
 type WalletSummaryProps = {
@@ -33,21 +42,80 @@ export const WalletSummary = ({
   totalValue,
   investedCapital,
 }: WalletSummaryProps) => {
-  const capitalRatio =
-    totalValue !== 0 ? Math.min((investedCapital / totalValue) * 100, 100) : 0;
+  const isProfit = totalIncome >= 0;
 
-  const profitRatio = totalValue !== 0 ? 100 - capitalRatio : 0;
+  const capitalShare = isProfit
+    ? totalValue > 0
+      ? investedCapital / totalValue
+      : 0
+    : 1;
+
+  const profitShare = isProfit
+    ? totalValue > 0
+      ? totalIncome / totalValue
+      : 0
+    : 0;
+
+  const capitalBarWidth = capitalShare * 100;
 
   const totalProfitPercent =
-    investedCapital !== 0 ? (totalIncome / investedCapital) * 100 : 0;
-
+    investedCapital > 0 ? totalIncome / investedCapital : 0;
   const yesterdayValue = totalValue - todayIncome;
-
   const todayIncomePercent =
-    yesterdayValue !== 0 ? (todayIncome / yesterdayValue) * 100 : 0;
+    yesterdayValue > 0 ? todayIncome / yesterdayValue : 0;
 
   return (
-    <div className="mt-6 flex flex-col gap-4">
+    <div className="mt-6 flex flex-col gap-6">
+      <Card className="flex-1">
+        <CardHeader className="flex items-center justify-between pb-2">
+          <CardTitle>Struktura Twojego kapitał</CardTitle>
+          <PieChart className="size-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent data-testid="structure-of-capital">
+          <div
+            className={`
+              mb-3 h-3 w-full overflow-hidden rounded-full bg-emerald-500/20
+            `}
+          >
+            <div
+              className={`
+                h-full rounded-full bg-primary transition-all duration-500
+              `}
+              style={{ width: `${capitalBarWidth}%` }}
+            />
+          </div>
+
+          <div
+            className={`
+              flex justify-between text-xs font-bold tracking-wider uppercase
+            `}
+          >
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] text-muted-foreground">
+                Wkład własny
+              </span>
+              <span className="text-primary">
+                {ratioFormatter.format(capitalShare)}
+              </span>
+            </div>
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-[10px] text-muted-foreground">
+                Pieniądze z zysku
+              </span>
+              <span
+                className={cn(
+                  totalIncome >= 0
+                    ? "text-emerald-500"
+                    : "text-muted-foreground",
+                )}
+              >
+                {ratioFormatter.format(profitShare)}
+              </span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       <div
         className={`
           flex flex-col gap-4
@@ -55,52 +123,32 @@ export const WalletSummary = ({
         `}
       >
         <Card className="flex-1">
-          <CardHeader className="flex items-center justify-between">
+          <CardHeader className="flex items-center justify-between pb-2">
             <CardTitle>Wartość portfela</CardTitle>
             <Wallet className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent data-testid="total-wallet-value">
-            <p className="mb-4 text-3xl font-bold text-amber-400">
+            <p className="text-3xl font-bold text-amber-400">
               {formatStockPrice(totalValue, currency)}
             </p>
-            <div
-              className={`
-                mb-2 h-2 w-full overflow-hidden rounded-full bg-emerald-500/20
-              `}
-            >
-              <div
-                className={`
-                  h-full rounded-full bg-primary transition-all duration-500
-                `}
-                style={{ width: `${capitalRatio}%` }}
-              />
-            </div>
-            <div className="flex justify-between text-xs">
-              <span className="text-primary">
-                Kapitał: {percentFormatter.format(capitalRatio / 100)}
-              </span>
-              <span
-                className={cn({
-                  "text-emerald-500": totalValue > investedCapital,
-                })}
-              >
-                Zysk: {percentFormatter.format(profitRatio / 100)}
-              </span>
-            </div>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Aktualna wartość Twoich udziałów na podstawie kursów giełdowych.
+            </p>
           </CardContent>
         </Card>
 
         <Card className="flex-1">
-          <CardHeader className="flex items-center justify-between">
+          <CardHeader className="flex items-center justify-between pb-2">
             <CardTitle>Zainwestowany kapitał</CardTitle>
             <PiggyBank className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent data-testid="total-wallet-invested-capital">
-            <p className="mb-4 text-3xl font-bold text-blue-400">
+            <p className="text-3xl font-bold text-blue-400">
               {formatStockPrice(investedCapital, currency)}
             </p>
-            <p className="text-sm text-muted-foreground">
-              Suma wpłaconych przez Ciebie środków.
+            <p className="mt-2 text-sm text-muted-foreground">
+              Suma wszystkich środków wpłaconych na zakup papierów
+              wartościowych.
             </p>
           </CardContent>
         </Card>
@@ -113,7 +161,7 @@ export const WalletSummary = ({
         `}
       >
         <Card className="flex-1">
-          <CardHeader className="flex items-center justify-between">
+          <CardHeader className="flex items-center justify-between pb-2">
             <CardTitle>Zysk całkowity</CardTitle>
             {totalIncome >= 0 ? (
               <TrendingUp className="size-4 text-emerald-500" />
@@ -123,14 +171,14 @@ export const WalletSummary = ({
           </CardHeader>
           <CardContent data-testid="total-wallet-income">
             <p
-              className={cn("mb-4 text-3xl font-bold", {
-                "text-emerald-500": totalIncome >= 0,
-                "text-red-500": totalIncome < 0,
-              })}
+              className={cn(
+                "mb-4 text-3xl font-bold",
+                totalIncome >= 0 ? `text-emerald-500` : `text-red-500`,
+              )}
             >
               {formatStockPrice(totalIncome, currency)}
             </p>
-            <p className="flex items-center text-sm text-muted-foreground">
+            <div className="flex items-center text-sm text-muted-foreground">
               <Badge
                 variant={totalProfitPercent >= 0 ? "outline" : "destructive"}
                 className={cn("mr-2", {
@@ -138,33 +186,33 @@ export const WalletSummary = ({
                     totalProfitPercent >= 0,
                 })}
               >
-                {percentFormatter.format(totalProfitPercent / 100)}
+                {signPercentFormatter.format(totalProfitPercent)}
               </Badge>
               od początku
-            </p>
+            </div>
           </CardContent>
         </Card>
 
         <Card className="flex-1">
-          <CardHeader className="flex items-center justify-between">
+          <CardHeader className="flex items-center justify-between pb-2">
             <CardTitle>Zysk dzienny</CardTitle>
             <Activity
-              className={cn("size-4", {
-                "text-emerald-500": todayIncome >= 0,
-                "text-red-500": todayIncome < 0,
-              })}
+              className={cn(
+                "size-4",
+                todayIncome >= 0 ? `text-emerald-500` : `text-red-500`,
+              )}
             />
           </CardHeader>
           <CardContent data-testid="today-wallet-income">
             <p
-              className={cn("mb-4 text-3xl font-bold", {
-                "text-emerald-500": todayIncome >= 0,
-                "text-red-500": todayIncome < 0,
-              })}
+              className={cn(
+                "mb-4 text-3xl font-bold",
+                todayIncome >= 0 ? `text-emerald-500` : `text-red-500`,
+              )}
             >
               {formatStockPrice(todayIncome, currency)}
             </p>
-            <p className="flex items-center text-sm text-muted-foreground">
+            <div className="flex items-center text-sm text-muted-foreground">
               <Badge
                 variant={todayIncomePercent >= 0 ? "outline" : "destructive"}
                 className={cn("mr-2", {
@@ -172,10 +220,10 @@ export const WalletSummary = ({
                     todayIncomePercent >= 0,
                 })}
               >
-                {percentFormatter.format(todayIncomePercent / 100)}
+                {signPercentFormatter.format(todayIncomePercent)}
               </Badge>
               dzisiaj
-            </p>
+            </div>
           </CardContent>
         </Card>
       </div>

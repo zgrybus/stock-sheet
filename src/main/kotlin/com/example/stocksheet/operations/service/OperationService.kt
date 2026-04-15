@@ -32,13 +32,26 @@ class OperationService(
 
         val items =
             operationRepository.getHoldingsSummaryByPortfolioId(portfolioId).map {
+                val averagePrice = it.totalCost.divide(it.totalVolume, 4, RoundingMode.HALF_EVEN)
+                val totalProfit =
+                    (it.stockPrice.multiply(it.totalVolume))
+                        .subtract(it.totalCost)
+                        .setScale(2, RoundingMode.HALF_EVEN)
+                val profitPercentage =
+                    it.stockPrice
+                        .subtract(averagePrice)
+                        .divide(averagePrice, 4, RoundingMode.HALF_UP)
+                        .setScale(4, RoundingMode.HALF_UP)
+
                 PortfolioHoldingsResponseDTO.PositionDTO(
                     stockSymbol = it.stockSymbol,
                     stockName = it.stockName,
                     stockPrice = it.stockPrice,
                     totalVolume = it.totalVolume,
                     totalCost = it.totalCost,
-                    averagePrice = it.totalCost.divide(it.totalVolume, 4, RoundingMode.HALF_EVEN),
+                    averagePrice = averagePrice,
+                    totalProfit = totalProfit,
+                    profitPercentage = profitPercentage,
                 )
             }
         val response = PortfolioHoldingsResponseDTO(portfolioId, items)

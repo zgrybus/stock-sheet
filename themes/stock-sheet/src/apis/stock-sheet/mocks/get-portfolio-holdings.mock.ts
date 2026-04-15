@@ -11,6 +11,8 @@ export const mockPortfolioHoldings: components["schemas"]["PortfolioHoldingsResp
         totalVolume: 5,
         stockPrice: 0.2523,
         averagePrice: 20,
+        totalProfit: -98.74,
+        profitPercentage: -0.9874,
       },
       {
         stockSymbol: "TSLA",
@@ -19,6 +21,8 @@ export const mockPortfolioHoldings: components["schemas"]["PortfolioHoldingsResp
         totalVolume: 10,
         stockPrice: 74.23,
         averagePrice: 5,
+        totalProfit: 692.3,
+        profitPercentage: 13.846,
       },
       {
         stockSymbol: "MID",
@@ -27,6 +31,8 @@ export const mockPortfolioHoldings: components["schemas"]["PortfolioHoldingsResp
         totalVolume: 12,
         stockPrice: 65,
         averagePrice: 43.3333,
+        totalProfit: 260.0,
+        profitPercentage: 0.5,
       },
     ],
   };

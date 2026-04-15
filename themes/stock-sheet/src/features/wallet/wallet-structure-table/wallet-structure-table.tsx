@@ -26,6 +26,8 @@ type Operation = {
   stockName: string;
   totalVolume: number;
   averagePrice: number;
+  totalProfit: number;
+  profitPercentage: number;
 };
 
 type WalletStructureTableProps = {
@@ -98,6 +100,14 @@ export const WalletStructureTable = ({
                 tracking-wider text-foreground uppercase
               `}
             >
+              Zysk
+            </TableHead>
+            <TableHead
+              className={`
+                px-4 py-4 text-right align-middle text-xs font-bold
+                tracking-wider text-foreground uppercase
+              `}
+            >
               Wartość
             </TableHead>
           </TableRow>
@@ -114,13 +124,7 @@ export const WalletStructureTable = ({
             </TableRow>
           ) : (
             stocks.map((operation, index) => {
-              const profitRatio =
-                operation.averagePrice > 0
-                  ? (operation.stockPrice - operation.averagePrice) /
-                    operation.averagePrice
-                  : 0;
-
-              const isProfit = profitRatio >= 0;
+              const isProfit = operation.totalProfit > 0;
 
               return (
                 <TableRow
@@ -176,11 +180,10 @@ export const WalletStructureTable = ({
 
                   <TableCell
                     className={cn(
-                      "px-4 text-right font-mono text-sm font-medium",
-                      {
-                        "text-green-500": isProfit,
-                        "text-red-500": !isProfit,
-                      },
+                      `
+                        px-4 text-right font-mono text-sm font-medium
+                        text-muted-foreground
+                      `,
                     )}
                   >
                     {formatStockPrice(operation.averagePrice, currency)}
@@ -195,9 +198,21 @@ export const WalletStructureTable = ({
                       },
                     )}
                   >
-                    {percentFormatter.format(profitRatio)}
+                    {percentFormatter.format(operation.profitPercentage)}
                   </TableCell>
-
+                  <TableCell
+                    className={cn(
+                      "px-4 text-right font-mono text-sm font-medium",
+                      {
+                        "text-green-500": isProfit,
+                        "text-red-500": !isProfit,
+                      },
+                    )}
+                  >
+                    {formatStockPrice(operation.totalProfit, currency, {
+                      fractionDigits: 2,
+                    })}
+                  </TableCell>
                   <TableCell
                     className={`
                       px-4 text-right font-mono text-sm font-bold

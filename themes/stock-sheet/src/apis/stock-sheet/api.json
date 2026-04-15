@@ -442,14 +442,18 @@
           "stockPrice": { "type": "number" },
           "averagePrice": { "type": "number" },
           "totalVolume": { "type": "number" },
-          "totalCost": { "type": "number" }
+          "totalCost": { "type": "number" },
+          "totalProfit": { "type": "number" },
+          "profitPercentage": { "type": "number" }
         },
         "required": [
           "averagePrice",
+          "profitPercentage",
           "stockName",
           "stockPrice",
           "stockSymbol",
           "totalCost",
+          "totalProfit",
           "totalVolume"
         ]
       },

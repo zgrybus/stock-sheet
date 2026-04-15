@@ -15,17 +15,22 @@ describe("Wallet Summary", () => {
       { wrapper: TestProviders },
     );
 
+    expect(screen.getByTestId("structure-of-capital")).toHaveTextContent(
+      "Wkład własny90.00%Pieniądze z zysku10.00%",
+    );
     expect(screen.getByTestId("total-wallet-value")).toHaveTextContent(
-      "$10,000.00Kapitał: 90%Zysk: 10%",
+      "$10,000.00Aktualna wartość Twoich udziałów na podstawie kursów giełdowych.",
     );
     expect(
       screen.getByTestId("total-wallet-invested-capital"),
-    ).toHaveTextContent("$9,000.00Suma wpłaconych przez Ciebie środków.");
+    ).toHaveTextContent(
+      "$9,000.00Suma wszystkich środków wpłaconych na zakup papierów wartościowych.",
+    );
     expect(screen.getByTestId("total-wallet-income")).toHaveTextContent(
-      "$1,000.0011.11%od początku",
+      "$1,000.00+11.11%od początku",
     );
     expect(screen.getByTestId("today-wallet-income")).toHaveTextContent(
-      "$100.001.01%dzisiaj",
+      "$100.00+1.01%dzisiaj",
     );
   });
 
@@ -41,14 +46,19 @@ describe("Wallet Summary", () => {
       { wrapper: TestProviders },
     );
 
+    expect(screen.getByTestId("structure-of-capital")).toHaveTextContent(
+      "Wkład własny100.00%Pieniądze z zysku0.00%",
+    );
     expect(screen.getByTestId("total-wallet-value")).toHaveTextContent(
-      "$8,000.00Kapitał: 100%Zysk: 0%",
+      "$8,000.00Aktualna wartość Twoich udziałów na podstawie kursów giełdowych.",
     );
     expect(
       screen.getByTestId("total-wallet-invested-capital"),
-    ).toHaveTextContent("$10,000.00Suma wpłaconych przez Ciebie środków.");
+    ).toHaveTextContent(
+      "$10,000.00Suma wszystkich środków wpłaconych na zakup papierów wartościowych",
+    );
     expect(screen.getByTestId("total-wallet-income")).toHaveTextContent(
-      "-$2,000.00-20%od początku",
+      "-$2,000.00-20.00%od początku",
     );
     expect(screen.getByTestId("today-wallet-income")).toHaveTextContent(
       "-$500.00-5.88%dzisiaj",
@@ -67,17 +77,22 @@ describe("Wallet Summary", () => {
       { wrapper: TestProviders },
     );
 
+    expect(screen.getByTestId("structure-of-capital")).toHaveTextContent(
+      "Wkład własny100.00%Pieniądze z zysku0.00%",
+    );
     expect(screen.getByTestId("total-wallet-value")).toHaveTextContent(
-      "$5,000.00Kapitał: 100%Zysk: 0%",
+      "$5,000.00Aktualna wartość Twoich udziałów na podstawie kursów giełdowych.",
     );
     expect(
       screen.getByTestId("total-wallet-invested-capital"),
-    ).toHaveTextContent("$5,000.00Suma wpłaconych przez Ciebie środków.");
+    ).toHaveTextContent(
+      "$5,000.00Suma wszystkich środków wpłaconych na zakup papierów wartościowych.",
+    );
     expect(screen.getByTestId("total-wallet-income")).toHaveTextContent(
-      "$0.000%od początku",
+      "$0.00+0.00%od początku",
     );
     expect(screen.getByTestId("today-wallet-income")).toHaveTextContent(
-      "$0.000%dzisiaj",
+      "$0.00+0.00%dzisiaj",
     );
   });
 
@@ -93,17 +108,22 @@ describe("Wallet Summary", () => {
       { wrapper: TestProviders },
     );
 
+    expect(screen.getByTestId("structure-of-capital")).toHaveTextContent(
+      "Wkład własny100.00%Pieniądze z zysku0.00%",
+    );
     expect(screen.getByTestId("total-wallet-value")).toHaveTextContent(
-      "$9,000.00Kapitał: 100%Zysk: 0%",
+      "$9,000.00Aktualna wartość Twoich udziałów na podstawie kursów giełdowych.",
     );
     expect(
       screen.getByTestId("total-wallet-invested-capital"),
-    ).toHaveTextContent("$10,000.00Suma wpłaconych przez Ciebie środków.");
+    ).toHaveTextContent(
+      "$10,000.00Suma wszystkich środków wpłaconych na zakup papierów wartościowych.",
+    );
     expect(screen.getByTestId("total-wallet-income")).toHaveTextContent(
-      "-$1,000.00-10%od początku",
+      "$1,000.00-10.00%od początku",
     );
     expect(screen.getByTestId("today-wallet-income")).toHaveTextContent(
-      "$200.002.27%dzisiaj",
+      "$200.00+2.27%dzisiaj",
     );
   });
 
@@ -119,17 +139,22 @@ describe("Wallet Summary", () => {
       { wrapper: TestProviders },
     );
 
+    expect(screen.getByTestId("structure-of-capital")).toHaveTextContent(
+      "Wkład własny0.00%Pieniądze z zysku0.00%",
+    );
     expect(screen.getByTestId("total-wallet-value")).toHaveTextContent(
-      "$0.00Kapitał: 0%Zysk: 0%",
+      "$0.00Aktualna wartość Twoich udziałów na podstawie kursów giełdowych.",
     );
     expect(
       screen.getByTestId("total-wallet-invested-capital"),
-    ).toHaveTextContent("$0.00Suma wpłaconych przez Ciebie środków.");
+    ).toHaveTextContent(
+      "$0.00Suma wszystkich środków wpłaconych na zakup papierów wartościowych.",
+    );
     expect(screen.getByTestId("total-wallet-income")).toHaveTextContent(
-      "$0.000%od początku",
+      "$0.00+0.00%od początku",
     );
     expect(screen.getByTestId("today-wallet-income")).toHaveTextContent(
-      "$0.000%dzisiaj",
+      "$0.00+0.00%dzisiaj",
     );
   });
 
@@ -144,17 +169,20 @@ describe("Wallet Summary", () => {
       />,
       { wrapper: TestProviders },
     );
-    expect(screen.getByTestId("total-wallet-value")).toHaveTextContent(
-      "$12,000.00Kapitał: 83.33%Zysk: 16.67%",
+
+    expect(screen.getByTestId("structure-of-capital")).toHaveTextContent(
+      "Wkład własny83.33%Pieniądze z zysku16.67",
     );
     expect(
       screen.getByTestId("total-wallet-invested-capital"),
-    ).toHaveTextContent("$10,000.00Suma wpłaconych przez Ciebie środków.");
+    ).toHaveTextContent(
+      "$10,000.00Suma wszystkich środków wpłaconych na zakup papierów wartościowych.",
+    );
     expect(screen.getByTestId("total-wallet-income")).toHaveTextContent(
-      "$2,000.0020%od początku",
+      "$2,000.00+20.00%od początku",
     );
     expect(screen.getByTestId("today-wallet-income")).toHaveTextContent(
-      "-$500.00-4%dzisiaj",
+      "-$500.00-4.00%dzisiaj",
     );
   });
 
@@ -170,17 +198,22 @@ describe("Wallet Summary", () => {
       { wrapper: TestProviders },
     );
 
+    expect(screen.getByTestId("structure-of-capital")).toHaveTextContent(
+      "Wkład własny1.00%Pieniądze z zysku99.00%",
+    );
     expect(screen.getByTestId("total-wallet-value")).toHaveTextContent(
-      "$100,000.00Kapitał: 1%Zysk: 99%",
+      "$100,000.00Aktualna wartość Twoich udziałów na podstawie kursów giełdowych",
     );
     expect(
       screen.getByTestId("total-wallet-invested-capital"),
-    ).toHaveTextContent("$1,000.00Suma wpłaconych przez Ciebie środków.");
+    ).toHaveTextContent(
+      "$1,000.00Suma wszystkich środków wpłaconych na zakup papierów wartościowych.",
+    );
     expect(screen.getByTestId("total-wallet-income")).toHaveTextContent(
-      "$99,000.009,900%od początku",
+      "$99,000.00+9,900.00%od początku",
     );
     expect(screen.getByTestId("today-wallet-income")).toHaveTextContent(
-      "$50,000.00100%dzisiaj",
+      "$50,000.00+100.00%dzisia",
     );
   });
 });
