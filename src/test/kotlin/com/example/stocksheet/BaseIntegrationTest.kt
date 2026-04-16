@@ -3,6 +3,7 @@ package com.example.stocksheet
 import com.example.stocksheet.integration.finnhub.dto.FinnhubCompanyProfile2Response
 import com.example.stocksheet.integration.finnhub.dto.FinnhubSymbolLookupResponse
 import com.example.stocksheet.integration.finnhub.service.FinnhubService
+import com.example.stocksheet.mocks.TestDatabaseFactory
 import com.example.stocksheet.stocks.entity.DividendFrequency
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.DescribeSpec
@@ -30,6 +31,9 @@ abstract class BaseIntegrationTest : DescribeSpec() {
 
     @MockkBean
     lateinit var finnhubService: FinnhubService
+
+    @Autowired
+    lateinit var testDb: TestDatabaseFactory
 
     init {
         beforeEach {

@@ -4,12 +4,9 @@ import com.example.stocksheet.BaseIntegrationTest
 import com.example.stocksheet.analytics.dto.PortfolioSummaryResponseDTO
 import com.example.stocksheet.exceptions.dto.ErrorDTO
 import com.example.stocksheet.exceptions.dto.ErrorResponse
-import com.example.stocksheet.mocks.createMockStockQuoteEntityMock
+import com.example.stocksheet.portfolio.entity.PortfolioEntity
 import com.example.stocksheet.portfolio.exceptions.PortfolioErrorType
-import com.example.stocksheet.scenarios.StandardMarketScenario
-import com.example.stocksheet.stocks.quotes.repository.StockQuoteRepository
 import io.kotest.matchers.shouldBe
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.get
 import org.springframework.transaction.annotation.Transactional
@@ -18,50 +15,88 @@ import java.time.LocalDate
 
 @Transactional
 class AnalyticsControllerTest : BaseIntegrationTest() {
-    @Autowired lateinit var standardMarketScenario: StandardMarketScenario
-
-    @Autowired lateinit var stockQuoteRepository: StockQuoteRepository
-
     init {
+        fun setup(): Pair<PortfolioEntity, PortfolioEntity> {
+            val portfolio1 = testDb.createPortfolioEntity()
+            val portfolio2 = testDb.createPortfolioEntity()
+
+            val stock1 =
+                testDb.createStockEntity {
+                    symbol = "GOOG"
+                    price = BigDecimal("332.62")
+                }
+            val stock2 =
+                testDb.createStockEntity {
+                    symbol = "MSFT"
+                    price = BigDecimal("418.62")
+                }
+
+            val referenceDate = LocalDate.now().minusDays(1)
+            testDb.createStockQuoteEntity {
+                date = referenceDate
+                stock = stock1
+                closedPrice = BigDecimal("330.25")
+            }
+            testDb.createStockQuoteEntity {
+                date = referenceDate
+                stock = stock2
+                closedPrice = BigDecimal("400.12")
+            }
+
+            testDb.createOperationEntity {
+                portfolio = portfolio2
+                stock = stock1
+                volume = BigDecimal("5.32")
+                pricePerVolume = BigDecimal("100.00")
+            }
+            testDb.createOperationEntity {
+                portfolio = portfolio2
+                stock = stock1
+                volume = BigDecimal("2")
+                pricePerVolume = BigDecimal("54.32")
+            }
+            testDb.createOperationEntity {
+                portfolio = portfolio2
+                stock = stock2
+                volume = BigDecimal("10.5423")
+                pricePerVolume = BigDecimal("5.23")
+            }
+
+            return Pair(portfolio1, portfolio2)
+        }
+
         describe("GET /api/analytics/{portfolioId}/summary") {
             it("gets summary with calculated values for existing portfolio") {
-                val data = standardMarketScenario.setup()
+                val (_, portfolio2) = setup()
 
-                val referenceDate = LocalDate.now().minusDays(1)
-                val stock1Quote =
-                    createMockStockQuoteEntityMock(
-                        stock = data.stocks[0],
-                        closedPrice = BigDecimal("70.5"),
-                        date = referenceDate,
-                    )
-                val stock2Quote =
-                    createMockStockQuoteEntityMock(
-                        stock = data.stocks[1],
-                        closedPrice = BigDecimal("60.45"),
-                        date = referenceDate,
-                    )
-                stockQuoteRepository.saveAll(listOf(stock1Quote, stock2Quote))
-
-                val portfolioUSD = data.portfolios[0]
-
-                val response = mockMvc.get("/api/analytics/${portfolioUSD.id}/summary").andReturn().response
+                val response = mockMvc.get("/api/analytics/${portfolio2.id}/summary").andReturn().response
 
                 val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    PortfolioSummaryResponseDTO(BigDecimal("6128.75"), BigDecimal("3728.75"), BigDecimal("2400.00"), BigDecimal("1697.00")),
+                    PortfolioSummaryResponseDTO(
+                        BigDecimal("6848.00"),
+                        BigDecimal("6152.22"),
+                        BigDecimal("695.78"),
+                        BigDecimal("212.38"),
+                    ),
                 )
             }
 
             it("gets zeroed summary when portfolio has no operations") {
-                val data = standardMarketScenario.setup()
-                val portfolioPLN = data.portfolios[1]
-                val response = mockMvc.get("/api/analytics/${portfolioPLN.id}/summary").andReturn().response
+                val (portfolio1) = setup()
+
+                val response = mockMvc.get("/api/analytics/${portfolio1.id}/summary").andReturn().response
 
                 val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    PortfolioSummaryResponseDTO(BigDecimal("0.00"), BigDecimal("0.00"), BigDecimal("0.00"), BigDecimal("0.00")),
+                    PortfolioSummaryResponseDTO(
+                        BigDecimal("0.00"),
+                        BigDecimal("0.00"),
+                        BigDecimal("0.00"),
+                        BigDecimal("0.00"),
+                    ),
                 )
             }
 
