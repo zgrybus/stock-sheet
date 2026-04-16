@@ -14,6 +14,7 @@ import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
+import jakarta.transaction.Transactional
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
@@ -21,27 +22,24 @@ import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 
+@Transactional
 class PortfolioControllerTest : BaseIntegrationTest() {
     @Autowired lateinit var portfolioRepository: PortfolioRepository
 
-    private lateinit var portfolioUSD: PortfolioEntity
-    private lateinit var portfolioPLN: PortfolioEntity
-
     init {
-        beforeEach {
-            portfolioUSD = PortfolioEntity(name = "portfolio_name_1", currency = "USD")
-            portfolioPLN = PortfolioEntity(name = "portfolio_name_2", currency = "PLN")
+        fun setup(): Pair<PortfolioEntity, PortfolioEntity> {
+            val portfolio1 =
+                testDb.createPortfolioEntity {
+                    name = "portfolio_name_1"
+                    currency = "USD"
+                }
+            val portfolio2 =
+                testDb.createPortfolioEntity {
+                    name = "portfolio_name_2"
+                    currency = "PLN"
+                }
 
-            portfolioRepository.saveAll(
-                listOf(
-                    portfolioUSD,
-                    portfolioPLN,
-                ),
-            )
-        }
-
-        afterEach {
-            portfolioRepository.deleteAllInBatch()
+            return Pair(portfolio1, portfolio2)
         }
 
         describe("POST /api/portfolio") {
@@ -58,11 +56,14 @@ class PortfolioControllerTest : BaseIntegrationTest() {
 
                 val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioResponseDTO::class.java)
 
-                returnedPortfolio.shouldBe(PortfolioResponseDTO(id = returnedPortfolio.id, name = body.name!!, currency = body.currency!!))
+                portfolioRepository.existsById(returnedPortfolio.id).shouldBeTrue()
+
+                returnedPortfolio.shouldBe(PortfolioResponseDTO(id = returnedPortfolio.id, name = body.name, currency = body.currency))
             }
 
             it("returns error, when portfolio name already exists") {
-                val body = PortfolioEntity(name = portfolioUSD.name, currency = "EUR")
+                val (portfolio1) = setup()
+                val body = PortfolioEntity(name = portfolio1.name, currency = "EUR")
 
                 val response =
                     mockMvc
@@ -92,20 +93,20 @@ class PortfolioControllerTest : BaseIntegrationTest() {
 
         describe("GET /api/portfolio") {
             it("returns list of the portfolio") {
+                val (portfolio1, portfolio2) = setup()
+
                 val response = mockMvc.get("/api/portfolio").andReturn().response
 
                 val returnedPortfolios = objectMapper.readValue(response.contentAsString, Array<PortfolioResponseDTO>::class.java)
 
                 returnedPortfolios.shouldHaveSize(2)
                 returnedPortfolios.shouldContainExactly(
-                    PortfolioResponseDTO(id = portfolioUSD.id!!, name = portfolioUSD.name, currency = portfolioUSD.currency),
-                    PortfolioResponseDTO(id = portfolioPLN.id!!, name = portfolioPLN.name, currency = portfolioPLN.currency),
+                    PortfolioResponseDTO(id = portfolio1.id!!, name = portfolio1.name, currency = portfolio1.currency),
+                    PortfolioResponseDTO(id = portfolio2.id!!, name = portfolio2.name, currency = portfolio2.currency),
                 )
             }
 
             it("returns empty list, when there are no portfolios") {
-                portfolioRepository.deleteAllInBatch()
-
                 val response = mockMvc.get("/api/portfolio").andReturn().response
 
                 val returnedPortfolios = objectMapper.readValue(response.contentAsString, Array<PortfolioResponseDTO>::class.java)
@@ -116,16 +117,20 @@ class PortfolioControllerTest : BaseIntegrationTest() {
 
         describe("GET /api/portfolio/{id}") {
             it("returns portfolio by id") {
-                val response = mockMvc.get("/api/portfolio/${portfolioUSD.id}").andReturn().response
+                val (portfolio1) = setup()
+
+                val response = mockMvc.get("/api/portfolio/${portfolio1.id}").andReturn().response
 
                 val returnedPortfolio = objectMapper.readValue(response.contentAsString, PortfolioResponseDTO::class.java)
 
                 returnedPortfolio.shouldBeEqual(
-                    PortfolioResponseDTO(id = portfolioUSD.id!!, name = portfolioUSD.name, currency = portfolioUSD.currency),
+                    PortfolioResponseDTO(id = portfolio1.id!!, name = portfolio1.name, currency = portfolio1.currency),
                 )
             }
 
             it("returns error, when id does not exist") {
+                setup()
+
                 val response = mockMvc.get("/api/portfolio/0").andReturn().response
 
                 val returnedErrorDTO = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
@@ -148,14 +153,18 @@ class PortfolioControllerTest : BaseIntegrationTest() {
 
         describe("DELETE /api/portfolio/{id}") {
             it("removes portfolio from the database") {
-                portfolioRepository.existsById(portfolioUSD.id!!).shouldBeTrue()
+                val (portfolio1) = setup()
 
-                mockMvc.delete("/api/portfolio/${portfolioUSD.id}").andReturn().response
+                portfolioRepository.existsById(portfolio1.id!!).shouldBeTrue()
 
-                portfolioRepository.existsById(portfolioUSD.id!!).shouldBeFalse()
+                mockMvc.delete("/api/portfolio/${portfolio1.id}").andReturn().response
+
+                portfolioRepository.existsById(portfolio1.id!!).shouldBeFalse()
             }
 
             it("returns error, when id does not exist") {
+                setup()
+
                 val response = mockMvc.delete("/api/portfolio/0").andReturn().response
 
                 val returnedErrorDTO = objectMapper.readValue(response.contentAsString, ErrorResponse::class.java)
