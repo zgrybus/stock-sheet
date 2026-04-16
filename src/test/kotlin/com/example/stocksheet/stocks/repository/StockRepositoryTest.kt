@@ -1,7 +1,6 @@
 package com.example.stocksheet.stocks.repository
 
 import com.example.stocksheet.BaseRepositoryTest
-import com.example.stocksheet.scenarios.StandardMarketScenario
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.equality.shouldBeEqualToComparingFields
 import org.springframework.beans.factory.annotation.Autowired
@@ -9,14 +8,25 @@ import org.springframework.beans.factory.annotation.Autowired
 class StockRepositoryTest : BaseRepositoryTest() {
     @Autowired lateinit var stockRepository: StockRepository
 
-    @Autowired lateinit var standardMarketScenario: StandardMarketScenario
-
     init {
+        fun setup() =
+            withFlushedTransaction {
+                val stock1 =
+                    testDb.createStockEntity {
+                        symbol = "GOOG"
+                    }
+
+                val stock2 =
+                    testDb.createStockEntity {
+                        symbol = "MSFT"
+                    }
+
+                Pair(stock1, stock2)
+            }
+
         describe("findAllBySymbolIn") {
             it("returns empty list for empty input") {
-                standardMarketScenario.setup()
-                entityManager.flush()
-                entityManager.clear()
+                setup()
 
                 val returnedStocks = stockRepository.findAllBySymbolIn(listOf())
 
@@ -24,44 +34,38 @@ class StockRepositoryTest : BaseRepositoryTest() {
             }
 
             it("returns only existing symbols") {
-                val data = standardMarketScenario.setup()
-                entityManager.flush()
-                entityManager.clear()
+                val (stock1) = setup()
 
-                val returnedStocks = stockRepository.findAllBySymbolIn(listOf("AAPL.US", "MSC", "TSL"))
+                val returnedStocks = stockRepository.findAllBySymbolIn(listOf("AAPL.US", "GOOG", "TSL"))
 
                 returnedStocks.shouldHaveSize(1)
                 returnedStocks[0].shouldBeEqualToComparingFields(
-                    data.stocks[1],
+                    stock1,
                 )
             }
 
             it("requires exact symbol match") {
-                val data = standardMarketScenario.setup()
-                entityManager.flush()
-                entityManager.clear()
+                val (stock1) = setup()
 
-                val returnedStocks = stockRepository.findAllBySymbolIn(listOf("AAPL", "GOOGL.US"))
+                val returnedStocks = stockRepository.findAllBySymbolIn(listOf("GOOG", "MSFT.US"))
 
                 returnedStocks.shouldHaveSize(1)
                 returnedStocks[0].shouldBeEqualToComparingFields(
-                    data.stocks[0],
+                    stock1,
                 )
             }
 
             it("returns multiple existing symbols") {
-                val data = standardMarketScenario.setup()
-                entityManager.flush()
-                entityManager.clear()
+                val (stock1, stock2) = setup()
 
-                val returnedStocks = stockRepository.findAllBySymbolIn(listOf("GOOGL.US", "AAPL.US"))
+                val returnedStocks = stockRepository.findAllBySymbolIn(listOf("GOOG", "MSFT"))
 
                 returnedStocks.shouldHaveSize(2)
                 returnedStocks[0].shouldBeEqualToComparingFields(
-                    data.stocks[0],
+                    stock1,
                 )
                 returnedStocks[1].shouldBeEqualToComparingFields(
-                    data.stocks[1],
+                    stock2,
                 )
             }
         }

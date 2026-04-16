@@ -1,7 +1,6 @@
 package com.example.stocksheet
 
 import com.example.stocksheet.mocks.TestDatabaseFactory
-import com.example.stocksheet.scenarios.StandardMarketScenario
 import io.kotest.core.spec.style.DescribeSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
@@ -18,7 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Testcontainers
-@Import(StandardMarketScenario::class, TestDatabaseFactory::class)
+@Import(TestDatabaseFactory::class)
 abstract class BaseRepositoryTest : DescribeSpec() {
     @Autowired
     lateinit var entityManager: TestEntityManager
