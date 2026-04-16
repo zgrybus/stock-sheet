@@ -27,7 +27,7 @@ class AnalyticsControllerTest : BaseIntegrationTest() {
                 val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    PortfolioSummaryResponseDTO(BigDecimal("6128.75"), BigDecimal("3728.75"), BigDecimal("2400.00"), BigDecimal.ZERO),
+                    PortfolioSummaryResponseDTO(BigDecimal("6128.75"), BigDecimal("3728.75"), BigDecimal("2400.00"), BigDecimal("0.00")),
                 )
             }
 
@@ -39,7 +39,7 @@ class AnalyticsControllerTest : BaseIntegrationTest() {
                 val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    PortfolioSummaryResponseDTO(BigDecimal("0.00"), BigDecimal("0.00"), BigDecimal("0.00"), BigDecimal.ZERO),
+                    PortfolioSummaryResponseDTO(BigDecimal("0.00"), BigDecimal("0.00"), BigDecimal("0.00"), BigDecimal("0.00")),
                 )
             }
 

@@ -2,16 +2,21 @@ package com.example.stocksheet.operations.repository
 
 import com.example.stocksheet.BaseRepositoryTest
 import com.example.stocksheet.mocks.createMockOperationEntity
+import com.example.stocksheet.mocks.createMockStockQuoteEntityMock
 import com.example.stocksheet.scenarios.StandardMarketScenario
+import com.example.stocksheet.stocks.quotes.repository.StockQuoteRepository
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.comparables.shouldBeEqualComparingTo
 import io.kotest.matchers.shouldBe
 import org.springframework.beans.factory.annotation.Autowired
 import java.math.BigDecimal
+import java.time.LocalDate
 
 class OperationRepositoryTest : BaseRepositoryTest() {
     @Autowired lateinit var operationRepository: OperationRepository
+
+    @Autowired lateinit var stockQuoteRepository: StockQuoteRepository
 
     @Autowired lateinit var standardMarketScenario: StandardMarketScenario
 
@@ -84,6 +89,92 @@ class OperationRepositoryTest : BaseRepositoryTest() {
                         ),
                     ),
                 )
+            }
+        }
+
+        describe("calculateValuationSnapshotByPortfolioId") {
+            it("calculates valuation using available historical quotes for all stocks") {
+                val data = standardMarketScenario.setup()
+
+                val referenceDate = LocalDate.now().minusDays(1)
+
+                val stock1Quote =
+                    createMockStockQuoteEntityMock(
+                        stock = data.stocks[0],
+                        closedPrice = BigDecimal("70.5"),
+                        date = referenceDate,
+                    )
+                val stock2Quote =
+                    createMockStockQuoteEntityMock(
+                        stock = data.stocks[1],
+                        closedPrice = BigDecimal("60.45"),
+                        date = referenceDate,
+                    )
+                stockQuoteRepository.saveAll(listOf(stock1Quote, stock2Quote))
+
+                entityManager.flush()
+                entityManager.clear()
+
+                val portfolioUSD = data.portfolios[0]
+
+                val valuationSnapshot = operationRepository.calculateValuationSnapshotByPortfolioId(portfolioUSD.id!!, referenceDate)
+
+                valuationSnapshot.currentValue.shouldBeEqualComparingTo(BigDecimal("6128.75"))
+                valuationSnapshot.historicalValue.shouldBeEqualComparingTo(BigDecimal("4431.75"))
+            }
+
+            it("handles zero-price quotes without affecting other stock calculations") {
+                val data = standardMarketScenario.setup()
+
+                val referenceDate = LocalDate.now().minusDays(1)
+
+                val stock1Quote =
+                    createMockStockQuoteEntityMock(
+                        stock = data.stocks[0],
+                        closedPrice = BigDecimal.ZERO,
+                        date = referenceDate,
+                    )
+                val stock2Quote =
+                    createMockStockQuoteEntityMock(
+                        stock = data.stocks[1],
+                        closedPrice = BigDecimal("60.45"),
+                        date = referenceDate,
+                    )
+                stockQuoteRepository.saveAll(listOf(stock1Quote, stock2Quote))
+
+                entityManager.flush()
+                entityManager.clear()
+
+                val portfolioUSD = data.portfolios[0]
+
+                val valuationSnapshot = operationRepository.calculateValuationSnapshotByPortfolioId(portfolioUSD.id!!, referenceDate)
+
+                valuationSnapshot.currentValue.shouldBeEqualComparingTo(BigDecimal("6128.75"))
+                valuationSnapshot.historicalValue.shouldBeEqualComparingTo(BigDecimal("906.75"))
+            }
+
+            it("fallbacks to current stock price when historical quote is missing") {
+                val data = standardMarketScenario.setup()
+
+                val referenceDate = LocalDate.now().minusDays(1)
+
+                val stock2Quote =
+                    createMockStockQuoteEntityMock(
+                        stock = data.stocks[1],
+                        closedPrice = BigDecimal("60.45"),
+                        date = referenceDate,
+                    )
+                stockQuoteRepository.saveAll(listOf(stock2Quote))
+
+                entityManager.flush()
+                entityManager.clear()
+
+                val portfolioUSD = data.portfolios[0]
+
+                val valuationSnapshot = operationRepository.calculateValuationSnapshotByPortfolioId(portfolioUSD.id!!, referenceDate)
+
+                valuationSnapshot.currentValue.shouldBeEqualComparingTo(BigDecimal("6128.75"))
+                valuationSnapshot.historicalValue.shouldBeEqualComparingTo(BigDecimal("5906.75"))
             }
         }
     }
