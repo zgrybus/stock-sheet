@@ -4,30 +4,52 @@ import com.example.stocksheet.BaseIntegrationTest
 import com.example.stocksheet.analytics.dto.PortfolioSummaryResponseDTO
 import com.example.stocksheet.exceptions.dto.ErrorDTO
 import com.example.stocksheet.exceptions.dto.ErrorResponse
+import com.example.stocksheet.mocks.createMockStockQuoteEntityMock
 import com.example.stocksheet.portfolio.exceptions.PortfolioErrorType
 import com.example.stocksheet.scenarios.StandardMarketScenario
+import com.example.stocksheet.stocks.quotes.repository.StockQuoteRepository
 import io.kotest.matchers.shouldBe
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.test.web.servlet.get
 import org.springframework.transaction.annotation.Transactional
 import java.math.BigDecimal
+import java.time.LocalDate
 
 @Transactional
 class AnalyticsControllerTest : BaseIntegrationTest() {
     @Autowired lateinit var standardMarketScenario: StandardMarketScenario
 
+    @Autowired lateinit var stockQuoteRepository: StockQuoteRepository
+
     init {
         describe("GET /api/analytics/{portfolioId}/summary") {
             it("gets summary with calculated values for existing portfolio") {
                 val data = standardMarketScenario.setup()
+
+                val referenceDate = LocalDate.now().minusDays(1)
+                val stock1Quote =
+                    createMockStockQuoteEntityMock(
+                        stock = data.stocks[0],
+                        closedPrice = BigDecimal("70.5"),
+                        date = referenceDate,
+                    )
+                val stock2Quote =
+                    createMockStockQuoteEntityMock(
+                        stock = data.stocks[1],
+                        closedPrice = BigDecimal("60.45"),
+                        date = referenceDate,
+                    )
+                stockQuoteRepository.saveAll(listOf(stock1Quote, stock2Quote))
+
                 val portfolioUSD = data.portfolios[0]
+
                 val response = mockMvc.get("/api/analytics/${portfolioUSD.id}/summary").andReturn().response
 
                 val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    PortfolioSummaryResponseDTO(BigDecimal("6128.75"), BigDecimal("3728.75"), BigDecimal("2400.00"), BigDecimal.ZERO),
+                    PortfolioSummaryResponseDTO(BigDecimal("6128.75"), BigDecimal("3728.75"), BigDecimal("2400.00"), BigDecimal("1697.00")),
                 )
             }
 
@@ -39,7 +61,7 @@ class AnalyticsControllerTest : BaseIntegrationTest() {
                 val returnedResponse = objectMapper.readValue(response.contentAsString, PortfolioSummaryResponseDTO::class.java)
 
                 returnedResponse.shouldBe(
-                    PortfolioSummaryResponseDTO(BigDecimal("0.00"), BigDecimal("0.00"), BigDecimal("0.00"), BigDecimal.ZERO),
+                    PortfolioSummaryResponseDTO(BigDecimal("0.00"), BigDecimal("0.00"), BigDecimal("0.00"), BigDecimal("0.00")),
                 )
             }
 

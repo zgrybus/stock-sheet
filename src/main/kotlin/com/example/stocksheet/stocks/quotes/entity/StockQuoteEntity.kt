@@ -28,10 +28,10 @@ class StockQuoteEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false, scale = 4, precision = 19)
     var closedPrice: BigDecimal,
     @Column(nullable = false, updatable = false)
-    var date: LocalDate? = null,
+    var date: LocalDate,
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "stock_id", nullable = false, updatable = false)
     var stock: StockEntity,
