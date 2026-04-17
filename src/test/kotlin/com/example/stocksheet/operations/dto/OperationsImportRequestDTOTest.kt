@@ -22,7 +22,6 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
             OperationsImportRequestDTO.OperationRequestDTO(
                 externalId = "external-id-1",
                 stockSymbol = "APPL",
-                stockExchange = "US",
                 type = OperationType.BUY,
                 volume = BigDecimal("10.00"),
                 openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
@@ -89,19 +88,6 @@ class OperationsImportRequestDTOTest : DescribeSpec() {
                         violations.first().should {
                             it.message.shouldBe("Stock Symbol is required")
                             it.propertyPath.toString().shouldBe("stockSymbol")
-                        }
-                    }
-                }
-
-                describe("stockExchange validation") {
-                    it("returns an error, when stock exchange is not set") {
-                        val dto = getOperationRequestDTO().apply { stockExchange = "" }
-                        val violations = validator.validate(dto)
-
-                        violations.shouldHaveSize(1)
-                        violations.first().should {
-                            it.message.shouldBe("Stock Exchange is required")
-                            it.propertyPath.toString().shouldBe("stockExchange")
                         }
                     }
                 }

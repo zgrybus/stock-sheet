@@ -1,0 +1,4 @@
+fmp:
+  api:
+    key: "test-key"
+    base-url: "http://localhost"

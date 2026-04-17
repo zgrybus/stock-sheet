@@ -22,8 +22,6 @@ data class OperationsImportRequestDTO(
         var externalId: String = "",
         @field:NotBlank(message = "Stock Symbol is required")
         var stockSymbol: String = "",
-        @field:NotBlank(message = "Stock Exchange is required")
-        var stockExchange: String = "",
         // TODO: add validation
         @field:NotNull(message = "Type is required")
         var type: OperationType = OperationType.UNKNOWN,

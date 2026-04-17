@@ -153,7 +153,6 @@ class OperationControllerTest : BaseIntegrationTest() {
                 OperationsImportRequestDTO.OperationRequestDTO(
                     externalId = "external-id-1",
                     stockSymbol = "GOOG",
-                    stockExchange = "US",
                     type = OperationType.BUY,
                     volume = BigDecimal("10.00"),
                     openDate = LocalDateTime.of(2019, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
@@ -169,7 +168,6 @@ class OperationControllerTest : BaseIntegrationTest() {
                             getOperationRequestDTO().apply {
                                 externalId = "external-id-101"
                                 stockSymbol = "NVDA"
-                                stockExchange = "L"
                             },
                         ),
                 )
@@ -236,10 +234,10 @@ class OperationControllerTest : BaseIntegrationTest() {
                 )
             }
 
-            it("successfully imports operations using fallback stock data when Finnhub API fails") {
+            it("successfully imports operations using fallback stock data when Fmp API fails") {
                 val (_, portfolio2) = setup()
 
-                every { finnhubService.getSymbolLookup("NVDA", any<String>()) } throws RuntimeException("Error")
+                every { fmpService.getCompanyProfile("NVDA") } throws RuntimeException("Error")
 
                 val batch = getOperationsImportRequestDTO()
 

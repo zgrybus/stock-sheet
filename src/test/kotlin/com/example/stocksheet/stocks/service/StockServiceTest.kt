@@ -1,8 +1,7 @@
 package com.example.stocksheet.stocks.service
 
-import com.example.stocksheet.integration.finnhub.dto.FinnhubCompanyProfile2Response
-import com.example.stocksheet.integration.finnhub.dto.FinnhubSymbolLookupResponse
-import com.example.stocksheet.integration.finnhub.service.FinnhubService
+import com.example.stocksheet.integration.fmp.dto.FmpCompanyProfileResponseDTO
+import com.example.stocksheet.integration.fmp.service.FmpService
 import com.example.stocksheet.mocks.createMockStockEntity
 import com.example.stocksheet.stocks.entity.DividendFrequency
 import com.example.stocksheet.stocks.entity.StockEntity
@@ -21,9 +20,9 @@ import java.math.BigDecimal
 
 class StockServiceTest : DescribeSpec() {
     private val stockRepositoryMock = mockk<StockRepository>()
-    private val finnhubServiceMock = mockk<FinnhubService>()
+    private val fmpServiceMock = mockk<FmpService>()
 
-    private val stockService = StockService(stockRepositoryMock, StockMapper(), finnhubServiceMock)
+    private val stockService = StockService(stockRepositoryMock, StockMapper(), fmpServiceMock)
 
     init {
         beforeEach {
@@ -47,21 +46,16 @@ class StockServiceTest : DescribeSpec() {
                 }
             }
 
-            every { finnhubServiceMock.getSymbolLookup(any<String>(), any<String>()) } answers {
-                FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.CommonStock
-            }
-
-            every { finnhubServiceMock.getCompanyProfile2(any<String>()) } answers {
+            every { fmpServiceMock.getCompanyProfile(any<String>()) } answers {
                 val symbol = firstArg<String>()
 
-                FinnhubCompanyProfile2Response(
+                FmpCompanyProfileResponseDTO(
                     name = "name".plus(symbol),
-                    ticker = symbol,
+                    symbol = symbol,
                     exchange = "exchange".plus(symbol),
                     industry = "industry".plus(symbol),
-                    dividend = BigDecimal("1.0025"),
+                    lastDividend = BigDecimal("1.0025"),
                     price = BigDecimal("520.5222"),
-                    dividendFrequency = DividendFrequency.MONTHLY.name,
                 )
             }
         }
@@ -85,10 +79,10 @@ class StockServiceTest : DescribeSpec() {
             it("calls repository with all provided symbols") {
                 stockService.getOrCreateStocks(
                     listOf(
-                        StockService.StockIdentifier(symbol = "NVDA", exchange = "US"),
-                        StockService.StockIdentifier(symbol = "AAPL", exchange = "L"),
-                        StockService.StockIdentifier(symbol = "GOOG", exchange = "US"),
-                        StockService.StockIdentifier(symbol = "TSL", exchange = "US"),
+                        StockService.StockIdentifier(symbol = "NVDA"),
+                        StockService.StockIdentifier(symbol = "AAPL"),
+                        StockService.StockIdentifier(symbol = "GOOG"),
+                        StockService.StockIdentifier(symbol = "TSL"),
                     ),
                 )
 
@@ -103,10 +97,10 @@ class StockServiceTest : DescribeSpec() {
             it("calls saveAll only for missing symbols") {
                 stockService.getOrCreateStocks(
                     listOf(
-                        StockService.StockIdentifier(symbol = "NVDA", exchange = "US"),
-                        StockService.StockIdentifier(symbol = "AAPL", exchange = "L"),
-                        StockService.StockIdentifier(symbol = "GOOG", exchange = "US"),
-                        StockService.StockIdentifier(symbol = "TSL", exchange = "US"),
+                        StockService.StockIdentifier(symbol = "NVDA"),
+                        StockService.StockIdentifier(symbol = "AAPL"),
+                        StockService.StockIdentifier(symbol = "GOOG"),
+                        StockService.StockIdentifier(symbol = "TSL"),
                     ),
                 )
 
@@ -124,7 +118,7 @@ class StockServiceTest : DescribeSpec() {
                         name = "nameGOOG",
                         dividend = BigDecimal("1.0025"),
                         price = BigDecimal("520.5222"),
-                        dividendFrequency = DividendFrequency.MONTHLY,
+                        dividendFrequency = DividendFrequency.NONE,
                     ),
                 )
                 capturedCreatedSymbols.captured[1].shouldBeEqualToComparingFields(
@@ -136,7 +130,7 @@ class StockServiceTest : DescribeSpec() {
                         name = "nameTSL",
                         dividend = BigDecimal("1.0025"),
                         price = BigDecimal("520.5222"),
-                        dividendFrequency = DividendFrequency.MONTHLY,
+                        dividendFrequency = DividendFrequency.NONE,
                     ),
                 )
             }
@@ -151,9 +145,9 @@ class StockServiceTest : DescribeSpec() {
                 val result =
                     stockService.getOrCreateStocks(
                         listOf(
-                            StockService.StockIdentifier(symbol = "NVDA", exchange = "US"),
-                            StockService.StockIdentifier(symbol = "AAPL", exchange = "L"),
-                            StockService.StockIdentifier(symbol = "GOOG", exchange = "US"),
+                            StockService.StockIdentifier(symbol = "NVDA"),
+                            StockService.StockIdentifier(symbol = "AAPL"),
+                            StockService.StockIdentifier(symbol = "GOOG"),
                         ),
                     )
 
@@ -183,23 +177,31 @@ class StockServiceTest : DescribeSpec() {
                         name = "nameGOOG",
                         dividend = BigDecimal("1.0025"),
                         price = BigDecimal("520.5222"),
-                        dividendFrequency = DividendFrequency.MONTHLY,
+                        dividendFrequency = DividendFrequency.NONE,
                     ),
                 )
             }
 
             it("ignores failing symbols and successfully saves the rest") {
                 every { stockRepositoryMock.findAllBySymbolIn(any<List<String>>()) } returns emptyList()
-                every { finnhubServiceMock.getSymbolLookup("FAIL", any<String>()) } throws RuntimeException("Error")
-                every { finnhubServiceMock.getSymbolLookup("SUCCESS", any<String>()) } answers {
-                    FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.CommonStock
+                every { fmpServiceMock.getCompanyProfile("FAIL") } throws RuntimeException("Error")
+                every { fmpServiceMock.getCompanyProfile("SUCCESS") } answers {
+                    val symbol = firstArg<String>()
+                    FmpCompanyProfileResponseDTO(
+                        name = "name".plus(symbol),
+                        symbol = symbol,
+                        exchange = "exchange".plus(symbol),
+                        industry = "industry".plus(symbol),
+                        lastDividend = BigDecimal("1.0025"),
+                        price = BigDecimal("520.5222"),
+                    )
                 }
 
                 val result =
                     stockService.getOrCreateStocks(
                         listOf(
-                            StockService.StockIdentifier("FAIL", "US"),
-                            StockService.StockIdentifier("SUCCESS", "US"),
+                            StockService.StockIdentifier("FAIL"),
+                            StockService.StockIdentifier("SUCCESS"),
                         ),
                     )
 
@@ -209,7 +211,7 @@ class StockServiceTest : DescribeSpec() {
                         symbol = "FAIL",
                         id = 2000L,
                         industry = "",
-                        exchange = "US",
+                        exchange = "",
                         name = "FAIL",
                         price = BigDecimal.ZERO,
                         dividend = BigDecimal.ZERO,
@@ -224,42 +226,19 @@ class StockServiceTest : DescribeSpec() {
                         name = "nameSUCCESS",
                         dividend = BigDecimal("1.0025"),
                         price = BigDecimal("520.5222"),
-                        dividendFrequency = DividendFrequency.MONTHLY,
+                        dividendFrequency = DividendFrequency.NONE,
                     ),
                 )
-            }
-
-            it("does not fetch company profile for non-common stocks") {
-                every { stockRepositoryMock.findAllBySymbolIn(any<List<String>>()) } returns emptyList()
-                every { finnhubServiceMock.getSymbolLookup("VWRA", any<String>()) } answers {
-                    FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.ETP
-                }
-                every { finnhubServiceMock.getSymbolLookup("AAPL", any<String>()) } answers {
-                    FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.UNKNOWN
-                }
-
-                stockService.getOrCreateStocks(
-                    listOf(
-                        StockService.StockIdentifier("VWRA", "US"),
-                        StockService.StockIdentifier("AAPL", "US"),
-                    ),
-                )
-
-                verify(exactly = 0) { finnhubServiceMock.getCompanyProfile2("VWRA") }
-                verify(exactly = 0) { finnhubServiceMock.getCompanyProfile2("AAPL") }
             }
 
             it("uses fallback values when company profile is null") {
                 every { stockRepositoryMock.findAllBySymbolIn(any<List<String>>()) } returns emptyList()
-                every { finnhubServiceMock.getSymbolLookup(any<String>(), any<String>()) } answers {
-                    FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.CommonStock
-                }
-                every { finnhubServiceMock.getCompanyProfile2(any<String>()) } returns null
+                every { fmpServiceMock.getCompanyProfile(any<String>()) } returns null
 
                 val result =
                     stockService.getOrCreateStocks(
                         listOf(
-                            StockService.StockIdentifier("VWRA", "US"),
+                            StockService.StockIdentifier("VWRA"),
                         ),
                     )
 
@@ -269,7 +248,7 @@ class StockServiceTest : DescribeSpec() {
                         symbol = "VWRA",
                         id = 2000L,
                         industry = "",
-                        exchange = "US",
+                        exchange = "",
                         name = "VWRA",
                         price = BigDecimal.ZERO,
                         dividend = BigDecimal.ZERO,

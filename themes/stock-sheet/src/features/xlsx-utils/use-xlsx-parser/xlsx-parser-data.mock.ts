@@ -5,7 +5,6 @@ export const mockCashOperationHistory: CashOperationHistory = {
     {
       id: "1000001",
       stockSymbol: "AAPL",
-      stockExchange: "US",
       type: "BUY",
       volume: 10,
       openDate: "15/01/2023 14:30:00",
@@ -15,7 +14,6 @@ export const mockCashOperationHistory: CashOperationHistory = {
     {
       id: "1000002",
       stockSymbol: "MSFT",
-      stockExchange: "US",
       type: "BUY",
       volume: 5.5,
       openDate: "10/02/2023 10:15:00",
