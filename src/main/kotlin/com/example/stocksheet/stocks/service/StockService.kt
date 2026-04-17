@@ -1,8 +1,7 @@
 package com.example.stocksheet.stocks.service
 
 import com.example.stocksheet.Loggable
-import com.example.stocksheet.integration.finnhub.dto.FinnhubSymbolLookupResponse
-import com.example.stocksheet.integration.finnhub.service.FinnhubService
+import com.example.stocksheet.integration.fmp.service.FmpService
 import com.example.stocksheet.stocks.dto.StockDTO
 import com.example.stocksheet.stocks.entity.DividendFrequency
 import com.example.stocksheet.stocks.entity.StockEntity
@@ -15,7 +14,7 @@ import java.math.BigDecimal
 class StockService(
     private val stockRepository: StockRepository,
     private val stockMapper: StockMapper,
-    private val finnhubService: FinnhubService,
+    private val fmpService: FmpService,
 ) : Loggable {
     data class StockIdentifier(
         val symbol: String,
@@ -68,39 +67,21 @@ class StockService(
     }
 
     private fun fetchStock(stock: StockIdentifier): StockDTO {
-        val stockType = finnhubService.getSymbolLookup(stock.symbol, stock.exchange)
-
-        return when (stockType) {
-            FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.CommonStock,
-            FinnhubSymbolLookupResponse.FinnhubSymbolLookupType.REIT,
-            -> {
-                val stockProfile = finnhubService.getCompanyProfile2(stock.symbol)
-
-                StockDTO(
-                    name = stockProfile?.name ?: stock.symbol,
-                    symbol = stockProfile?.ticker ?: stock.symbol,
-                    industry = stockProfile?.industry ?: "",
-                    exchange = stockProfile?.exchange ?: stock.exchange,
-                    price = stockProfile?.price ?: BigDecimal.ZERO,
-                    dividend = stockProfile?.dividend ?: BigDecimal.ZERO,
-                    dividendFrequency =
-                        DividendFrequency.entries.find {
-                            it.name == stockProfile?.dividendFrequency
-                        } ?: DividendFrequency.NONE,
-                )
+        val stockSymbol =
+            when (stock.exchange) {
+                "US" -> stock.symbol
+                else -> "${stock.symbol}.${stock.exchange}"
             }
+        val stockProfile = fmpService.getCompanyProfile(stockSymbol)
 
-            else -> {
-                StockDTO(
-                    name = stock.symbol,
-                    symbol = stock.symbol,
-                    industry = "",
-                    exchange = stock.exchange,
-                    price = BigDecimal.ZERO,
-                    dividend = BigDecimal.ZERO,
-                    dividendFrequency = DividendFrequency.NONE,
-                )
-            }
-        }
+        return StockDTO(
+            name = stockProfile?.name ?: stock.symbol,
+            symbol = stockProfile?.symbol ?: stock.symbol,
+            industry = stockProfile?.industry ?: "",
+            exchange = stockProfile?.exchange ?: "",
+            price = stockProfile?.price ?: BigDecimal.ZERO,
+            dividend = stockProfile?.lastDividend ?: BigDecimal.ZERO,
+            dividendFrequency = DividendFrequency.NONE,
+        )
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.web.client.RestClient
 class FinnhubConfig(
     @Value("\${spring.finnhub.api.key}")
     private val apiKey: String,
-    @Value("\${spring.finnhub.api.base-url}")
+    @Value("\${finnhub.api.base-url}")
     private val baseUrl: String,
 ) {
     @Bean
