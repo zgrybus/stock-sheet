@@ -6,6 +6,7 @@ import com.example.stocksheet.stocks.dto.StockDTO
 import com.example.stocksheet.stocks.entity.DividendFrequency
 import com.example.stocksheet.stocks.entity.StockEntity
 import com.example.stocksheet.stocks.mappers.StockMapper
+import com.example.stocksheet.stocks.quotes.service.StockQuoteService
 import com.example.stocksheet.stocks.repository.StockRepository
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
@@ -15,6 +16,7 @@ class StockService(
     private val stockRepository: StockRepository,
     private val stockMapper: StockMapper,
     private val fmpService: FmpService,
+    private val stockQuoteService: StockQuoteService,
 ) : Loggable {
     data class StockIdentifier(
         val symbol: String,
@@ -31,6 +33,12 @@ class StockService(
         }
 
         val savedStocks = createStocks(missingStocks)
+
+        val stockQuotes =
+            savedStocks.map { stock ->
+                StockQuoteService.StockQuote(symbol = stock.symbol, price = stock.price)
+            }
+        stockQuoteService.upsertStockQuotes(stockQuotes)
 
         return existingStocks.plus(savedStocks)
     }

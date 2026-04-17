@@ -6,6 +6,7 @@ import com.example.stocksheet.mocks.createMockStockEntity
 import com.example.stocksheet.stocks.entity.DividendFrequency
 import com.example.stocksheet.stocks.entity.StockEntity
 import com.example.stocksheet.stocks.mappers.StockMapper
+import com.example.stocksheet.stocks.quotes.service.StockQuoteService
 import com.example.stocksheet.stocks.repository.StockRepository
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldHaveSize
@@ -21,8 +22,9 @@ import java.math.BigDecimal
 class StockServiceTest : DescribeSpec() {
     private val stockRepositoryMock = mockk<StockRepository>()
     private val fmpServiceMock = mockk<FmpService>()
+    private val stockQuoteServiceMock = mockk<StockQuoteService>()
 
-    private val stockService = StockService(stockRepositoryMock, StockMapper(), fmpServiceMock)
+    private val stockService = StockService(stockRepositoryMock, StockMapper(), fmpServiceMock, stockQuoteServiceMock)
 
     init {
         beforeEach {
