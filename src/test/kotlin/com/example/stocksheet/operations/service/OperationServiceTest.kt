@@ -54,7 +54,6 @@ class OperationServiceTest : DescribeSpec() {
                     OperationsImportRequestDTO.OperationRequestDTO(
                         externalId = "external-id-1",
                         stockSymbol = "AAPL",
-                        stockExchange = "US",
                         type = OperationType.BUY,
                         volume = BigDecimal("10.00"),
                         openDate = LocalDateTime.of(2024, Month.APRIL, 10, 10, 15).toInstant(ZoneOffset.UTC),
@@ -131,8 +130,8 @@ class OperationServiceTest : DescribeSpec() {
 
                     uniqueStocks.captured.shouldContainExactly(
                         listOf(
-                            StockService.StockIdentifier(symbol = "AAPL", exchange = "US"),
-                            StockService.StockIdentifier(symbol = "NVDA", exchange = "US"),
+                            StockService.StockIdentifier(symbol = "AAPL"),
+                            StockService.StockIdentifier(symbol = "NVDA"),
                         ),
                     )
                 }

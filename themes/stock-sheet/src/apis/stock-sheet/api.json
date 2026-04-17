@@ -372,7 +372,6 @@
         "properties": {
           "externalId": { "type": "string", "minLength": 1 },
           "stockSymbol": { "type": "string", "minLength": 1 },
-          "stockExchange": { "type": "string", "minLength": 1 },
           "type": { "type": "string", "enum": ["BUY", "SELL", "UNKNOWN"] },
           "volume": { "type": "number" },
           "openDate": { "type": "string", "format": "date-time" },
@@ -383,7 +382,6 @@
           "externalId",
           "openDate",
           "pricePerVolume",
-          "stockExchange",
           "stockSymbol",
           "totalPrice",
           "type",

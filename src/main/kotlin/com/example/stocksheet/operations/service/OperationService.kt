@@ -89,7 +89,6 @@ class OperationService(
                 .map {
                     StockService.StockIdentifier(
                         symbol = it.stockSymbol,
-                        exchange = it.stockExchange,
                     )
                 }.distinct()
 

@@ -18,7 +18,6 @@ class StockService(
 ) : Loggable {
     data class StockIdentifier(
         val symbol: String,
-        val exchange: String,
     )
 
     fun getOrCreateStocks(stocks: List<StockIdentifier>): List<StockEntity> {
@@ -48,7 +47,7 @@ class StockService(
                     stockMapper.toEntity(
                         StockDTO(
                             symbol = stock.symbol,
-                            exchange = stock.exchange,
+                            exchange = "",
                             name = stock.symbol,
                             industry = "",
                             price = BigDecimal.ZERO,
@@ -67,12 +66,7 @@ class StockService(
     }
 
     private fun fetchStock(stock: StockIdentifier): StockDTO {
-        val stockSymbol =
-            when (stock.exchange) {
-                "US" -> stock.symbol
-                else -> "${stock.symbol}.${stock.exchange}"
-            }
-        val stockProfile = fmpService.getCompanyProfile(stockSymbol)
+        val stockProfile = fmpService.getCompanyProfile(stock.symbol)
 
         return StockDTO(
             name = stockProfile?.name ?: stock.symbol,

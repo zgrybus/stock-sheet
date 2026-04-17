@@ -84,11 +84,12 @@ const parseStockSymbol = (input: string) => {
     throw Error(ParseError.ParsingError);
   }
 
+  const [_, symbol, exchange] = regexMatch;
+
   return {
-    stockSymbol: regexMatch[1],
-    stockExchange: match(regexMatch[2])
-      .with("UK", () => "L")
-      .otherwise((value) => value),
+    stockSymbol: match(exchange)
+      .with("UK", () => `${symbol}.L`)
+      .otherwise(() => symbol),
   };
 };
 
